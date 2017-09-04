@@ -1,6 +1,7 @@
 <?php
 
 	include_once "core/db_connect.php";
+	include_once "core/ymapi.php";
 	include_once "include/auth.php";
 
 
@@ -52,6 +53,21 @@
 				//echo $q_add_user;
 				mysql_query($q_add_user) or die(mysql_error());
 
+				//Обрезаем email до имени пользователя
+
+
+				$email_user_name = substr($add_email, 0, strpos($add_email, "@"));
+				//echo '<br>';
+				//echo 'user = '.$email_user_name;
+
+				//Создаем попьзователю почтовый ящик на домене
+
+
+				shell_exec("curl -H 'PddToken: WXDQN7U72I7E5YYIZBGIQIJC6KR7O4X2WUYB2J5WRHT7ZVO4RPNQ' -d 'domain=tworiver.ru&login=".$email_user_name."&password=".$_GET['password']."' 'https://pddimp.yandex.ru/api2/admin/email/add'");
+
+
+
+
 				$add_user_id = mysql_insert_id();
 				//добавляем пользователю основной тариф
 				//echo 'Добавляем тариф1';
@@ -74,7 +90,7 @@
 				$q_add_contract = "INSERT INTO users_contracts SET user = $add_user_id, type = 1, num = '$add_contract_num', date_start = '$add_contract_date'";
 				mysql_query($q_add_contract) or die(mysql_error());
 
-				$error_msg = '<script type="text/javascript">swal("", "Пользователь добавлен", "success")</script>';
+				$error_msg = '<script type="text/javascript">swal("", "Пользователь добавлен ", "success")</script>';
 
 			}
 
@@ -180,11 +196,11 @@
 												</div>
 												<div class="form-group">
 													<label for="InputUcastok">Номер участка</label>
-													<input name="uchastok" type="text" class="form-control" id="InputUcastok" placeholder="Номер участка">
+													<input name="uchastok" type="text" class="form-control" id="InputUcastok" placeholder="Номер участка" onchange="generateEmail(this.value)">
 												</div>
 												<div class="form-group">
 													<label for="InputEmail">Email</label>
-													<input name="email" type="email" class="form-control" id="InputEmail" placeholder="Email">
+													<input name="email" type="email" class="form-control" id="InputEmail" placeholder="Email" >
 												</div>
 												<div class="form-group">
 													<label for="InputPhone">Телефон</label>
@@ -378,6 +394,38 @@
 		        // id="retype"
 		        //document.getElementById('retype').value = result;
 		}
+		</script>
+
+		<script>
+		function generateEmail(dogNum){
+				var domain = '@tworiver.ru';
+				var result = '';
+				result = transliterate(dogNum) + domain;
+				document.getElementById('InputEmail').value = result;
+
+		}
+		</script>
+
+		<script>
+		//Если с английского на русский, то передаём вторым параметром true.
+		transliterate = (
+			function() {
+				var
+					rus = "щ   ш  ч  ц  ю  я  ё  ж  ъ  ы  э  а б в г д е з и й к л м н о п р с т у ф х ь".split(/ +/g),
+					eng = "shh sh ch cz yu ya yo zh `` y' e` a b v g d e z i j k l m n o p r s t u f x `".split(/ +/g)
+				;
+				return function(text, engToRus) {
+					var x;
+					for(x = 0; x < rus.length; x++) {
+						text = text.split(engToRus ? eng[x] : rus[x]).join(engToRus ? rus[x] : eng[x]);
+						text = text.split(engToRus ? eng[x].toUpperCase() : rus[x].toUpperCase()).join(engToRus ? rus[x].toUpperCase() : eng[x].toUpperCase());
+					}
+					return text;
+				}
+			}
+		)();
+
+
 		</script>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
