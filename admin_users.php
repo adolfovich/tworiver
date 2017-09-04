@@ -1,37 +1,37 @@
 <?php
-	
+
 	include_once "core/db_connect.php";
 	include_once "include/auth.php";
-	
-	
-	
+
+
+
 	$curdate = date("Y-m-d");
-	
-	if ($is_auth == 1) { 
-	
-		
-		
+
+	if ($is_auth == 1) {
+
+
+
 		$result_user_is_admin = mysql_query("SELECT is_admin FROM users WHERE email = '".$_COOKIE["user"]."'") or die(mysql_error());
-		
+
 		while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 			$is_admin = $user_is_admin['is_admin'];
 		}
-		
+
 		//выбираем существующие тарифы
-		
-		
-		
+
+
+
 		if ($is_admin == 1) {
-			
+
 			$result_tarifs = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
 			$result_tarifs2 = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
-			
+
 			if (isset($_GET['del_user']) && strlen($_GET['del_user'])!=0) {
 				//Ставим пользователю пометку об удалении
 				mysql_query("UPDATE users SET is_del = 1 WHERE id = ".$_GET['del_user']) or die(mysql_error());
 				header("Location: admin_users.php");
 			}
-			
+
 			if (isset($_GET['fio']) && strlen($_GET['fio'])!=0) {
 				$add_fio = $_GET['fio'];
 				$add_email = $_GET['email'];
@@ -47,11 +47,11 @@
 				$add_tarif2 = $_GET['tarif2'];
 				$add_contract_num = $_GET['contract_num'];
 				$add_contract_date = $_GET['contract_date'];
-				
+
 				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$add_phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_indications = $add_start_ind, start_balans = $add_start_bal";
 				//echo $q_add_user;
 				mysql_query($q_add_user) or die(mysql_error());
-				
+
 				$add_user_id = mysql_insert_id();
 				//добавляем пользователю основной тариф
 				//echo 'Добавляем тариф1';
@@ -60,8 +60,8 @@
 				//echo $q_add_tarif1;
 				//echo '<br>';
 				mysql_query($q_add_tarif1) or die(mysql_error());
-				
-				
+
+
 				if ($add_tarif2 != 0) {
 					//echo 'Добавляем тариф2';
 					//echo '<br>';
@@ -69,18 +69,18 @@
 					//echo $q_add_tarif2;
 					mysql_query($q_add_tarif2) or die(mysql_error());
 				}
-				
+
 				//Добавляем пользователю договор на энергопотребление
 				$q_add_contract = "INSERT INTO users_contracts SET user = $add_user_id, type = 1, num = '$add_contract_num', date_start = '$add_contract_date'";
 				mysql_query($q_add_contract) or die(mysql_error());
-				
+
 				$error_msg = '<script type="text/javascript">swal("", "Пользователь добавлен", "success")</script>';
-				
+
 			}
-			
+
 		}
 	}
-	
+
 ?>
 
 <!DOCTYPE html>
@@ -90,7 +90,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Система управления СНТ</title>
-		
+
 		<script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
 		<!-- Latest compiled and minified CSS -->
@@ -103,10 +103,10 @@
 		<link rel="stylesheet" href="css/font-awesome.min.css">
 
 		<link rel="stylesheet" href="css/sweetalert.css">
-		
+
 		<script src="js/sweetalert.min.js"></script>
 
-		
+
 
 		<style>
 			#header {
@@ -125,23 +125,23 @@
 				color:red;
 			}
 		</style>
-		
-		
-		
+
+
+
 	</head>
 	<body>
 		<?php echo $error_msg; ?>
 		<?php include_once "include/head.php"; ?>
-		
-		
-		
+
+
+
 		<div class="container" style="padding-bottom: 50px;">
-			
-				
-				
-				  
-					<?php 
-					if ($is_auth == 1) { 
+
+
+
+
+					<?php
+					if ($is_auth == 1) {
 						if ($is_admin == 1) {
 						?>
 							<div class="row">
@@ -179,6 +179,10 @@
 													<input name="fio" type="text" class="form-control" id="InputFIO" placeholder="ФИО">
 												</div>
 												<div class="form-group">
+													<label for="InputUcastok">Номер участка</label>
+													<input name="uchastok" type="text" class="form-control" id="InputUcastok" placeholder="Номер участка">
+												</div>
+												<div class="form-group">
 													<label for="InputEmail">Email</label>
 													<input name="email" type="email" class="form-control" id="InputEmail" placeholder="Email">
 												</div>
@@ -189,11 +193,9 @@
 												<div class="form-group">
 													<label for="InputPass">Пароль</label>
 													<input name="password" type="password" class="form-control" id="InputPass" placeholder="Пароль">
+													<a href="#" class="btn btn-default" onclick="generatePass()"><i class="fa fa-key" aria-hidden="true"> Создать пароль</i></a>
 												</div>
-												<div class="form-group">
-													<label for="InputUcastok">Номер участка</label>
-													<input name="uchastok" type="text" class="form-control" id="InputUcastok" placeholder="Номер участка">
-												</div>
+
 												<div class="form-group">
 													<label for="InputSchModel">Модель счетчика</label>
 													<input name="sch_model" type="text" class="form-control" id="InputSchModel" placeholder="Модель счетчика">
@@ -217,7 +219,7 @@
 												<div class="form-group">
 													<label for="InputContractNum">Договор на электропотребление</label>
 													<input name="contract_num" type="text" class="form-control" id="InputContractNum" placeholder="Номер договора">
-													
+
 													<input name="contract_date" type="date" class="form-control" id="InputContractNum" placeholder="дата договора">
 												</div>
 												<div class="form-group">
@@ -241,7 +243,7 @@
 														?>
 													</select>
 												</div>
-												
+
 											</form>
 										  </div>
 										  <!-- Футер модального окна -->
@@ -253,11 +255,11 @@
 									  </div>
 									</div>
 									<br><br>
-								  <?php 
+								  <?php
 									//выбираем всех пользователей
 									$result_all_users = mysql_query("SELECT u.id, u.uchastok, u.name, u.phone, u.sch_model, u.sch_num, u.sch_plomb_num, u.balans, uc.num, uc.date_start FROM users u, users_contracts uc WHERE u.is_del = 0 AND u.id = uc.user AND uc.date_end IS NULL") or die(mysql_error());
-									
-									
+
+
 									echo '<table class="table table-condensed">';
 									echo '<tr>';
 									echo '<th>Участок</th>';
@@ -271,7 +273,7 @@
 									echo '<th></th>';
 									echo '<th></th>';
 									echo '</tr>';
-									
+
 									while ($users = mysql_fetch_assoc($result_all_users)) {
 										if ($users['balans'] >= 0) {
 											echo '<tr>';
@@ -279,7 +281,7 @@
 										else {
 											echo '<tr class="danger">';
 										}
-										
+
 										echo '<td>'. $users['uchastok'].'</td>';
 										echo '<td>'. $users['name'].'</td>';
 										echo '<td>'. $users['phone'].'</td>';
@@ -295,11 +297,11 @@
 										echo '</tr>';
 									}
 									echo '</table>';
-									
+
 								  ?>
-									
+
 									<script>
-										function ConfirmDelUser(user_id) 
+										function ConfirmDelUser(user_id)
 										{
 											swal({
 												title: 'Удалить пользователя?',
@@ -321,35 +323,66 @@
 											})
 										}
 									</script>
-									
+
 									</div>
 								</div>
-								
+
 							</div>
-						
-						<?php 
+
+						<?php
 						}
-					} 
-					else 
+					}
+					else
 					{
 					?>
 					  <div class="col-md-12">
 						  <h2>Вы не авторизованы</h2>
-						  
+
 					  </div>
 					<?php
 					}
 					?>
-			   
-			
-			
+
+
+
 		</div>
-		
+
 		<?php include_once "include/footer.php"; ?>
+
+		<script>
+		function makeRand(max){
+		        // Generating random number from 0 to max (argument)
+		        return Math.floor(Math.random() * max);
+		}
+		function generatePass(){
+		        // password Lenght
+		        var length = 8;
+		        var result = '';
+		        // allowed characters
+		        var symbols = new Array(
+		                                'q','w','e','r','t','y','u','i','o','p',
+		                                'a','s','d','f','g','h','j','k','l',
+		                                'z','x','c','v','b','n','m',
+		                                'Q','W','E','R','T','Y','U','I','O','P',
+		                                'A','S','D','F','G','H','J','K','L',
+		                                'Z','X','C','V','B','N','M',
+		                                1,2,3,4,5,6,7,8,9,0
+		        );
+		        for (i = 0; i < length; i++){
+		                result += symbols[makeRand(symbols.length)];
+		        }
+		        // id="pass"
+						document.getElementById('InputPass').type = "text";
+						document.getElementById('InputPass').value = result;
+
+		        // id="retype"
+		        //document.getElementById('retype').value = result;
+		}
+		</script>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 
-		
+
 	</body>
 </html>
