@@ -47,6 +47,8 @@
 			$email_notice = $user_detail['email_notice'];
 			$pass_md5 = $user_detail['pass'];
 			$user_agreement = $user_detail['user_agreement'];
+			$start_indications = $user_detail['start_indications'];
+			$start_balans = $user_detail['start_balans'];
 		}
 
 		//echo $user_agreement;
@@ -410,6 +412,63 @@
 
 							</div>
 						</div>
+						<div class="row">
+								<div class="col-md-12">
+									<!-- Nav tabs -->
+									<ul class="nav nav-tabs">
+									  <li class="active"><a href="#indications" data-toggle="tab">Детализация показаний</a></li>
+									  <li><a href="#payments" data-toggle="tab">Детализация платежей</a></li>
+									</ul>
+									<!-- Tab panes -->
+									<div class="tab-content">
+									  <div class="tab-pane fade in active" id="indications">
+											<h4>Начальные показания: <?php echo $start_indications; ?> кВт*ч</h4>
+											<table class="table table-striped">
+												<tr>
+													<th>Дата</th>
+													<th>Тариф</th>
+													<th>Показания кВт*ч</th>
+													<th>Сумма по тарифу руб.</th>
+												</tr>
+												<?php
+												//Выбираем все показания пользователя
+												$result_user_all_indications = mysql_query("SELECT i.id, i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND t.id = i.tarif") or die(mysql_error());
+												while ($user_all_indications = mysql_fetch_assoc($result_user_all_indications)) {
+													$ind_date = date("d.m.Y", strtotime($user_all_indications['date']));
+													echo '<tr>';
+													echo '<td>'.$ind_date.'</td>';
+													echo '<td>'.$user_all_indications['tarif'].' - '.$user_all_indications['additional'].' руб./кВт*ч</td>';
+													echo '<td>'.$user_all_indications['Indications'].'</td>';
+													echo '<td>'.$user_all_indications['additional_sum'].'</td>';
+													echo '</tr>';
+												}
+												?>
+											</table>
+										</div>
+									  <div class="tab-pane fade" id="payments">
+											<h4>Начальный баланс: <?php echo $start_balans; ?> руб.</h4>
+											<table class="table table-striped">
+												<tr>
+													<th>Дата</th>
+													<th>Сумма, руб.</th>
+													<th>Основание</th>
+												</tr>
+												<?php
+												//Выбираем все показания пользователя
+												$result_user_all_payments = mysql_query("SELECT * FROM payments WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."')") or die(mysql_error());
+												while ($user_all_payments = mysql_fetch_assoc($result_user_all_payments)) {
+													$p_date = date("d.m.Y", strtotime($user_all_payments['date']));
+													echo '<tr>';
+													echo '<td>'.$p_date.'</td>';
+													echo '<td>'.$user_all_payments['sum'].'</td>';
+													echo '<td>'.$user_all_payments['base'].'</td>';
+													echo '</tr>';
+												}
+												?>
+										</div>
+									</div>
+								</div>
+						</div>
 						<?php } ?>
 					<?php
 					}
@@ -429,6 +488,17 @@
 		</div>
 
 		<?php include_once "include/footer.php"; ?>
+
+		<script>
+		$('#indications a').click(function (e) {
+		  e.preventDefault()
+		  $(this).tab('show')
+		})
+		$('#payments a').click(function (e) {
+		  e.preventDefault()
+		  $(this).tab('show')
+		})
+		</script>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
