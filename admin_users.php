@@ -50,9 +50,10 @@
 				$add_contract_date = $_GET['contract_date'];
 				
 				if ($add_phone[0] == '8') {
-					echo 'номер на 8<br>';
 					$phone = '7' . substr($add_phone, 1);
-					echo 'Теперь номер ' . $phone;
+				}
+				else if ($add_phone[0] == '+') {
+					$phone = substr($add_phone, 1);
 				}
 
 				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_indications = $add_start_ind, start_balans = $add_start_bal";
