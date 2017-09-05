@@ -14,25 +14,45 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
-				<li><a href="/">Новости</a></li>
-				<li><a href="contacts.php">Контакты</a></li>
-				
-				<?php 
-				if ($is_auth == 1) { 
-					echo '<li><a href="user.php">Личный кабинет</a></li>';
-				
-					if ($_COOKIE["user_is_admin"] == 1) {
-						echo '<li><a href="admin.php">Админ. панель</a></li>';
+				<?php
+					if (basename($_SERVER['SCRIPT_NAME']) == 'index.php') {
+						echo '<li class="active"><a href="/">Новости</a></li>';
 					}
-				} 
-				?>
-				
-				
-				
-			</ul>
-			
+					else {
+						echo '<li><a href="/">Новости</a></li>';
+					}
+					if (basename($_SERVER['SCRIPT_NAME']) == 'contacts.php') {
+						echo '<li class="active"><a href="contacts.php">Контакты</a></li>';
+					}
+					else {
+						echo '<li><a href="contacts.php">Контакты</a></li>';
+					}
 
-			
+					if ($is_auth == 1) {
+						if (basename($_SERVER['SCRIPT_NAME']) == 'user.php') {
+							echo '<li class="active"><a href="user.php">Личный кабинет</a></li>';
+						}
+						else {
+							echo '<li><a href="user.php">Личный кабинет</a></li>';
+						}
+						if ($_COOKIE["user_is_admin"] == 1) {
+							if (basename($_SERVER['SCRIPT_NAME']) == 'admin.php' || basename($_SERVER['SCRIPT_NAME']) == 'admin_users.php' || basename($_SERVER['SCRIPT_NAME']) == 'admin_indications.php'  || basename($_SERVER['SCRIPT_NAME']) == 'admin_payments.php') {
+								echo '<li class="active"><a href="admin.php">Админ. панель</a></li>';
+							}
+							else {
+								echo '<li><a href="admin.php">Админ. панель</a></li>';
+							}
+
+						}
+					}
+				?>
+
+
+
+			</ul>
+
+
+
 			<ul class="nav navbar-nav navbar-right">
 				<?php
 				if ($is_auth == 1) {
@@ -44,7 +64,7 @@
 					<div class="form-group">
 						<input name="logout" type="hidden" value="1">
 					</div>
-					<button type="submit" class="btn btn-default navbar-btn">Выход</button>
+					<button type="submit" class="btn btn-default navbar-btn"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
 				</form>
 				<?php
 				}
