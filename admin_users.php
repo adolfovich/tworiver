@@ -48,41 +48,36 @@
 				$add_tarif2 = $_GET['tarif2'];
 				$add_contract_num = $_GET['contract_num'];
 				$add_contract_date = $_GET['contract_date'];
+				
+				if ($add_phone[0] == '8') {
+					echo 'номер на 8<br>';
+					$phone = '7' . substr($add_phone, 1);
+					echo 'Теперь номер ' . $phone;
+				}
 
-				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$add_phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_indications = $add_start_ind, start_balans = $add_start_bal";
-				//echo $q_add_user;
+				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_indications = $add_start_ind, start_balans = $add_start_bal";
+								
 				mysql_query($q_add_user) or die(mysql_error());
 
 				//Обрезаем email до имени пользователя
-
-
 				$email_user_name = substr($add_email, 0, strpos($add_email, "@"));
-				//echo '<br>';
-				//echo 'user = '.$email_user_name;
-
+				
 				//Создаем попьзователю почтовый ящик на домене
-
-
 				shell_exec("curl -H 'PddToken: WXDQN7U72I7E5YYIZBGIQIJC6KR7O4X2WUYB2J5WRHT7ZVO4RPNQ' -d 'domain=tworiver.ru&login=".$email_user_name."&password=".$_GET['password']."' 'https://pddimp.yandex.ru/api2/admin/email/add'");
-
-
-
 
 				$add_user_id = mysql_insert_id();
 				//добавляем пользователю основной тариф
-				//echo 'Добавляем тариф1';
-				//echo '<br>';
+				
 				$q_add_tarif1 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = $add_tarif1";
-				//echo $q_add_tarif1;
-				//echo '<br>';
+				
 				mysql_query($q_add_tarif1) or die(mysql_error());
 
 
 				if ($add_tarif2 != 0) {
 					//echo 'Добавляем тариф2';
-					//echo '<br>';
+					
 					$q_add_tarif2 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = $add_tarif2";
-					//echo $q_add_tarif2;
+					
 					mysql_query($q_add_tarif2) or die(mysql_error());
 				}
 
@@ -200,7 +195,7 @@
 												</div>
 												<div class="form-group">
 													<label for="InputEmail">Email</label>
-													<input name="email" type="email" class="form-control" id="InputEmail" placeholder="Email" >
+													<input name="email" type="email" class="form-control" id="InputEmail" placeholder="Email" readonly>
 												</div>
 												<div class="form-group">
 													<label for="InputPhone">Телефон</label>
@@ -300,7 +295,7 @@
 
 										echo '<td>'. $users['uchastok'].'</td>';
 										echo '<td>'. $users['name'].'</td>';
-										echo '<td>'. $users['phone'].'</td>';
+										echo '<td>+'. $users['phone'].'</td>';
 										//$date_indications = date( 'd.m.Y',strtotime($users['date_start']));
 										echo '<td>'. $users['num'].' от '.date( 'd.m.Y',strtotime($users['date_start'])).'</td>';
 										echo '<td>'. $users['sch_model'].'</td>';
