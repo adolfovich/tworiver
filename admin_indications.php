@@ -34,7 +34,7 @@
 				
 				$selected_user = $_GET['select_user'];
 				//$q_indications = ;
-				$result_indications = mysql_query("SELECT i.id, i.additional_sum, i.date, i.Indications, t.price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = ".$_GET['select_user']." AND i.tarif = t.id") or die(mysql_error());
+				$result_indications = mysql_query("SELECT i.id, i.additional_sum, i.date, i.Indications, i.additional as price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = ".$_GET['select_user']." AND i.tarif = t.id") or die(mysql_error());
 				
 				//Выбираем все тарифы пользователя
 				$result_user_tarifs = mysql_query("SELECT t.id, t.name FROM users_tarifs ut, tarifs t WHERE user = ".$_GET['select_user']." AND ut.tarif = t.id") or die(mysql_error());
