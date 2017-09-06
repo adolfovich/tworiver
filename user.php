@@ -41,6 +41,7 @@
 			$user_sch_num = $user_detail['sch_num'];
 			$user_sch_plomb_num = $user_detail['sch_plomb_num'];
 			$balans = $user_detail['balans'];
+			$total_balance = $user_detail['total_balance'];
 			$phone = $user_detail['phone'];
 			$email = $user_detail['email'];
 			$sms_notice = $user_detail['sms_notice'];
@@ -272,10 +273,10 @@
 							else {
 						?>
 						<div class="row">
-							<div class="col-md-12">
+							<div class="col-md-6">
 								<h2>Личный кабинет: участок №<?php echo $user_uchastok;?></h2>
 
-								<hr>
+
 
 
 
@@ -346,12 +347,102 @@
 
 
 							</div>
+							<div class="col-md-6">
+								<?php
+									if ($total_balance < 0) {
+										$total_balans_color = "color: red;";
+									}
+								?>
+								<h2>Общий баланс <span style="<?php echo $total_balans_color; ?>"><?php echo $total_balance; ?> руб.</span>
+								<?php
+								if ($balans < 0) {
+									echo '<a href="#PaymentVariant" class="btn btn-primary" data-toggle="modal">Оплатить</a>';
+								}
+								else {
+									echo '<a href="#PaymentVariant" class="btn btn-primary" data-toggle="modal" disabled="disabled" >Оплатить</a>';
+								}
+								?>
+								</h2>
+								<!-- HTML-код модального окна -->
+								<div id="PaymentVariant" class="modal fade">
+								  <div class="modal-dialog">
+									<div class="modal-content">
+									  <!-- Заголовок модального окна -->
+									  <div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										<h4 class="modal-title">Варианты оплаты</h4>
+									  </div>
+									  <!-- Основное содержимое модального окна -->
+									  <div class="modal-body">
+											<form  role="form">
+												<div class="form-inline">
+													<div class="form-group">
+														<?php
+															if ($balans < 0) {
+																echo '<input class="form-control" type="text" value="'.-$balans.'" id="pay_electric">&nbsp;<label><input type="checkbox" checked> Электроэнергия</label>';
+															}
+															else {
+																echo '<input class="form-control" type="text" value="0" id="pay_electric">&nbsp;<label><input type="checkbox"> Электроэнергия</label>';
+															}
+														?>
+													</div>
+												</div>
+												<div class="form-inline">
+													<div class="form-group">
+														<?php
+															if ($member_balans < 0) {
+																echo '<input class="form-control" type="text" value="'.-$member_balans.'" id="pay_member">&nbsp;<label><input type="checkbox" checked> Членские взносы</label>';
+															}
+															else {
+																echo '<input class="form-control" type="text" value="0" id="pay_member">&nbsp;<label><input type="checkbox"> Членские взносы</label>';
+															}
+														?>
 
+													</div>
+												</div>
+												<div class="form-inline">
+													<div class="form-group">
+														<?php
+															if ($target_balans < 0) {
+																echo '<input class="form-control" type="text" value="'.-$target_balans.'"  id="pay_target">&nbsp;<label><input type="checkbox" checked> Целевые взносы</label>';
+															}
+															else {
+																echo '<input class="form-control" type="text" value="0" id="pay_target">&nbsp;<label><input type="checkbox"> Целевые взносы</label>';
+															}
+														?>
+
+													</div>
+												</div>
+											</form>
+									  </div>
+									  <!-- Футер модального окна -->
+									  <div class="modal-footer">
+											<button type="button" class="btn btn-primary" disabled>Онлайн оплата</button>
+											<button type="button" class="btn btn-primary" onclick="toPrintInvoice(); return false;">Распечатать квитанцию</button>
+											<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+										</div>
+									</div>
+								  </div>
+								</div>
+							</div>
+							<script>
+								function toPrintInvoice() {
+									var pay_electric = document.getElementById("pay_electric").value;
+									var pay_member = document.getElementById("pay_member").value;
+									var pay_target = document.getElementById("pay_target").value;
+									//alert(pay_electric);
+									window.open(
+									  'forms/invoice.php?pay_electric='+pay_electric+'&pay_member='+pay_member+'&pay_target='+pay_target,
+									  '_blank' // <- This is what makes it open in a new window.
+									);
+								}
+							</script>
 						</div>
+						<hr>
 						<div class="row">
 							<div class="col-md-12">
 								<h3>Договор на электропотребление №<?php echo $user_conrtact_num;?> от <?php echo $user_conrtact_date;?></h3>
-								<hr>
+
 							</div>
 						</div>
 						<div class="row">
@@ -370,40 +461,13 @@
 								<h3>
 									Баланс: <span style="<?php echo $balans_color; ?>"><?php echo $balans;?></span>
 
-									<?php
-									if ($balans < 0) {
-										echo '<a href="#PaymentVariant" class="btn btn-primary" data-toggle="modal">Оплатить</a>';
-									}
-									else {
-										echo '<a href="#PaymentVariant" class="btn btn-primary" data-toggle="modal" disabled="disabled" >Оплатить</a>';
-									}
-									?>
+
 
 								</h3>
-								
-								<!-- HTML-код модального окна -->
-								<div id="PaymentVariant" class="modal fade">
-								  <div class="modal-dialog">
-									<div class="modal-content">
-									  <!-- Заголовок модального окна -->
-									  <div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-										<h4 class="modal-title">Варианты оплаты</h4>
-									  </div>
-									  <!-- Основное содержимое модального окна -->
-									  <div class="modal-body">
-										тут будут варианты
-									  </div>
-									  <!-- Футер модального окна -->
-									  <div class="modal-footer">
-										<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-										
-									  </div>
-									</div>
-								  </div>
-								</div>
-								
-								
+
+
+
+
 								<?php
 								//выбираем тарифы которые есть у пользователя
 								//echo ;
