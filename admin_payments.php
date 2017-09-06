@@ -17,6 +17,15 @@
 		
 		if ($is_admin == 1) {
 			
+			if (isset($_GET['del_payment'])) {  
+				//Удаляем платеж
+				mysql_query("DELETE FROM payments WHERE id = ".$_GET['del_payment']) or die(mysql_error());
+				//Откатываем баланс 
+				mysql_query("UPDATE users SET balans = (balans - ".$_GET['sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
+				
+				header("Location: admin_payments.php?select_user=".$_GET['select_user']);
+			}
+			
 			//выбираем всех пользователей 
 			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0") or die(mysql_error());
 			
@@ -46,7 +55,7 @@
 				//echo $q_upd_balans;
 				mysql_query($q_upd_balans) or die(mysql_error());
 				
-				//header("Location: admin_payments.php?select_user=".$_GET['select_user']);
+				header("Location: admin_payments.php?select_user=".$_GET['select_user']);
 			}
 			
 		}
@@ -177,7 +186,7 @@
 									?>
 									
 									<script>
-										function ConfirmDelPayment(payment_id, user_id, sum) 
+										function ConfirmDelInd(payment_id, user_id, sum) 
 										{
 											swal({
 												title: 'Удалить платеж?',
