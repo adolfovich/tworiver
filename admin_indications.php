@@ -49,7 +49,7 @@
 				}
 				else {
 					//Выбираем предыдущие показания
-					$result_prev_inications = mysql_query("SELECT * FROM Indications WHERE user = ".$selected_user." ORDER BY id DESC LIMIT 1") or die(mysql_error());
+					$result_prev_inications = mysql_query("SELECT * FROM Indications WHERE user = ".$selected_user." AND tarif = ".$_GET['tarif']." ORDER BY id DESC LIMIT 1") or die(mysql_error());
 					
 					while ($prev_inications = mysql_fetch_assoc($result_prev_inications)) {
 						$prev_inication = $prev_inications['Indications'];
