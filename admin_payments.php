@@ -18,12 +18,13 @@
 		if ($is_admin == 1) {
 			
 			if (isset($_GET['del_payment'])) {  
-				//Удаляем платеж
+				echo 'Удаляем платеж';
 				mysql_query("DELETE FROM payments WHERE id = ".$_GET['del_payment']) or die(mysql_error());
-				//Откатываем баланс 
+				//echo 'Откатываем баланс';
+				//echo "UPDATE users SET balans = (balans - ".$_GET['del_sum'].") WHERE id = ".$_GET['select_user'];				
 				mysql_query("UPDATE users SET balans = (balans - ".$_GET['del_sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
 				
-				header("Location: admin_payments.php?select_user=".$_GET['select_user']);
+				//header("Location: admin_payments.php?select_user=".$_GET['select_user']);
 			}
 			
 			//выбираем всех пользователей 
