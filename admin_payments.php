@@ -22,7 +22,7 @@
 				mysql_query("DELETE FROM payments WHERE id = ".$_GET['del_payment']) or die(mysql_error());
 				//echo 'Откатываем баланс';
 				//echo "UPDATE users SET balans = (balans - ".$_GET['del_sum'].") WHERE id = ".$_GET['select_user'];				
-				mysql_query("UPDATE users SET balans = (balans - ".$_GET['del_sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
+				mysql_query("UPDATE users SET balans = (balans - ".$_GET['del_sum']."), total_balance = (total_balance - ".$_GET['del_sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error()); 
 				
 				//header("Location: admin_payments.php?select_user=".$_GET['select_user']);
 			}
@@ -52,7 +52,7 @@
 				mysql_query($q_add_payment) or die(mysql_error());
 				
 				//Обновляем баланс пользователя
-				$q_upd_balans = "UPDATE users u SET u.balans = (u.balans + $sum) WHERE u.id = ".$selected_user;
+				$q_upd_balans = "UPDATE users u SET u.balans = (u.balans + $sum), u.total_balance = (u.total_balance + $sum) WHERE u.id = ".$selected_user; 
 				//echo $q_upd_balans;
 				mysql_query($q_upd_balans) or die(mysql_error());
 				

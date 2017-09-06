@@ -21,7 +21,8 @@
 				//Удаляем показания
 				mysql_query("DELETE FROM Indications WHERE id = ".$_GET['del_ind']) or die(mysql_error());
 				//Откатываем баланс 
-				mysql_query("UPDATE users SET balans = (balans + ".$_GET['sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
+				mysql_query("UPDATE users SET balans = (balans + ".$_GET['sum']."), total_balance = (total_balance + ".$_GET['sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
+				
 				
 				header("Location: admin_indications.php?select_user=".$_GET['select_user']);
 			}
@@ -77,9 +78,9 @@
 						//echo $q_add_inications;
 						mysql_query($q_add_inications) or die(mysql_error());
 						//Обновляем баланс пользователя
-						$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - (".$diff_inication."*$price)) WHERE u.id = ".$selected_user;
+						$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - (".$diff_inication."*$price)), u.total_balance = (u.total_balance - (".$diff_inication."*$price)) WHERE u.id = ".$selected_user;
 						mysql_query($q_upd_balans) or die(mysql_error());
-						//echo $q_upd_balans;
+						
 						
 						header("Location: admin_indications.php?select_user=".$_GET['select_user']);
 					}

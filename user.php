@@ -280,7 +280,7 @@
 
 
 								<p><a href="#editSettings" class="btn btn-primary" data-toggle="modal"><i class="fa fa-sliders" aria-hidden="true"></i> Изменить настройки</a></p>
-								<!-- HTML-код модального окна -->
+									<!-- HTML-код модального окна -->
 									<div id="editSettings" class="modal fade">
 									  <div class="modal-dialog">
 										<div class="modal-content">
@@ -372,14 +372,38 @@
 
 									<?php
 									if ($balans < 0) {
-										echo '<button type="button" class="btn btn-primary">Оплатить</button>';
+										echo '<a href="#PaymentVariant" class="btn btn-primary" data-toggle="modal">Оплатить</a>';
 									}
 									else {
-										echo '<button type="button" class="btn btn-primary" disabled="disabled" >Оплатить</button>';
+										echo '<a href="#PaymentVariant" class="btn btn-primary" data-toggle="modal" disabled="disabled" >Оплатить</a>';
 									}
 									?>
 
-									</h3>
+								</h3>
+								
+								<!-- HTML-код модального окна -->
+								<div id="PaymentVariant" class="modal fade">
+								  <div class="modal-dialog">
+									<div class="modal-content">
+									  <!-- Заголовок модального окна -->
+									  <div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										<h4 class="modal-title">Варианты оплаты</h4>
+									  </div>
+									  <!-- Основное содержимое модального окна -->
+									  <div class="modal-body">
+										тут будут варианты
+									  </div>
+									  <!-- Футер модального окна -->
+									  <div class="modal-footer">
+										<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+										
+									  </div>
+									</div>
+								  </div>
+								</div>
+								
+								
 								<?php
 								//выбираем тарифы которые есть у пользователя
 								//echo ;
