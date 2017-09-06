@@ -21,7 +21,7 @@
 				//Удаляем платеж
 				mysql_query("DELETE FROM payments WHERE id = ".$_GET['del_payment']) or die(mysql_error());
 				//Откатываем баланс 
-				mysql_query("UPDATE users SET balans = (balans - ".$_GET['sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
+				mysql_query("UPDATE users SET balans = (balans - ".$_GET['del_sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
 				
 				header("Location: admin_payments.php?select_user=".$_GET['select_user']);
 			}
@@ -41,7 +41,7 @@
 			else if (isset($_GET['sum']) && $_GET['sum'] == 0) {
 				$error_msg = '<script type="text/javascript">swal("Внимание!", "Сумма не может быть равна нулю", "error")</script>';
 			}
-			else if (isset($_GET['sum'])) {
+			else if (isset($_GET['sum'])){
 				//Приводим сумму к float 
 				$sum = str_replace(",", ".", $_GET['sum']);
 				$sum = (float)$sum;
@@ -204,7 +204,7 @@
 												  'Показания удалены.',
 												  'success'
 												);
-												document.location.href = "admin_payments.php?del_payment="+payment_id+"&select_user="+user_id+"&sum="+sum;
+												document.location.href = "admin_payments.php?del_payment="+payment_id+"&select_user="+user_id+"&del_sum="+sum;
 											})
 										}
 									</script>
