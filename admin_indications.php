@@ -27,7 +27,7 @@
 			}
 			
 			
-			//выбираем всех польхователей 
+			//выбираем всех пользователей 
 			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0") or die(mysql_error());
 			
 			if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
@@ -38,11 +38,14 @@
 				
 				//Выбираем все тарифы пользователя
 				$result_user_tarifs = mysql_query("SELECT t.id, t.name FROM users_tarifs ut, tarifs t WHERE user = ".$_GET['select_user']." AND ut.tarif = t.id") or die(mysql_error());
+				
+				
 			}
 			
+			//если отправлена форма с новыми показаниями
 			if (isset($_GET['indications'])) {
-				if (strlen($_GET['indications']) == 0 || $_GET['indications'] == 0 || $_GET['indications'] == '0' || $_GET['indications'] == '0.0' || $_GET['indications'] == '0.00' || $_GET['indications'] == '0,0' || $_GET['indications'] == '0,00') {
-					$error_msg = '<script type="text/javascript">swal("Внимание!", "Не введены показания или введен 0", "error")</script>';
+				if (strlen($_GET['indications']) == 0 || $_GET['indications'] == 0 || $_GET['indications'] == '0' || $_GET['indications'] == '0.0' || $_GET['indications'] == '0.00' || $_GET['indications'] == '0,0' || $_GET['indications'] == '0,00' || $_GET['price'] == '0,00'  || strlen($_GET['price']) == 0) {
+					$error_msg = '<script type="text/javascript">swal("Внимание!", "Не введены показания или введен 0 или цена 0", "error")</script>';
 				}
 				else {
 					//Выбираем предыдущие показания
@@ -57,6 +60,10 @@
 					$inication = str_replace(",", ".", $_GET['indications']);
 					$inication = (float)$inication;
 					
+					//Приводим стоимость к float 
+					$price = str_replace(",", ".", $_GET['price']);
+					$price = (float)$price;
+					
 					/*var_dump($prev_inication);
 					echo '<br>';
 					var_dump($inication);*/
@@ -66,11 +73,11 @@
 					//Проверяем что бы новые показания былыи больше предыдущих
 					if ($diff_inication > 0) {
 						//Добавляем показания пользователю 
-						$q_add_inications = "INSERT INTO Indications SET user = ".$selected_user.", tarif = ".$_GET['tarif'].", Indications = '".$inication."',	additional_sum = (".$diff_inication."*(SELECT price FROM tarifs t WHERE t.id = ".$_GET['tarif'].")), date = '".$_GET['ind_date']."'";
+						$q_add_inications = "INSERT INTO Indications SET user = ".$selected_user.", tarif = ".$_GET['tarif'].", Indications = '".$inication."',	additional = $price, additional_sum = (".$diff_inication."*$price), date = '".$_GET['ind_date']."'";
 						//echo $q_add_inications;
 						mysql_query($q_add_inications) or die(mysql_error());
 						//Обновляем баланс пользователя
-						$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - (".$diff_inication."*(SELECT price FROM tarifs t WHERE t.id = ".$_GET['tarif']."))) WHERE u.id = ".$selected_user;
+						$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - (".$diff_inication."*$price)) WHERE u.id = ".$selected_user;
 						mysql_query($q_upd_balans) or die(mysql_error());
 						//echo $q_upd_balans;
 						
@@ -179,7 +186,7 @@
 												?>
 											</select>
 										</div>
-										<!-- <button type="submit" class="btn btn-default">Выбрать</button> -->
+										
 									</form>
 									<br>
 									<?php 
@@ -254,9 +261,10 @@
 											<form method="GET" role="form" id="AddIndications">
 												<div class="form-group">
 													<label for="tarif">Тариф</label>
-													<select class="form-control" name="tarif" id="tarif">
+													<select class="form-control" name="tarif" id="tarif" onchange="getTarifPrice(this.value)">
 														<?php
 														while ($user_tarif = mysql_fetch_assoc($result_user_tarifs)) {
+															$user_tarif_price = $user_tarif['price'];
 															echo '<option value="'.$user_tarif['id'].'">'.$user_tarif['name'].'</option>';
 														}
 														?>
@@ -269,6 +277,10 @@
 												<div class="form-group">
 													<label for="indications">Показания</label>
 													<input name="indications" type="text" class="form-control" id="indications" placeholder="0,00">
+												</div>
+												<div class="form-group">
+													<label for="price">Стоимость</label>
+													<input name="price" type="text" class="form-control" id="price" placeholder="0,00">
 												</div>
 												<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
 											</form>
@@ -304,8 +316,48 @@
 			
 		</div>
 		
+		
+		
 		<?php include_once "include/footer.php"; ?>
 
+		<script>
+		function getXmlHttp(){
+		  var xmlhttp;
+		  try {
+			xmlhttp = new ActiveXObject("Msxml2.XMLHTTP");
+		  } catch (e) {
+			try {
+			  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch (E) {
+			  xmlhttp = false;
+			}
+		  }
+		  if (!xmlhttp && typeof XMLHttpRequest!='undefined') {
+			xmlhttp = new XMLHttpRequest();
+		  }
+		  return xmlhttp;
+		}
+		
+		
+		function getTarifPrice(tarif) {
+			var req = getXmlHttp()  
+			req.onreadystatechange = function() {  
+				if (req.readyState == 4) { 
+					if(req.status == 200) { 
+						document.getElementById("price").value = req.responseText;
+					}
+				}
+			}
+			req.open('GET', 'ajax/get_user_tarif.php?tarif='+tarif, true);  
+			req.send(null);  
+		}
+		
+		var price = document.getElementById("tarif").value;
+		getTarifPrice(price);
+
+		</script>
+		
+		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 
