@@ -3,7 +3,7 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" onMouseOver="window.close();">
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -64,27 +64,39 @@
 		/*$tmp = str_split($pay_electric[1]);
 		var_dump($tmp[0]);*/
 
-		if ($pay_electric > 0) {
+
+
+		if ($pay_electric[0] > 0) {
 			echo '<div class="page">';
 			include "invoice_electric.php";
 			include "invoice_electric.php";
 			echo '</div>';
 		}
-		if ($pay_member > 0) {
+		if ($pay_member[0] > 0) {
 			/*echo '<div class="page">';
 			include "invoice_member.php";
 			include "invoice_member.php";
 			echo '</div>';*/
 		}
-		if ($pay_target > 0) {
+		if ($pay_target[0] > 0) {
 			/*echo '<div class="page">';
 			include "invoice_target.php";
 			include "invoice_target.php";
 			echo '</div>';*/
 		}
+
+
 	}
 
+
 ?>
-	<script>//window.print();</script>
+	<script>
+		window.print();
+		//window.close();
+	</script>
+	<script>
+	 //setTimeout(function(){window.print();}, 500);
+	 //window.onfocus = function(){setTimeout(function(){window.close();}, 500);};
+	</script>
 	</body>
 </html>

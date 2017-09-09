@@ -379,22 +379,22 @@
 													<div class="form-group">
 														<?php
 															if ($balans < 0) {
-																echo '<input class="form-control" type="text" value="'.-$balans.'" id="pay_electric">&nbsp;<label><input type="checkbox" checked> Электроэнергия</label>';
+																echo '<input class="form-control" type="text" value="'.-$balans.'" id="pay_electric">&nbsp;<label><input id="checked_el" type="checkbox" checked > Электроэнергия</label>';
 															}
 															else {
-																echo '<input class="form-control" type="text" value="0" id="pay_electric">&nbsp;<label><input type="checkbox"> Электроэнергия</label>';
+																echo '<input class="form-control" type="text" value="0" id="pay_electric">&nbsp;<label><input id="checked_el" type="checkbox" > Электроэнергия</label>';
 															}
 														?>
 													</div>
 												</div>
-												<!--<div class="form-inline">
+												<div class="form-inline">
 													<div class="form-group">
 														<?php
 															if ($member_balans < 0) {
-																//echo '<input class="form-control" type="text" value="'.-$member_balans.'" id="pay_member">&nbsp;<label><input type="checkbox" checked> Членские взносы</label>';
+																echo '<input class="form-control" type="hidden" value="'.-$member_balans.'" id="pay_member">&nbsp;<!-- <label><input id="checked_mem" type="checkbox" checked> Членские взносы</label>-->';
 															}
 															else {
-																//echo '<input class="form-control" type="text" value="0" id="pay_member">&nbsp;<label><input type="checkbox"> Членские взносы</label>';
+																echo '<input class="form-control" type="hidden" value="0" id="pay_member">&nbsp;<!--<label><input id="checked_mem" type="checkbox"> Членские взносы</label>-->';
 															}
 														?>
 
@@ -404,17 +404,17 @@
 													<div class="form-group">
 														<?php
 															if ($target_balans < 0) {
-																//echo '<input class="form-control" type="text" value="'.-$target_balans.'"  id="pay_target">&nbsp;<label><input type="checkbox" checked> Целевые взносы</label>';
+																echo '<input class="form-control" type="hidden" value="'.-$target_balans.'"  id="pay_target">&nbsp;<!--<label><input id="checked_tar" type="checkbox" checked> Целевые взносы</label>-->';
 															}
 															else {
-																//echo '<input class="form-control" type="text" value="0" id="pay_target">&nbsp;<label><input type="checkbox"> Целевые взносы</label>';
+																echo '<input class="form-control" type="hidden" value="0" id="pay_target">&nbsp;<!--<label><input id="checked_tar" type="checkbox"> Целевые взносы</label>-->';
 															}
 														?>
 
 													</div>
 												</div>
 											</form>
-									  </div> -->
+									  </div>
 									  <!-- Футер модального окна -->
 									  <div class="modal-footer">
 											<button type="button" class="btn btn-primary" disabled>Онлайн оплата</button>
@@ -427,14 +427,29 @@
 							</div>
 							<script>
 								function toPrintInvoice() {
-									var pay_electric = document.getElementById("pay_electric").value;
-									var pay_member = document.getElementById("pay_member").value;
-									var pay_target = document.getElementById("pay_target").value;
-									//alert(pay_electric);
-									window.open(
-									  'forms/invoice.php?pay_electric='+pay_electric+'&pay_member='+pay_member+'&pay_target='+pay_target+'&user=<?php echo $user_id; ?>',
-									  '_blank' // <- This is what makes it open in a new window.
-									);
+									var pay_electric
+									var pay_member = document.getElementById("pay_member").value; //удалить присваивание когда появится членский взнос
+									var pay_target = document.getElementById("pay_target").value; //удалить присваивание когда появится целевой взнос
+
+
+									  if (document.getElementById("checked_el").checked) { pay_electric = document.getElementById("pay_electric").value;}
+									  else { pay_electric = 0 ; }
+
+										//Раскоментировать когда появится членский взнос
+										/*if (document.getElementById("checked_mem").checked) { pay_member = document.getElementById("pay_member").value;}
+									  else { pay_member = 0 ; }
+
+										//Раскоментировать когда появится целевой взнос
+										if (document.getElementById("checked_tar").checked) { pay_target = document.getElementById("pay_target").value;}
+									  else { pay_target = 0 ; }*/
+
+										if ( pay_electric <= 0 && pay_member <= 0 && pay_target <= 0) {
+											swal("", "Не выбран ни один платеж или все платежи равны нулю", "error");
+										}
+										else {
+											window.open('forms/invoice.php?pay_electric='+pay_electric+'&pay_member='+pay_member+'&pay_target='+pay_target+'&user=<?php echo $user_id; ?>','_blank');
+										}
+
 								}
 							</script>
 						</div>
