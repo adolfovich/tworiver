@@ -30,7 +30,11 @@
 
 	if (isset($_GET['pay_electric']) && isset($_GET['pay_member']) && isset($_GET['pay_target'])  && isset($_GET['user'])) {
 
-		$pay_electric = explode(".", $_GET['pay_electric']);
+
+		$pay_electric = str_replace(",", ".", $_GET['pay_electric']);
+
+		$pay_electric = explode(".", $pay_electric);
+
 		$pay_member = $_GET['pay_member'];
 		$pay_target = $_GET['pay_target'];
 		$id_user = $_GET['user'];
