@@ -1,7 +1,6 @@
 <?php
 
 	include_once "core/db_connect.php";
-	include_once "core/ymapi.php";
 	include_once "include/auth.php";
 
 
@@ -303,9 +302,9 @@
 										echo '<td>'. $users['sch_num'].'</td>';
 										echo '<td>'. $users['sch_plomb_num'].'</td>';
 										echo '<td>'. $users['balans'].'</td>';
-										echo '<td><a href="admin_user_edit.php?edit_user='.$users['id'].'"><i class="fa fa-pencil" aria-hidden="true"></i></a></td>';
+										echo '<td><a href="admin_user_edit.php?edit_user='.$users['id'].'"><i class="fa fa-pencil" aria-hidden="true" title="Редактировать пользователя"></i></a></td>';
 										//echo '<td><a class="del_user" href="admin_users.php?del_user='.$users['id'].'"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
-										echo '<td><a class="del_user" href="#" onclick="ConfirmDelUser('.$users['id'].')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
+										echo '<td><a class="del_user" href="#" onclick="ConfirmDelUser('.$users['id'].')"><i class="fa fa-trash" aria-hidden="true" title="Удалить пользователя"></i></a></td>';
 										echo '</tr>';
 									}
 									echo '</table>';

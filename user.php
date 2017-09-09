@@ -387,14 +387,14 @@
 														?>
 													</div>
 												</div>
-												<div class="form-inline">
+												<!--<div class="form-inline">
 													<div class="form-group">
 														<?php
 															if ($member_balans < 0) {
-																echo '<input class="form-control" type="text" value="'.-$member_balans.'" id="pay_member">&nbsp;<label><input type="checkbox" checked> Членские взносы</label>';
+																//echo '<input class="form-control" type="text" value="'.-$member_balans.'" id="pay_member">&nbsp;<label><input type="checkbox" checked> Членские взносы</label>';
 															}
 															else {
-																echo '<input class="form-control" type="text" value="0" id="pay_member">&nbsp;<label><input type="checkbox"> Членские взносы</label>';
+																//echo '<input class="form-control" type="text" value="0" id="pay_member">&nbsp;<label><input type="checkbox"> Членские взносы</label>';
 															}
 														?>
 
@@ -404,17 +404,17 @@
 													<div class="form-group">
 														<?php
 															if ($target_balans < 0) {
-																echo '<input class="form-control" type="text" value="'.-$target_balans.'"  id="pay_target">&nbsp;<label><input type="checkbox" checked> Целевые взносы</label>';
+																//echo '<input class="form-control" type="text" value="'.-$target_balans.'"  id="pay_target">&nbsp;<label><input type="checkbox" checked> Целевые взносы</label>';
 															}
 															else {
-																echo '<input class="form-control" type="text" value="0" id="pay_target">&nbsp;<label><input type="checkbox"> Целевые взносы</label>';
+																//echo '<input class="form-control" type="text" value="0" id="pay_target">&nbsp;<label><input type="checkbox"> Целевые взносы</label>';
 															}
 														?>
 
 													</div>
 												</div>
 											</form>
-									  </div>
+									  </div> -->
 									  <!-- Футер модального окна -->
 									  <div class="modal-footer">
 											<button type="button" class="btn btn-primary" disabled>Онлайн оплата</button>
@@ -432,7 +432,7 @@
 									var pay_target = document.getElementById("pay_target").value;
 									//alert(pay_electric);
 									window.open(
-									  'forms/invoice.php?pay_electric='+pay_electric+'&pay_member='+pay_member+'&pay_target='+pay_target,
+									  'forms/invoice.php?pay_electric='+pay_electric+'&pay_member='+pay_member+'&pay_target='+pay_target+'&user=<?php echo $user_id; ?>',
 									  '_blank' // <- This is what makes it open in a new window.
 									);
 								}
