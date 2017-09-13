@@ -121,13 +121,7 @@
 								<div class="col-md-12">
 									<h2>Панель администратора</h2>
 									<hr>
-									<nav>
-										<ul class="nav navbar-nav">
-											<li><a href="admin_users.php">Пользователи</a></li>
-											<li><a href="admin_indications.php">Показания</a></li>
-											<li><a href="admin_payments.php">Платежи</a></li>
-										</ul>
-									</nav>
+									<?php include_once "include/admin_menu.php"; ?>
 								</div>
 							</div>
 							<div class="row">

@@ -186,11 +186,7 @@
 									<h2>Панель администратора</h2>
 									<hr>
 									<nav>
-										<ul class="nav navbar-nav">
-											<li><a href="admin_users.php">Пользователи</a></li>
-											<li><a href="admin_indications.php">Показания</a></li>
-											<li><a href="admin_payments.php">Платежи</a></li>
-										</ul>
+										<?php include_once "include/admin_menu.php"; ?>
 									</nav>
 								</div>
 							</div>
