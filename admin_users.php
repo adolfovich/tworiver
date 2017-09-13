@@ -47,7 +47,7 @@
 				$add_tarif2 = $_GET['tarif2'];
 				$add_contract_num = $_GET['contract_num'];
 				$add_contract_date = $_GET['contract_date'];
-				
+
 				if ($add_phone[0] == '8') {
 					$phone = '7' . substr($add_phone, 1);
 				}
@@ -56,34 +56,40 @@
 				}
 
 				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_indications = $add_start_ind, start_balans = $add_start_bal";
-								
+
 				mysql_query($q_add_user) or die(mysql_error());
 
 				//Обрезаем email до имени пользователя
 				$email_user_name = substr($add_email, 0, strpos($add_email, "@"));
-				
+
 				//Создаем попьзователю почтовый ящик на домене
 				shell_exec("curl -H 'PddToken: WXDQN7U72I7E5YYIZBGIQIJC6KR7O4X2WUYB2J5WRHT7ZVO4RPNQ' -d 'domain=tworiver.ru&login=".$email_user_name."&password=".$_GET['password']."' 'https://pddimp.yandex.ru/api2/admin/email/add'");
 
 				$add_user_id = mysql_insert_id();
 				//добавляем пользователю основной тариф
-				
+
 				$q_add_tarif1 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = $add_tarif1";
-				
+
 				mysql_query($q_add_tarif1) or die(mysql_error());
 
 
 				if ($add_tarif2 != 0) {
 					//echo 'Добавляем тариф2';
-					
+
 					$q_add_tarif2 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = $add_tarif2";
-					
+
 					mysql_query($q_add_tarif2) or die(mysql_error());
 				}
 
 				//Добавляем пользователю договор на энергопотребление
 				$q_add_contract = "INSERT INTO users_contracts SET user = $add_user_id, type = 1, num = '$add_contract_num', date_start = '$add_contract_date'";
 				mysql_query($q_add_contract) or die(mysql_error());
+
+				//Отправляем пользователю смс с паролем
+				//$sms_text = urlencode('Личный кабинет СНТ "Двуречье". снт-двуречье.рф Логин '.$add_email.' Пароль '.$add_password);
+				//echo $sms_text;
+				//shell_exec("curl http://195.128.126.48/sendsms.php?user=sador1&pwd=d3330&sadr=SNT&dadr=$add_phone&text=$sms_text");
+
 
 				$error_msg = '<script type="text/javascript">swal("", "Пользователь добавлен ", "success")</script>';
 
@@ -283,6 +289,7 @@
 									echo '<th>Баланс</th>';
 									echo '<th></th>';
 									echo '<th></th>';
+									echo '<th></th>';
 									echo '</tr>';
 
 									while ($users = mysql_fetch_assoc($result_all_users)) {
@@ -302,6 +309,7 @@
 										echo '<td>'. $users['sch_num'].'</td>';
 										echo '<td>'. $users['sch_plomb_num'].'</td>';
 										echo '<td>'. $users['balans'].'</td>';
+										echo '<td><button href="#" class="btn btn-danger btn-xs" onclick="ConfirmCounterReplace('.$users['id'].')" disabled>Замена счетчика</button></td>';
 										echo '<td><a href="admin_user_edit.php?edit_user='.$users['id'].'"><i class="fa fa-pencil" aria-hidden="true" title="Редактировать пользователя"></i></a></td>';
 										//echo '<td><a class="del_user" href="admin_users.php?del_user='.$users['id'].'"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
 										echo '<td><a class="del_user" href="#" onclick="ConfirmDelUser('.$users['id'].')"><i class="fa fa-trash" aria-hidden="true" title="Удалить пользователя"></i></a></td>';
@@ -331,6 +339,26 @@
 												  'success'
 												);
 												document.location.href = "admin_users.php?del_user="+user_id;
+											})
+										}
+									</script>
+
+									<script>
+										function ConfirmCounterReplace(user_id)
+										{
+											swal({
+												title: 'Внимание!!!',
+												text: 'Эта операция необратима!',
+												type: 'warning',
+												showCancelButton: true,
+												confirmButtonColor: '#dd6b55',
+												cancelButtonColor: '#999',
+												confirmButtonText: 'Продолжить',
+												cancelButtonText: 'Отмена',
+												closeOnConfirm: false
+											}, function() {
+
+												document.location.href = "counter_replace.php?user="+user_id;
 											})
 										}
 									</script>
