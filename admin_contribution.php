@@ -22,7 +22,7 @@
 		if ($is_admin == 1) {
 			
 			//выбираем всех пользователей 
-			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0") or die(mysql_error());
+			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0 ORDER BY uchastok DESC") or die(mysql_error());
 			
 			if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
 				$selected_user = $_GET['select_user'];
@@ -30,8 +30,6 @@
 				$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = ".$_GET['select_user']) or die(mysql_error());
 			}
 			
-			
-			//del_сontrib=1&select_user=1&paid1&sum=2000
 			if (isset($_GET['del_сontrib']) && strlen($_GET['del_сontrib']) != 0 && $_GET['del_сontrib'] != 0) {
 				$del_contrib_id = $_GET['del_сontrib'];
 				$del_contrib_user = $_GET['select_user'];
@@ -84,9 +82,10 @@
 			//paid_contribution
 			if (isset($_GET['paid_contribution']) && strlen($_GET['paid_contribution']) != 0 && $_GET['paid_contribution'] != 0) {
 				$paid_contribution = $_GET['paid_contribution'];
+				$paid_contribution_date = $_GET['paid_contribution_date'];
 				
 				//Устанавливаем признак оплаты взносу
-				$q_paid_contribution = "UPDATE users_contributions SET paid = 1 WHERE id = $paid_contribution";
+				$q_paid_contribution = "UPDATE users_contributions SET paid = 1, paid_date = '$paid_contribution_date' WHERE id = $paid_contribution";
 				mysql_query($q_paid_contribution) or die(mysql_error());
 				
 				//узнаем тип оплаченого взноса и его сумму
@@ -182,17 +181,18 @@
 					$contribution_add_comment = $_GET['contribution_comment'];
 					$contribution_add_user = $_GET['select_user'];
 					$contribution_add_paid = $_GET['contribution_paid'];
+					$contribution_add_paid_date = $_GET['contribution_paid_date'];
 					
 					//добавляем пользователю взнос
 					
 					if ($contribution_add_paid == 'on') { //Если стоит галка Оплачен
 					
 						if ($contribution_add_type == 1){
-							$q_insert_contribution = "INSERT INTO users_contributions SET user = $contribution_add_user, date = '$contribution_add_date', contribution_type = $contribution_add_type, year = '$contribution_add_period_year', quarter = '$contribution_add_period_quarter', sum = '$contribution_add_sum', paid = 1";
+							$q_insert_contribution = "INSERT INTO users_contributions SET user = $contribution_add_user, date = '$contribution_add_date', contribution_type = $contribution_add_type, year = '$contribution_add_period_year', quarter = '$contribution_add_period_quarter', sum = '$contribution_add_sum', paid = 1, paid_date = '$contribution_add_paid_date'";
 						}
 						else if ($contribution_add_type == 2) {
 							$contributions_add_comment = $_GET['contributions_comment'];
-							$q_insert_contribution = "INSERT INTO users_contributions SET user = $contribution_add_user, date = '$contribution_add_date', contribution_type = $contribution_add_type, sum = '$contribution_add_sum', comment = '$contribution_add_comment', paid = 1";
+							$q_insert_contribution = "INSERT INTO users_contributions SET user = $contribution_add_user, date = '$contribution_add_date', contribution_type = $contribution_add_type, sum = '$contribution_add_sum', comment = '$contribution_add_comment', paid = 1, paid_date = '$contribution_add_paid_date'";
 						}
 							
 						//echo $q_insert_contribution;
@@ -368,9 +368,9 @@
 													<p class="help-block">Выбрать несколько пользователей можно зажав клавишу Ctrl</p>
 													<select name="contributions_users[]" class="form-control" id="contributions_users" multiple>
 													<?php
-													$result_users = mysql_query("SELECT * FROM users WHERE is_del = 0") or die(mysql_error());
+													$result_users = mysql_query("SELECT * FROM users WHERE is_del = 0 ORDER BY uchastok") or die(mysql_error());
 													while ($users = mysql_fetch_assoc($result_users)) {
-														echo '<option value="'.$users['id'].'" selected>'.$users['name'].'</option>';
+														echo '<option value="'.$users['id'].'" selected>'.$users['uchastok'].' '. $users['name'].'</option>';
 													}
 													?>
 													</select>
@@ -413,11 +413,11 @@
 												<?php
 												while ($select_user = mysql_fetch_assoc($result_select_user)) {
 													if ($selected_user == $select_user['id']) {
-														echo '<option value="'.$select_user['id'].'" selected="selected">'.$select_user['name'].' Участок №'.$select_user['uchastok'].'</option>';
+														echo '<option value="'.$select_user['id'].'" selected="selected">'.$select_user['uchastok'].' '.$select_user['name'].'</option>';
 													}
 													else {
-														echo '<option value="'.$select_user['id'].'">'.$select_user['name'].' Участок №'.$select_user['uchastok'].'</option>';
-													}
+														echo '<option value="'.$select_user['id'].'">'.$select_user['uchastok'].' '.$select_user['name'].'</option>';
+													}//uchastok
 													
 													
 												}
@@ -494,7 +494,8 @@
 												</div>
 												<div class="form-group">
 													<label for="contribution_paid">Оплачен</label>
-													<input name="contribution_paid" type="checkbox" id="contribution_paid" >
+													<input name="contribution_paid" type="checkbox" id="contribution_paid" onclick="dateChangeStatus()">
+													<input name="contribution_paid_date" type="date" id="contribution_paid_date" class="form-control" style="display: inline; width: 200px; margin-left: 20px;" disabled>
 												</div>
 												
 												<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
@@ -523,6 +524,16 @@
 												document.getElementById("contribution_comment").removeAttribute('disabled');
 											}
 										}
+										function dateChangeStatus() {
+											var statusPaid = document.getElementById("contribution_paid").checked;
+											//alert(dis);
+											if (statusPaid) {
+												document.getElementById("contribution_paid_date").removeAttribute('disabled');
+											}
+											else if (!statusPaid) {
+												document.getElementById("contribution_paid_date").setAttribute('disabled', 'disabled');
+											}
+										}
 									</script>
 									
 									<!-- Nav tabs -->
@@ -547,22 +558,51 @@
 												$result_user_membership = mysql_query("SELECT * FROM users_contributions WHERE user = ".$_GET['select_user']." AND contribution_type = 1") or die(mysql_error());
 												while ($user_membership = mysql_fetch_assoc($result_user_membership)) {
 													$date_membership = date( 'd.m.Y',strtotime($user_membership['date']));
+													$paid_date = date( 'd.m.Y',strtotime($user_membership['paid_date']));
 																					
 													echo '<tr>';
 													echo '<td>'.$date_membership.'</td>';
 													echo '<td>'.$user_membership['quarter'].' квартал '.$user_membership['year'].'</td>';
 													echo '<td>'.$user_membership['sum'].'</td>';
 													if ($user_membership['paid'] == 1) {
-														echo '<td>Оплачен</td>';
+														echo '<td>'.$paid_date.'</td>';
 													}
 													else {
-														echo '<td>
-																<form method="GET">
-																	<input name="select_user" type="hidden" value="'.$_GET['select_user'].'" />
-																	<input name="paid_contribution" type="hidden" value="'.$user_membership['id'].'" />
-																	<input type="submit" class="btn btn-success btn-xs" value="Установить оплату" />
+														echo '<td><a href="#addPaid'.$user_membership['id'].'" class="btn btn-success btn-xs" data-toggle="modal">Установить оплату</a>';
+														?>
+														<!-- HTML-код модального окна -->
+														<div id="addPaid<?php echo $user_membership['id']; ?>" class="modal fade">
+														  <div class="modal-dialog">
+															<div class="modal-content">
+															  <!-- Заголовок модального окна -->
+															  <div class="modal-header">
+																<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+																<h4 class="modal-title">Установка оплаты</h4>
+															  </div>
+															  <!-- Основное содержимое модального окна -->
+															  <div class="modal-body">
+																<form method="GET" role="form" id="AddPaid">
+																	
+																	<div class="form-group">
+																		<label for="paid_contribution_date">Дата</label>
+																		<input name="select_user" type="hidden" value="<?php echo $_GET['select_user']; ?>" />
+																		<input name="paid_contribution" type="hidden" value="<?php echo $user_membership['id']; ?>" />
+																		<input name="paid_contribution_date" type="date" class="form-control" id="paid_contribution_date" value="<?php echo $date_membership; ?>">
+																	</div>
+																	
+																	<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
 																</form>
-															</td>';;
+															  </div>
+															  <!-- Футер модального окна -->
+															  <div class="modal-footer">
+																<button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+																<button type="button" class="btn btn-primary" onclick="document.getElementById('AddPaid').submit(); return false;" >Установить</button>
+															  </div>
+															</div>
+														  </div>
+														</div>
+														<?php
+														echo '</td>';
 													}
 													echo '<td><a class="del_user" href="#" onclick="ConfirmDelContrib('.$user_membership['id'].','.$_GET['select_user'].','.$user_membership['paid'].','.$user_membership['sum'].')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
 													echo '</tr>';
@@ -571,6 +611,7 @@
 												
 												?>
 											</table>
+											
 										</div>
 									  <div class="tab-pane fade" id="target">
 											
@@ -587,6 +628,7 @@
 												$result_user_target = mysql_query("SELECT * FROM users_contributions WHERE user = ".$_GET['select_user']." AND contribution_type = 2") or die(mysql_error());
 												while ($user_target = mysql_fetch_assoc($result_user_target)) {
 													$date_target = date( 'd.m.Y',strtotime($user_target['date']));
+													$paid_target_date = date( 'd.m.Y',strtotime($user_target['paid_date']));
 																			
 													echo '<tr>';
 													echo '<td>'.$date_target.'</td>';
@@ -594,16 +636,44 @@
 													echo '<td>'.$user_target['comment'].'</td>';
 													
 													if ($user_target['paid'] == 1) {
-														echo '<td>Оплачен</td>';
+														echo '<td>'.$paid_target_date.'</td>';
 													}
 													else {
-														echo '<td>
-																<form method="GET">
-																	<input name="select_user" type="hidden" value="'.$_GET['select_user'].'" />
-																	<input name="paid_contribution" type="hidden" value="'.$user_target['id'].'" />
-																	<input type="submit" class="btn btn-success btn-xs" value="Установить оплату" />
+														echo '<td><a href="#addPaid'.$user_target['id'].'" class="btn btn-success btn-xs" data-toggle="modal">Установить оплату</a>';
+														?>
+														<!-- HTML-код модального окна -->
+														<div id="addPaid<?php echo $user_target['id']; ?>" class="modal fade">
+														  <div class="modal-dialog">
+															<div class="modal-content">
+															  <!-- Заголовок модального окна -->
+															  <div class="modal-header">
+																<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+																<h4 class="modal-title">Установка оплаты</h4>
+															  </div>
+															  <!-- Основное содержимое модального окна -->
+															  <div class="modal-body">
+																<form method="GET" role="form" id="AddPaid">
+																	
+																	<div class="form-group">
+																		<label for="paid_contribution_date">Дата</label>
+																		<input name="select_user" type="hidden" value="<?php echo $_GET['select_user']; ?>" />
+																		<input name="paid_contribution" type="hidden" value="<?php echo $user_target['id']; ?>" />
+																		<input name="paid_contribution_date" type="date" class="form-control" id="paid_contribution_date" value="<?php echo $date_target; ?>">
+																	</div>
+																	
+																	<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
 																</form>
-															</td>';
+															  </div>
+															  <!-- Футер модального окна -->
+															  <div class="modal-footer">
+																<button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+																<button type="button" class="btn btn-primary" onclick="document.getElementById('AddPaid').submit(); return false;" >Установить</button>
+															  </div>
+															</div>
+														  </div>
+														</div>
+														<?php
+														echo '</td>';
 													}
 													echo '<td><a class="del_user" href="#" onclick="ConfirmDelContrib('.$user_target['id'].','.$_GET['select_user'].','.$user_target['paid'].','.$user_target['sum'].')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
 													echo '</tr>';

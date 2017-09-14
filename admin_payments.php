@@ -136,11 +136,11 @@
 												<?php
 												while ($select_user = mysql_fetch_assoc($result_select_user)) {
 													if ($selected_user == $select_user['id']) {
-														echo '<option value="'.$select_user['id'].'" selected="selected">'.$select_user['name'].' Участок №'.$select_user['uchastok'].'</option>';
+														echo '<option value="'.$select_user['id'].'" selected="selected">'.$select_user['uchastok'].' '.$select_user['name'].'</option>';
 													}
 													else {
-														echo '<option value="'.$select_user['id'].'">'.$select_user['name'].' Участок №'.$select_user['uchastok'].'</option>';
-													}
+														echo '<option value="'.$select_user['id'].'">'.$select_user['uchastok'].' '.$select_user['name'].'</option>';
+													}//uchastok
 													
 													
 												}
