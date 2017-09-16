@@ -43,6 +43,7 @@
 		<link rel="stylesheet" href="css/font-awesome.min.css">
 
 		<link rel="stylesheet" href="css/sweetalert.css">
+		<link rel="stylesheet" href="css/my.css">
 		
 		<script src="js/sweetalert.min.js"></script>
 

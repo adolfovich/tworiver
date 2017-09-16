@@ -36,6 +36,7 @@ if (isset($_POST['auth']) && $_POST['auth'] == '1') {
 			$auth_login = $_POST['auth_login'];
 			
 			$q_auth = "SELECT * FROM users WHERE email = '$auth_login'";
+			echo $q_auth;
 			
 			$result_auth = mysql_query($q_auth) or die(mysql_error());
 			

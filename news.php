@@ -31,7 +31,7 @@
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-		
+		<link rel="stylesheet" href="css/my.css">
 		<style>
 			#header {
 				background: url(img/header.jpg);

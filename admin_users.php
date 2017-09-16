@@ -122,7 +122,7 @@
 		<link rel="stylesheet" href="css/sweetalert.css">
 
 		<script src="js/sweetalert.min.js"></script>
-
+		<link rel="stylesheet" href="css/my.css">
 
 
 		<style>

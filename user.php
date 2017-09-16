@@ -124,6 +124,30 @@
 				$error = 'Поле номер телефона не может быть пустым';
 			}
 		}
+		
+		//получаем баланс пользователя по целевым взносам
+		$result_target_balans = mysql_query("SELECT target_balans FROM users WHERE email = '".$_COOKIE['user']."'") or die(mysql_error());
+		while ($target_balans = mysql_fetch_assoc($result_target_balans)) {
+			$user_target_balans = $target_balans['target_balans'];
+		}
+		if ($user_target_balans < 0) {
+			$target_balans_color = "color: red;";
+		}
+		else {
+			$target_balans_color = '';
+		}
+		
+		//получаем баланс пользователя по членским взносам
+		$result_membership_balans = mysql_query("SELECT membership_balans FROM users WHERE email = '".$_COOKIE['user']."'") or die(mysql_error());
+		while ($membership_balans = mysql_fetch_assoc($result_membership_balans)) {
+			$user_membership_balans = $membership_balans['membership_balans'];
+		}
+		if ($user_membership_balans < 0) {
+			$membership_balans_color = "color: red;";
+		}
+		else {
+			$membership_balans_color = '';
+		}
 
 	}
 ?>
@@ -146,6 +170,7 @@
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="css/font-awesome.min.css">
 		<link rel="stylesheet" href="css/sweetalert.css">
+		<link rel="stylesheet" href="css/my.css">
 		<script src="js/sweetalert.min.js"></script>
 
 		<style>
@@ -158,10 +183,30 @@
 			.news_date {
 				color: #777;
 			}
+			
 		</style>
+		
+		<script>
+			var arr = [];
+			var i = 0;
+			$(":checkbox").change(function(){
+				if(this.checked){
+					arr[i] = $(this).val();
+					i++;
+				}else{
+					var val = $(this).val();
+					var index = arr.indexOf(val);
+					arr.splice(index, 1);
+					i--;
+				}
+				console.log(arr);
+			});
+		</script>
 
 	</head>
 	<body>
+		
+		
 		<?php echo $error_msg; ?>
 		<?php echo $error; ?>
 		<?php include_once "include/head.php"; ?>
@@ -284,22 +329,27 @@
 
 
 							</div>
+							
+							
 							<div class="col-md-6">
 								<?php
 									if ($total_balance < 0) {
 										$total_balans_color = "color: red;";
 									}
 								?>
-								<h2>Общий баланс <span style="<?php echo $total_balans_color; ?>"><?php echo $total_balance; ?> руб.</span>
-								<?php
-								if ($balans < 0) {
-									echo '<a href="#PaymentVariant" class="btn btn-primary" data-toggle="modal">Оплатить</a>';
-								}
-								else {
-									echo '<a href="#PaymentVariant" class="btn btn-primary" data-toggle="modal" disabled="disabled" >Оплатить</a>';
-								}
+								<div class="row">
+									<h2 class="pull-right">Общий баланс <span style="<?php echo $total_balans_color; ?>"><?php echo $total_balance; ?> руб.</span></h2>
+								</div>
+								<div class="row">
+									<?php
+									if ($total_balance < 0) {
+										echo '<a href="#PaymentVariant" class="btn btn-primary pull-right" data-toggle="modal">Оплатить</a>';
+									}
+									else {
+										echo '<a href="#PaymentVariant" class="btn btn-primary pull-right" data-toggle="modal" disabled="disabled" >Оплатить</a>';
+									}
 								?>
-								</h2>
+								</div>
 								<!-- HTML-код модального окна -->
 								<div id="PaymentVariant" class="modal fade">
 								  <div class="modal-dialog">
@@ -324,30 +374,87 @@
 														?>
 													</div>
 												</div>
+												
+												
+												
 												<div class="form-inline">
 													<div class="form-group">
 														<?php
-															if ($member_balans < 0) {
-																echo '<input class="form-control" type="hidden" value="'.-$member_balans.'" id="pay_member">&nbsp;<!-- <label><input id="checked_mem" type="checkbox" checked> Членские взносы</label>-->';
+															if ($user_membership_balans < 0) {
+																echo '<br>';
+																echo '<input class="form-control" type="text" value="'.-$user_membership_balans.'" id="pay_member" disabled>&nbsp;<label>Членские взносы</label>';
+																echo '<br>';
+																echo '<div id="member_elements">';
+																$result_no_paid_member = mysql_query("SELECT * FROM users_contributions WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND contribution_type = 1 AND paid = 0") or die(mysql_error());
+																while ($no_paid_member = mysql_fetch_assoc($result_no_paid_member)) {
+																	echo '<p style="margin: 0;">';
+																	echo '<label class="pay_label">';
+																	echo '<input type="checkbox" value="'.$no_paid_member['sum'].'" data-id="'.$no_paid_member['id'].'" onclick="editMember(this.value, this.checked)" checked> '.$no_paid_member['quarter'].' кватрал '.$no_paid_member['year'].' ('.$no_paid_member['sum'].'руб.)';
+																	echo '</label>';
+																	echo '</p>';
+																}
+																echo '</div>';
 															}
 															else {
 																echo '<input class="form-control" type="hidden" value="0" id="pay_member">&nbsp;<!--<label><input id="checked_mem" type="checkbox"> Членские взносы</label>-->';
 															}
 														?>
-
+														<script>
+														function editMember(sum, checked) {
+															var itog;
+															var memberInput = document.getElementById("pay_member");
+															if (checked) {
+																itog = Number(memberInput.value) + Number(sum);
+																memberInput.value = itog;
+															}
+															else if (!checked) {
+																itog = Number(memberInput.value) - Number(sum);
+																memberInput.value = itog;
+															}
+															
+															//alert(itog);
+														}
+														</script>
 													</div>
 												</div>
 												<div class="form-inline">
 													<div class="form-group">
 														<?php
-															if ($target_balans < 0) {
-																echo '<input class="form-control" type="hidden" value="'.-$target_balans.'"  id="pay_target">&nbsp;<!--<label><input id="checked_tar" type="checkbox" checked> Целевые взносы</label>-->';
+															if ($user_target_balans < 0) {
+																echo '<br>';
+																echo '<input class="form-control" type="text" value="'.-$user_target_balans.'" id="pay_target" disabled>&nbsp;<label>Целевые взносы</label>';
+																echo '<br>';
+																echo '<div id="target_elements">';
+																$result_no_paid_target = mysql_query("SELECT * FROM users_contributions WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND contribution_type = 2 AND paid = 0") or die(mysql_error());
+																while ($no_paid_target = mysql_fetch_assoc($result_no_paid_target)) {
+																	echo '<p style="margin: 0;">';
+																	echo '<label class="pay_label">';
+																	echo '<input type="checkbox" value="'.$no_paid_target['sum'].'" data-id="'.$no_paid_target['id'].'" onclick="editTarget(this.value, this.checked)" checked> '.$no_paid_target['comment'].' ('.$no_paid_target['sum'].'руб.)';
+																	echo '</label>';
+																	echo '</p>';
+																}
+																echo '</div>';
 															}
 															else {
-																echo '<input class="form-control" type="hidden" value="0" id="pay_target">&nbsp;<!--<label><input id="checked_tar" type="checkbox"> Целевые взносы</label>-->';
+																echo '<input class="form-control" type="hidden" value="0" id="pay_member">&nbsp;<!--<label><input id="checked_mem" type="checkbox"> Целевые взносы</label>-->';
 															}
 														?>
-
+														<script>
+														function editTarget(sum, checked) {
+															var itog;
+															var targetInput = document.getElementById("pay_target");
+															if (checked) {
+																itog = Number(targetInput.value) + Number(sum);
+																targetInput.value = itog;
+															}
+															else if (!checked) {
+																itog = Number(targetInput.value) - Number(sum);
+																targetInput.value = itog;
+															}
+															
+															//alert(itog);
+														}
+														</script>
 													</div>
 												</div>
 											</form>
@@ -365,150 +472,299 @@
 							<script>
 								function toPrintInvoice() {
 									var pay_electric
-									var pay_member = document.getElementById("pay_member").value; //удалить присваивание когда появится членский взнос
-									var pay_target = document.getElementById("pay_target").value; //удалить присваивание когда появится целевой взнос
+									var pay_member = document.getElementById("pay_member").value; 
+									var pay_target = document.getElementById("pay_target").value; 
 
 
 									  if (document.getElementById("checked_el").checked) { pay_electric = document.getElementById("pay_electric").value;}
 									  else { pay_electric = 0 ; }
 
-										//Раскоментировать когда появится членский взнос
-										/*if (document.getElementById("checked_mem").checked) { pay_member = document.getElementById("pay_member").value;}
-									  else { pay_member = 0 ; }
-
-										//Раскоментировать когда появится целевой взнос
-										if (document.getElementById("checked_tar").checked) { pay_target = document.getElementById("pay_target").value;}
-									  else { pay_target = 0 ; }*/
-
+										var allMember = document.getElementById('member_elements').getElementsByTagName('input').length;
+										var urlMember = '';
+										for (var i = 0; i <= allMember-1; i++) {
+											if (document.getElementById('member_elements').getElementsByTagName('input')[i].checked) {
+												urlMember = urlMember + '&member_id[]=' + document.getElementById('member_elements').getElementsByTagName('input')[i].getAttribute('data-id');
+											}
+											
+										}
+										
+										var allTarget = document.getElementById('target_elements').getElementsByTagName('input').length;
+										var urlTarget = '';
+										for (var i = 0; i <= allTarget-1; i++) {
+											if (document.getElementById('target_elements').getElementsByTagName('input')[i].checked){
+												urlTarget = urlTarget + '&target_id[]=' + document.getElementById('target_elements').getElementsByTagName('input')[i].getAttribute('data-id');
+											}
+										}
+										
 										if ( pay_electric <= 0 && pay_member <= 0 && pay_target <= 0) {
 											swal("", "Не выбран ни один платеж или все платежи равны нулю", "error");
 										}
 										else {
-											window.open('forms/invoice.php?pay_electric='+pay_electric+'&pay_member='+pay_member+'&pay_target='+pay_target+'&user=<?php echo $user_id; ?>','_blank');
+											var fullUrl = 'forms/invoice.php?pay_electric='+pay_electric + urlMember + urlTarget + '&user=<?php echo $user_id; ?>';
+											
+											window.open(fullUrl,'_blank');
+											
 										}
 
 								}
 							</script>
 						</div>
 						<hr>
+						
+						<?php
+							if ($balans < 0) {
+								$balans_color = "color: red;";
+							}
+						?>
+						
 						<div class="row">
-							<div class="col-md-12">
-								<h3>Договор на электропотребление №<?php echo $user_conrtact_num;?> от <?php echo $user_conrtact_date;?></h3>
-
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-md-6">
-							  <h3>Данные об установленном счетчике</h3>
-							  <p><strong>Марка: </strong><?php echo $user_sch_model;?></p>
-							  <p><strong>Номер: </strong><?php echo $user_sch_num;?></p>
-							  <p><strong>Пломба №: </strong><?php echo $user_sch_plomb_num;?></p>
-							</div>
-							<div class="col-md-4">
-								<?php
-									if ($balans < 0) {
-										$balans_color = "color: red;";
-									}
-								?>
-								<h3>
-									Баланс: <span style="<?php echo $balans_color; ?>"><?php echo $balans;?></span>
-
-
-
-								</h3>
-
-
-
-
-								<?php
-								//выбираем тарифы которые есть у пользователя
-								//echo ;
-
-								$result_user_tarifs = mysql_query("SELECT t.id as id, ut.tarif as tarif_id, t.name as tarif_name FROM users_tarifs ut, tarifs t WHERE ut.tarif = t.id AND ut.user = (SELECT id FROM users WHERE email = '".$_COOKIE["user"]."')") or die(mysql_error());
-
-								echo '<p><strong>Последние показания: </strong></p>';
-								while ($user_tarif = mysql_fetch_assoc($result_user_tarifs)) {
-
-									//Выбираем показания по тарифу
-									$result_user_indications = mysql_query("SELECT * FROM Indications WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND tarif = ".$user_tarif['id']." ORDER BY date DESC LIMIT 1") or die(mysql_error());
-
-									while ($user_indications = mysql_fetch_assoc($result_user_indications)) {
-
-
-										echo '<p><strong>'. $user_tarif['tarif_name'].': </strong>'.$user_indications['Indications'].'</p>';
-									}
-
-								}
-
-								//Выбираем последний платеж пользователя
-								$result_user_payment = mysql_query("SELECT * FROM payments WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') ORDER BY date DESC LIMIT 1") or die(mysql_error());
-								while ($user_payment = mysql_fetch_assoc($result_user_payment)) {
-									$payment_date = date("d.m.Y", strtotime($user_payment['date']));
-									echo '<p><strong>Последний платеж: </strong> '.$user_payment['sum'].'р от '.$payment_date.'</p>';
-								}
-								?>
-
-
-
-							</div>
-						</div>
-						<div class="row">
-								<div class="col-md-12">
-									<!-- Nav tabs -->
-									<ul class="nav nav-tabs">
-									  <li class="active"><a href="#indications" data-toggle="tab">Детализация показаний</a></li>
-									  <li><a href="#payments" data-toggle="tab">Детализация платежей</a></li>
-									</ul>
-									<!-- Tab panes -->
-									<div class="tab-content">
-									  <div class="tab-pane fade in active" id="indications">
-											<h4>Начальные показания: <?php echo $start_indications; ?> кВт*ч</h4>
-											<table class="table table-striped">
-												<tr>
-													<th>Дата</th>
-													<th>Тариф</th>
-													<th>Показания кВт*ч</th>
-													<th>Сумма по тарифу руб.</th>
-												</tr>
-												<?php
-												//Выбираем все показания пользователя
-												$result_user_all_indications = mysql_query("SELECT i.id, i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND t.id = i.tarif") or die(mysql_error());
-												while ($user_all_indications = mysql_fetch_assoc($result_user_all_indications)) {
-													$ind_date = date("d.m.Y", strtotime($user_all_indications['date']));
-													echo '<tr>';
-													echo '<td>'.$ind_date.'</td>';
-													echo '<td>'.$user_all_indications['tarif'].' - '.$user_all_indications['additional'].' руб./кВт*ч</td>';
-													echo '<td>'.$user_all_indications['Indications'].'</td>';
-													echo '<td>'.$user_all_indications['additional_sum'].'</td>';
-													echo '</tr>';
-												}
-												?>
-											</table>
+							<div class="panel panel-default">
+								<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
+									<button type="button" class="btn btn-default spoiler-trigger" data-toggle="collapse" style="width: 100%; box-shadow: none; border: none; border-radius: 0;">
+										<h3>
+											<span class="pull-left">Энергопотребление</span> 
+											<span class="pull-right">Баланс:
+												<span style="<?php echo $balans_color; ?>"><?php echo $balans;?></span> 
+											руб.</span>
+										</h3>
+									</button>
+								</div>
+								<div class="panel-collapse collapse out">
+									<div class="panel-body">
+										<div class="row">
+											<div class="col-md-12">
+												<h3>Договор на электропотребление №<?php echo $user_conrtact_num;?> от <?php echo $user_conrtact_date;?></h3>
+											</div>
 										</div>
-									  <div class="tab-pane fade" id="payments">
-											<h4>Начальный баланс: <?php echo $start_balans; ?> руб.</h4>
-											<table class="table table-striped">
-												<tr>
-													<th>Дата</th>
-													<th>Сумма, руб.</th>
-													<th>Основание</th>
-												</tr>
-												<?php
-												//Выбираем все показания пользователя
-												$result_user_all_payments = mysql_query("SELECT * FROM payments WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."')") or die(mysql_error());
-												while ($user_all_payments = mysql_fetch_assoc($result_user_all_payments)) {
-													$p_date = date("d.m.Y", strtotime($user_all_payments['date']));
-													echo '<tr>';
-													echo '<td>'.$p_date.'</td>';
-													echo '<td>'.$user_all_payments['sum'].'</td>';
-													echo '<td>'.$user_all_payments['base'].'</td>';
-													echo '</tr>';
-												}
-												?>
+										<div class="row">
+											<div class="col-md-6">
+											  <h3>Данные об установленном счетчике</h3>
+											  <p><strong>Марка: </strong><?php echo $user_sch_model;?></p>
+											  <p><strong>Номер: </strong><?php echo $user_sch_num;?></p>
+											  <p><strong>Пломба №: </strong><?php echo $user_sch_plomb_num;?></p>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<!-- Nav tabs -->
+												<ul class="nav nav-tabs">
+												  <li class="active"><a href="#indications" data-toggle="tab">Детализация показаний</a></li>
+												  <li><a href="#payments" data-toggle="tab">Детализация платежей</a></li>
+												</ul>
+												<!-- Tab panes -->
+												<div class="tab-content">
+												  <div class="tab-pane fade in active" id="indications">
+														<h4>Начальные показания: <?php echo $start_indications; ?> кВт*ч</h4>
+														<table class="table table-striped">
+															<tr>
+																<th>Дата</th>
+																<th>Тариф</th>
+																<th>Показания кВт*ч</th>
+																<th>Сумма по тарифу руб.</th>
+															</tr>
+															<?php
+																//Выбираем все показания пользователя
+																$result_user_all_indications = mysql_query("SELECT i.id, i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND t.id = i.tarif") or die(mysql_error());
+																while ($user_all_indications = mysql_fetch_assoc($result_user_all_indications)) {
+																	$ind_date = date("d.m.Y", strtotime($user_all_indications['date']));
+																	echo '<tr>';
+																	echo '<td>'.$ind_date.'</td>';
+																	echo '<td>'.$user_all_indications['tarif'].' - '.$user_all_indications['additional'].' руб./кВт*ч</td>';
+																	echo '<td>'.$user_all_indications['Indications'].'</td>';
+																	echo '<td>'.$user_all_indications['additional_sum'].'</td>';
+																	echo '</tr>';
+																}
+															?>
+														</table>
+													</div>
+												  <div class="tab-pane fade" id="payments">
+													<h4>Начальный баланс: <?php echo $start_balans; ?> руб.</h4>
+													<table class="table table-striped">
+														<tr>
+															<th>Дата</th>
+															<th>Сумма, руб.</th>
+															<th>Основание</th>
+														</tr>
+														<?php
+																//Выбираем все показания пользователя
+																$result_user_all_payments = mysql_query("SELECT * FROM payments WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."')") or die(mysql_error());
+																while ($user_all_payments = mysql_fetch_assoc($result_user_all_payments)) {
+																	$p_date = date("d.m.Y", strtotime($user_all_payments['date']));
+																	echo '<tr>';
+																	echo '<td>'.$p_date.'</td>';
+																	echo '<td>'.$user_all_payments['sum'].'</td>';
+																	echo '<td>'.$user_all_payments['base'].'</td>';
+																	echo '</tr>';
+																}
+														?>
+													</table>
+												  </div>
+												</div>
+											</div>
 										</div>
 									</div>
 								</div>
+							</div>
 						</div>
+						
+						<div class="row">
+							<div class="panel panel-default">
+								<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
+									<button type="button" class="btn btn-default spoiler-trigger" data-toggle="collapse" style="width: 100%; box-shadow: none; border: none; border-radius: 0;">
+										<h3>
+											<span class="pull-left">Членские взносы</span> 
+											<span class="pull-right">Баланс:
+												<span style="<?php echo $membership_balans_color; ?>"><?php echo $user_membership_balans; ?></span> 
+											руб.</span>
+										</h3>
+									</button>
+								</div>
+								<div class="panel-collapse collapse out">
+									<div class="panel-body">
+										<div class="row">
+											<div class="col-md-12">
+												<h3></h3>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-6">
+											  
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<!-- Nav tabs -->
+												<ul class="nav nav-tabs">
+												  <li class="active"><a href="#membership" data-toggle="tab">Детализация взносов</a></li>
+												</ul>
+												<!-- Tab panes -->
+												<div class="tab-content">
+												  <div class="tab-pane fade in active" id="membership">
+													<table class="table table-striped">
+														<tr>
+															<th>Дата</th>
+															<th>Период</th>
+															<th>Сумма</th>
+															<th>Оплачен</th>
+														</tr>
+														<?php 
+															$result_membership_contribution = mysql_query("SELECT * FROM users_contributions WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND contribution_type = 1") or die(mysql_error());
+															while ($membership_contribution = mysql_fetch_assoc($result_membership_contribution)) {
+																$date_membership = date( 'd.m.Y',strtotime($membership_contribution['date']));
+																$date_membership_paid = date( 'd.m.Y',strtotime($membership_contribution['paid_date']));
+																
+																if ($membership_contribution['paid'] == 1) {
+																	$tr_style = '';
+																}
+																else {
+																	$tr_style = 'danger';
+																}
+																
+																echo '<tr class="'.$tr_style.'">';
+																	echo '<td>'.$date_membership.'</td>';
+																	echo '<td>'.$membership_contribution['quarter'].' квартал '.$membership_contribution['year'].'</td>';
+																	echo '<td>'.$membership_contribution['sum'].'руб.</td>';
+																	if ($membership_contribution['paid'] == 1) {
+																		echo '<td>'.$date_membership_paid.'</td>';
+																	}
+																	else {
+																		echo '<td >Не оплачен</td>';
+																	}
+																echo '</tr>';
+																
+															}
+														?>
+													</table>
+												  </div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="panel panel-default">
+								<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
+									<button type="button" class="btn btn-default spoiler-trigger" data-toggle="collapse" style="width: 100%; box-shadow: none; border: none; border-radius: 0;">
+										<h3>
+											<span class="pull-left">Целевые взносы</span>
+											<span class="pull-right">Баланс:
+												<span style="<?php echo $target_balans_color; ?>"><?php echo $user_target_balans; ?></span> 
+											руб.</span>
+										</h3>
+									</button>
+								</div>
+								<div class="panel-collapse collapse out">
+									<div class="panel-body">
+										<div class="row">
+											<div class="col-md-12">
+												<h3></h3>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-6">
+											  
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<!-- Nav tabs -->
+												<ul class="nav nav-tabs">
+												  <li class="active"><a href="#membership" data-toggle="tab">Детализация взносов</a></li>
+												</ul>
+												<!-- Tab panes -->
+												<div class="tab-content">
+												  <div class="tab-pane fade in active" id="membership">
+													<table class="table table-striped">
+														<tr>
+															<th>Дата</th>
+															<th>Сумма</th>
+															<th>Комментарий</th>
+															<th>Оплата</th>
+														</tr>
+														<?php 
+															$result_target_contribution = mysql_query("SELECT * FROM users_contributions WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND contribution_type = 2") or die(mysql_error());
+															while ($target_contribution = mysql_fetch_assoc($result_target_contribution)) {
+																$date_target = date( 'd.m.Y',strtotime($target_contribution['date']));
+																$date_target_paid = date( 'd.m.Y',strtotime($target_contribution['paid_date']));
+																
+																if ($target_contribution['paid'] == 1) {
+																	$tr_style = '';
+																}
+																else {
+																	$tr_style = 'danger';
+																}
+																
+																echo '<tr class="'.$tr_style.'">';
+																	echo '<td>'.$date_target.'</td>';
+																	echo '<td>'.$target_contribution['sum'].'руб.</td>';
+																	echo '<td>'.$target_contribution['comment'].'</td>';
+																	if ($target_contribution['paid'] == 1) {
+																		echo '<td>'.$date_target_paid.'</td>';
+																	}
+																	else {
+																		echo '<td >Не оплачен</td>';
+																	}
+																echo '</tr>';
+																
+															}
+														?>
+													</table>
+												  </div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+						
+						
+						
 						<?php } ?>
 					<?php
 					}
@@ -529,6 +785,12 @@
 
 		<?php include_once "include/footer.php"; ?>
 
+		<script>
+			$(".spoiler-trigger").click(function() {
+				$(this).parent().next().collapse('toggle');
+			});
+		</script>
+		
 		<script>
 		$('#indications a').click(function (e) {
 		  e.preventDefault()

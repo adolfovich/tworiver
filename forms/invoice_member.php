@@ -51,6 +51,13 @@
 		border: none !important;
 		border-right: #000 1px solid !important;
 	}
+	
+	hr {
+		margin-top: 5px;
+		margin-bottom: 5px;
+		border: 0;
+		border-top: 1px solid #000;
+	}
 
 </style>
 
@@ -158,13 +165,25 @@
 		<td class="noborder">
 			<table class="numeral_table">
 				<tr>
-					<td style="border:none; text-align: right; width: 200px; font-weight: 100; vertical-align: top;"><b>Вид платежа:</b><br>оплата за электроэнергию</td>
+					<td style="border:none; text-align: right; width: 200px; font-weight: 100; vertical-align: top;" rowspan="2"><b>Вид платежа:</b><br>оплата членских взносов</td>
+					<td style="border:none; text-align: right; width: 200px; font-weight: 100; vertical-align: top;" colspan="5">
+					<?php
+							foreach ($members as $value) {
+								echo '<b>'.$value.'</b><hr>';
+								//var_dump($value);
+							}
+					?>
+					</td>
+				</tr>
+				<tr>
 					<td style="border:none; vertical-align: top; padding-left: 90px !important;">Сумма:</td>
 					<td style="border:none; vertical-align: top; padding: 0 !important; width: auto;">
 						<table class="numeral_table" style="">
 							<tr>
 							<?php
-							foreach (str_split($pay_electric[0]) as $value) {
+							
+							
+							foreach (str_split($members_sum[0]) as $value) {
 								echo "<td>$value</td>";
 							}
 							?>
@@ -177,13 +196,13 @@
 						<table class="numeral_table">
 							<tr>
 							<?php
-							$tmp = str_split($pay_electric[1]);
+							$tmp = str_split($members_sum[1]);
 							if ($tmp[0] == "") {
 								echo "<td>0</td>";
 								echo "<td>0</td>";
 							}
 							else {
-								foreach (str_split($pay_electric[1]) as $value) {
+								foreach (str_split($members_sum[1]) as $value) {
 									echo "<td>$value</td>";
 								}
 							}
