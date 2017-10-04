@@ -84,7 +84,12 @@
 						   $error_msg = '<script type="text/javascript">swal("", "Письмо не отправлено '.$mail->ErrorInfo.'", "error")</script>';
 						} else {
 							$error_msg = '<script type="text/javascript">swal("", "Письмо отправлено", "success")</script>';
+							unset($_POST['input_name']);
+							unset($_POST['input_subject']);
+							unset($_POST['input_text']);
+							unset($_POST['input_email']);
 						}
+						
 					}
 					else {
 						$error_msg = '<script type="text/javascript">swal("", "Не заполнено поле Email", "error")</script>';
