@@ -86,7 +86,7 @@
 				  <h2>Контакты</h2>
 				  <hr>
 				  <p><strong>Председатель правления:</strong> Хакало Владимир Олегович</p>
-				  <p><strong>Тел.:</strong> +7-918-45-3881</p>
+				  <p><strong>Тел.:</strong> +7-918-450-38-81</p>
 				  <p><strong>Email:</strong> hakalo@bk.ru</p>
 				  			  
 			   	</div>

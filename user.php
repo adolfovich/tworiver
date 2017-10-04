@@ -148,6 +148,8 @@
 		else {
 			$membership_balans_color = '';
 		}
+		
+		$result_acts = mysql_query("SELECT * FROM acts WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."')") or die(mysql_error());
 
 	}
 ?>
@@ -207,8 +209,15 @@
 	<body>
 		
 		
-		<?php echo $error_msg; ?>
-		<?php echo $error; ?>
+		<?php 
+		if (isset($error_msg)) {
+			echo $error_msg; 
+		}
+		
+		if (isset($error)) {
+			echo $error; 
+		}
+		?>
 		<?php include_once "include/head.php"; ?>
 
 		<div class="jumbotron" id="header">
@@ -397,6 +406,7 @@
 															}
 															else {
 																echo '<input class="form-control" type="hidden" value="0" id="pay_member">&nbsp;<!--<label><input id="checked_mem" type="checkbox"> Членские взносы</label>-->';
+																echo '<div id="member_elements"></div>';
 															}
 														?>
 														<script>
@@ -436,7 +446,8 @@
 																echo '</div>';
 															}
 															else {
-																echo '<input class="form-control" type="hidden" value="0" id="pay_member">&nbsp;<!--<label><input id="checked_mem" type="checkbox"> Целевые взносы</label>-->';
+																echo '<input class="form-control" type="hidden" value="0" id="pay_target">&nbsp;<!--<label><input id="checked_mem" type="checkbox"> Целевые взносы</label>-->';
+																echo '<div id="target_elements"></div>';
 															}
 														?>
 														<script>
@@ -576,6 +587,18 @@
 																}
 															?>
 														</table>
+														<h4>Акты сверки</h4>
+														
+														<?php
+														if(mysql_num_rows($result_acts) > 0) {
+															while ($acts = mysql_fetch_assoc($result_acts)) {
+																echo '<p><a href="'.$acts['path'].'" target="_blank">'.date( 'd.m.Y',strtotime($acts['date'])).' - '.$acts['comment'].'</a></p>';
+															}
+														}
+														else {
+															echo '<p>Актов не найдено</p>';
+														}
+														?>
 													</div>
 												  <div class="tab-pane fade" id="payments">
 													<h4>Начальный баланс: <?php echo $start_balans; ?> руб.</h4>

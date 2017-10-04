@@ -22,7 +22,7 @@
 		if ($is_admin == 1) {
 			
 			//выбираем всех пользователей 
-			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0 ORDER BY uchastok") or die(mysql_error());
+			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0 ORDER BY CONVERT(uchastok,SIGNED)") or die(mysql_error());
 			
 			if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
 				$selected_user = $_GET['select_user'];

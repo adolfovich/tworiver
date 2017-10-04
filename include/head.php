@@ -29,6 +29,12 @@
 					}
 
 					if ($is_auth == 1) {
+						if (basename($_SERVER['SCRIPT_NAME']) == 'reports.php') {
+							echo '<li class="active"><a href="reports.php">ФХД</a></li>';
+						}
+						else {
+							echo '<li><a href="reports.php">ФХД</a></li>';
+						}
 						if (basename($_SERVER['SCRIPT_NAME']) == 'user.php') {
 							echo '<li class="active"><a href="user.php">Личный кабинет</a></li>';
 						}

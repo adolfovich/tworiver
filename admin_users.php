@@ -23,6 +23,10 @@
 
 		if ($is_admin == 1) {
 
+			if (isset($_GET['change_counter']) && $_GET['change_counter'] == 1) {
+				$error_msg = '<script type="text/javascript">swal("", "Счетчик заменен", "success")</script>';
+			}
+			
 			$result_tarifs = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
 			$result_tarifs2 = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
 
@@ -33,6 +37,7 @@
 			}
 
 			if (isset($_GET['fio']) && strlen($_GET['fio'])!=0) {
+				
 				$add_fio = $_GET['fio'];
 				$add_email = $_GET['email'];
 				$add_phone = $_GET['phone'];
@@ -56,14 +61,14 @@
 				}
 
 				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_indications = $add_start_ind, start_balans = $add_start_bal";
-
+				//echo $q_add_user;
 				mysql_query($q_add_user) or die(mysql_error());
 
 				//Обрезаем email до имени пользователя
 				$email_user_name = substr($add_email, 0, strpos($add_email, "@"));
 
 				//Создаем попьзователю почтовый ящик на домене
-				shell_exec("curl -H 'PddToken: WXDQN7U72I7E5YYIZBGIQIJC6KR7O4X2WUYB2J5WRHT7ZVO4RPNQ' -d 'domain=tworiver.ru&login=".$email_user_name."&password=".$_GET['password']."' 'https://pddimp.yandex.ru/api2/admin/email/add'");
+				//shell_exec("curl -H 'PddToken: WXDQN7U72I7E5YYIZBGIQIJC6KR7O4X2WUYB2J5WRHT7ZVO4RPNQ' -d 'domain=tworiver.ru&login=".$email_user_name."&password=".$_GET['password']."' 'https://pddimp.yandex.ru/api2/admin/email/add'");
 
 				$add_user_id = mysql_insert_id();
 				//добавляем пользователю основной тариф
@@ -92,6 +97,10 @@
 
 
 				$error_msg = '<script type="text/javascript">swal("", "Пользователь добавлен ", "success")</script>';
+				
+				header("Location: admin_users.php");
+				
+				///echo '111';
 
 			}
 
@@ -140,6 +149,26 @@
 			}
 			.del_user:hover{
 				color:red;
+			}
+			th {
+				text-align: center;
+			}
+			td.center {
+				text-align: center;
+			}
+			.acts {
+				display: none;
+				padding:10px;
+				background: #eee;
+				border-radius: 5px;
+				position: absolute;
+				-webkit-box-shadow: 1px 2px 15px 1px rgba(0,0,0,0.35);
+				-moz-box-shadow: 1px 2px 15px 1px rgba(0,0,0,0.35);
+				box-shadow: 1px 2px 15px 1px rgba(0,0,0,0.35);
+			}
+			a.close {
+				    font-size: 12px;
+					color: #000000;
 			}
 		</style>
 
@@ -268,7 +297,7 @@
 									<br><br>
 								  <?php
 									//выбираем всех пользователей
-									$result_all_users = mysql_query("SELECT u.id, u.uchastok, u.name, u.phone, u.sch_model, u.sch_num, u.sch_plomb_num, u.balans, uc.num, uc.date_start FROM users u, users_contracts uc WHERE u.is_del = 0 AND u.id = uc.user AND uc.date_end IS NULL ORDER BY u.uchastok") or die(mysql_error());
+									$result_all_users = mysql_query("SELECT u.id, u.uchastok, u.name, u.phone, u.sch_model, u.sch_num, u.sch_plomb_num, u.balans, uc.num, uc.date_start FROM users u, users_contracts uc WHERE u.is_del = 0 AND u.id = uc.user AND uc.date_end IS NULL ORDER BY CONVERT(u.uchastok,SIGNED)") or die(mysql_error());
 
 
 									echo '<table class="table table-condensed">';
@@ -276,10 +305,11 @@
 									echo '<th>Участок</th>';
 									echo '<th>ФИО</th>';
 									echo '<th>Телефон</th>';
-									echo '<th>Номер договора</th>';
-									echo '<th>Модель счетчика</th>';
-									echo '<th>Номер счетчика</th>';
-									echo '<th>Номер пломбы</th>';
+									echo '<th>Номер<br>договора</th>';
+									echo '<th>Модель<br>счетчика</th>';
+									echo '<th>Номер<br>счетчика</th>';
+									echo '<th>Номер<br>пломбы</th>';
+									echo '<th>Акты<br>сверок</th>';
 									echo '<th>Баланс</th>';
 									echo '<th></th>';
 									echo '<th></th>';
@@ -293,7 +323,7 @@
 										else {
 											echo '<tr class="danger">';
 										}
-
+										
 										echo '<td>'. $users['uchastok'].'</td>';
 										echo '<td>'. $users['name'].'</td>';
 										echo '<td>+'. $users['phone'].'</td>';
@@ -302,11 +332,40 @@
 										echo '<td>'. $users['sch_model'].'</td>';
 										echo '<td>'. $users['sch_num'].'</td>';
 										echo '<td>'. $users['sch_plomb_num'].'</td>';
+										
+										$result_acts = mysql_query("SELECT * FROM acts WHERE user = ".$users['id']) or die(mysql_error());
+										
+										if(mysql_num_rows($result_acts) > 0) {
+											echo '<td class="center">';
+												echo '<a href="#acts-'.$users['id'].'" onhover="" onclick="showActs('.$users['id'].')">';
+													echo '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>';
+												echo '</a>';
+												echo '<div name="acts-'.$users['id'].'" id="acts-'.$users['id'].'" class="acts">';
+													echo '<table>';
+														echo '<tr>';
+															echo '<td style="font-size: 12px; color: #000000; text-align: left;">Акты</td>';
+															echo '<td style="font-size: 12px; color: #000000;"><a class="close" href="#" onclick="closeActs('.$users['id'].')">X</a></td>';
+														echo '</tr>';
+														while ($acts = mysql_fetch_assoc($result_acts)) {
+															echo '<tr>
+																	<td><a href="'.$acts['path'].'" target="_blank">'.date( 'd.m.Y',strtotime($acts['date'])).' - '.$acts['comment'].'</a></td>
+																	<td></td>
+																</tr>';
+														}
+													echo '</table>';
+												echo '	</div>';
+											echo '</td>';
+										}
+										else {
+											echo '<td class="center">';
+												echo '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>';
+											echo '</td>';
+										}
 										echo '<td>'. $users['balans'].'</td>';
-										echo '<td><button href="#" class="btn btn-danger btn-xs" onclick="ConfirmCounterReplace('.$users['id'].')" disabled>Замена счетчика</button></td>';
-										echo '<td><a href="admin_user_edit.php?edit_user='.$users['id'].'"><i class="fa fa-pencil" aria-hidden="true" title="Редактировать пользователя"></i></a></td>';
+										echo '<td class="center"><button href="#" class="btn btn-danger btn-xs" onclick="ConfirmCounterReplace('.$users['id'].')" >Замена счетчика</button></td>';
+										echo '<td class="center"><a href="admin_user_edit.php?edit_user='.$users['id'].'"><i class="fa fa-pencil" aria-hidden="true" title="Редактировать пользователя"></i></a></td>';
 										//echo '<td><a class="del_user" href="admin_users.php?del_user='.$users['id'].'"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
-										echo '<td><a class="del_user" href="#" onclick="ConfirmDelUser('.$users['id'].')"><i class="fa fa-trash" aria-hidden="true" title="Удалить пользователя"></i></a></td>';
+										echo '<td class="center"><a class="del_user" href="#" onclick="ConfirmDelUser('.$users['id'].')"><i class="fa fa-trash" aria-hidden="true" title="Удалить пользователя"></i></a></td>';
 										echo '</tr>';
 									}
 									echo '</table>';
@@ -314,6 +373,16 @@
 								  ?>
 
 									<script>
+										function showActs(userId) {
+											showDiv = document.getElementById('acts-'+userId);
+											showDiv.style.display="block";
+										}
+										function closeActs(userId) {
+											showDiv = document.getElementById('acts-'+userId);
+											showDiv.style.display="none";
+										}
+										
+										
 										function ConfirmDelUser(user_id)
 										{
 											swal({
