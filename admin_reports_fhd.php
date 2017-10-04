@@ -35,7 +35,7 @@
 				else if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 					
 					//var_dump($uploadfile);
-					$q_file_path = "INSERT INTO reports_fhd SET date = '".$_POST['year']."-".$_POST['month']."-01', path = '$uploadfile'";
+					$q_file_path = "INSERT INTO reports_fhd SET name='".$_POST['name']."', date = '".$_POST['year']."-".$_POST['month']."-01', path = '$uploadfile'";
 					//echo $q_file_path;
 					mysql_query($q_file_path) or die(mysql_error());
 					$error_msg = '<script type="text/javascript">swal("", "Файл загружен ", "success")</script>';
@@ -132,6 +132,10 @@
 										<h4>Загрузка отчета</h4>
 										<form enctype="multipart/form-data" method="POST">
 											<div class="form-group">
+												<label for="name">Название</label>
+												<input type="text" name="name" class="form-control">
+											</div>
+											<div class="form-group">
 												<label for="month">Месяц/Год</label>
 												<select name="month" class="form-control" style="width: 100px; display: inline;">
 													<?php 
@@ -183,6 +187,7 @@
 									<table class="table table-condensed">
 										<tr>
 											<th>Дата</th>
+											<th>Название</th>
 											<th>Файл</th>
 											<th></th>
 										</tr>
@@ -190,6 +195,7 @@
 										while ($reports = mysql_fetch_assoc($result_reports)) {
 											echo '<tr>';
 											echo '<td>'.date( 'm.Y',strtotime($reports['date'])).'</td>';
+											echo '<td>'.$reports['name'].'</td>';
 											echo '<td>'.$reports['path'].'</td>';
 											echo '<td><a class="del_user" href="#" onclick="ConfirmDelReport('.$reports['id'].')"><i class="fa fa-trash" aria-hidden="true" title="Удалить файл"></i></a></td>';
 											echo '</tr>';
