@@ -42,6 +42,9 @@
 			.news_date {
 				color: #777;
 			}
+			img {
+				width: 100%;
+			}
 		</style>
 		
 	</head>

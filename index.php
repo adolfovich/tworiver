@@ -61,6 +61,9 @@
 			.news_date {
 				color: #777;
 			}
+			img {
+				width: 100%;
+			}
 		</style>
 		
 	</head>
@@ -106,8 +109,8 @@
 						$news_date = "[$day $month $year]";
 						$words = explode(' ',$news['text']);
 
-						if(count($words) > 50 && 50 > 0) {
-							$text = implode(' ',array_slice($words, 0, 50)).'...';
+						if(count($words) > 20 && 20 > 0) {
+							$text = implode(' ',array_slice($words, 0, 20)).'...';
 						}
 											
 						echo '<h3>'.$news['header'].'</h3>';
