@@ -42,6 +42,9 @@
 			.news_date {
 				color: #777;
 			}
+			img {
+				width: 100%;
+			}
 		</style>
 		
 	</head>
@@ -81,7 +84,7 @@
 					echo '<h3>'.$news['header'].'</h3>';
 					echo '<span class="news_date">'.$news_date.'</span>';
 					echo '<p>'. $text .'</p>';
-					echo '<a class="btn btn-default navbar-btn" href="news.php?news='.$news['id'].'"> Подробнее </a>';
+					
 				}
 			  ?>
 			  
