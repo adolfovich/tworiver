@@ -23,7 +23,7 @@
 	}*/
 	
 	$curdate = date("Y-m-d");
-	$result_news = mysql_query("SELECT * FROM news WHERE date_end IS NULL OR date_end < $curdate") or die(mysql_error());
+	$result_news = mysql_query("SELECT * FROM news WHERE date_end IS NULL OR date_end < $curdate ORDER BY important DESC, date_crate DESC") or die(mysql_error());
 ?>
 
 <!DOCTYPE html>
@@ -61,12 +61,15 @@
 			.news_date {
 				color: #777;
 			}
-<<<<<<< HEAD
-			
-=======
->>>>>>> 3ba20411f30ec0122e316e8ce77b2f72ddc8b0c4
 			img {
 				width: 100%;
+			}
+			.container {
+			  margin-top: 10px;
+			}
+			.panel {
+			  box-shadow: none !important;
+			  margin-bottom: 5px;
 			}
 		</style>
 		
@@ -104,6 +107,71 @@
 				<div class="col-md-4">
 				  <h2>Новости</h2>
 				  <hr>
+				   <?php if ($is_auth == 1) { ?>
+				  <?php
+					//ищем всех пользователей у кого баланс по электричеству меньше нуля
+					$result_debtos = mysql_query("SELECT * FROM users WHERE balans < 0") or die(mysql_error());
+				  ?>
+				  <div class="panel panel-default">
+					<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
+						<button type="button" class="btn btn-default spoiler-trigger" data-toggle="collapse" style="width: 100%; box-shadow: none; border: none; border-radius: 0; color: red;">
+							Должники по электроэнергии (<?php echo mysql_num_rows($result_debtos); ?>) <i class="fa fa-chevron-down" aria-hidden="true"></i>
+						</button>
+					</div>
+					<div class="panel-collapse collapse out">
+						<div class="panel-body">
+							<?php 								
+								while ($debtos = mysql_fetch_assoc($result_debtos)) {
+									echo '<p><strong>Участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['balans'].'</span></strong></p>';
+								}
+							?>													
+						</div>
+					</div>
+				  </div>
+				  <p></p>
+				  <?php
+					//ищем всех пользователей у кого баланс по членским меньше нуля
+					$result_debtos = mysql_query("SELECT * FROM users WHERE membership_balans < 0") or die(mysql_error());
+				  ?>
+				  <div class="panel panel-default">
+					<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
+						<button type="button" class="btn btn-default spoiler-trigger" data-toggle="collapse" style="width: 100%; box-shadow: none; border: none; border-radius: 0; color: red;">
+							Должники по членским взносам (<?php echo mysql_num_rows($result_debtos); ?>) <i class="fa fa-chevron-down" aria-hidden="true"></i>
+						</button>
+					</div>
+					<div class="panel-collapse collapse out">
+						<div class="panel-body">
+							<?php 								
+								while ($debtos = mysql_fetch_assoc($result_debtos)) {
+									echo '<p><strong>Участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['membership_balans'].'</span></strong></p>';
+								}
+							?>	
+						</div>
+					</div>
+				  </div>
+				  <p></p>
+				  <?php
+					//ищем всех пользователей у кого баланс по членским меньше нуля
+					$result_debtos = mysql_query("SELECT * FROM users WHERE target_balans < 0") or die(mysql_error());
+				  ?>
+				  <div class="panel panel-default">
+					<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
+						<button type="button" class="btn btn-default spoiler-trigger" data-toggle="collapse" style="width: 100%; box-shadow: none; border: none; border-radius: 0; color: red;">
+							Должники по целевым взносам (<?php echo mysql_num_rows($result_debtos); ?>) <i class="fa fa-chevron-down" aria-hidden="true"></i>
+						</button>
+					</div>
+					<div class="panel-collapse collapse out">
+						<div class="panel-body">
+							<?php 								
+								while ($debtos = mysql_fetch_assoc($result_debtos)) {
+									echo '<p><strong>Участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['target_balans'].'</span></strong></p>';
+								}
+							?>
+						</div>
+					</div>
+				  </div>
+				  <p></p>
+				  <?php } ?>
 				  <?php
 					while ($news = mysql_fetch_assoc($result_news)) {
 						$time = strtotime($news['date_crate']);
@@ -117,20 +185,36 @@
 							$text = implode(' ',array_slice($words, 0, 20)).'...';
 						}
 											
+						if ($news['important'] == 1) {
+							echo '<div class="bg-danger" style="padding: 10px; border-radius: 10px;">';
+						}
+						else {
+							echo '<div>';
+						}
 						echo '<h3>'.$news['header'].'</h3>';
 						echo '<span class="news_date">'.$news_date.'</span>';
 						echo '<p>'. $text .'</p>';
 						echo '<a class="btn btn-default navbar-btn" href="news.php?news='.$news['id'].'"> Подробнее </a>';
+						echo '</div>';
 					}
 				  ?>
-				  			  
+				  
+				 
+				  
+				  
+				  
+				 
 			   	</div>
 			</div>
 			<hr>
 		</div>
 		
 		<?php include_once "include/footer.php"; ?>
-
+		<script>
+		$(".spoiler-trigger").click(function() {
+			$(this).parent().next().collapse('toggle');
+		});
+		</script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 
