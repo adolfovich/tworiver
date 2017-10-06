@@ -23,7 +23,7 @@
 	}*/
 	
 	$curdate = date("Y-m-d");
-	$result_news = mysql_query("SELECT * FROM news WHERE date_end IS NULL OR date_end < $curdate ORDER BY important DESC, date_crate DESC") or die(mysql_error());
+	$result_news = mysql_query("SELECT * FROM news WHERE date_end IS NULL OR date_end >= $curdate ORDER BY important DESC, date_crate DESC") or die(mysql_error());
 ?>
 
 <!DOCTYPE html>
