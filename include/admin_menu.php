@@ -5,5 +5,6 @@
 		<li><a href="admin_payments.php">Платежи</a></li>
 		<li><a href="admin_contribution.php">Взносы</a></li>
 		<li><a href="admin_reports_fhd.php">отчеты ФХД</a></li>
+		<li><a href="admin_news.php">Новости</a></li>
 	</ul>
 </nav>
