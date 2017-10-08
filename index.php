@@ -1,7 +1,5 @@
 <?php
 	
-	/*test hotfix*/
-	
 	include_once "core/db_connect.php";
 	include_once "include/auth.php";
 	
@@ -19,11 +17,6 @@
 		11 => 'ноября', 
 		12 => 'декабря' 
 	);
-	
-	/*if ($is_auth == 1) {
-		echo 'вы авторизованы под именем'.$_COOKIE["user_name"];
-	}*/
-	
 	$curdate = date("Y-m-d");
 	$result_news = mysql_query("SELECT * FROM news WHERE date_end IS NULL OR date_end >= '$curdate' ORDER BY important DESC, date_crate DESC") or die(mysql_error());
 ?>
@@ -35,24 +28,14 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Система управления СНТ</title>
-		
 		<script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-
-		<!-- Latest compiled and minified CSS -->
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-		<!-- Optional theme -->
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-		<!-- Latest compiled and minified JavaScript -->
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-
 		<link rel="stylesheet" href="css/font-awesome.min.css">
-
 		<link rel="stylesheet" href="css/sweetalert.css">
-		
 		<script src="js/sweetalert.min.js"></script>
 		<link rel="stylesheet" href="css/my.css">
-		
-
 		<style>
 			#header {
 				background: url(img/header.jpg);
@@ -78,11 +61,6 @@
 	</head>
 	<body>
 		
-		
-		<!-- вызов сообщения sweetalert
-		<script type="text/javascript">swal("А вот и сообщение!", "Красивое, правда?", "info")</script>
-		-->
-		
 		<?php echo $error_msg; ?>
 		
 		<?php include_once "include/head.php"; ?>
@@ -90,10 +68,8 @@
 		<div class="jumbotron" id="header">
 			<div class="container" ></div>
 		</div>
-		
 		<div class="container" style="padding-bottom: 50px;">
 			<div class="row">
-				
 				<div class="col-md-8">
 					<h2>Историческая справка</h2>
 					<hr>
@@ -105,7 +81,6 @@
 					Если знать дорогу, от карьера можно дойти до родника, где так же была усадьба вдовы офицера Кавказских войн.	<br>
 					И еще много всего происходило на этой благодатной земле в средние века.</p>
 				</div>
-				
 				<div class="col-md-4">
 				  <h2>Новости</h2>
 				  <hr>
@@ -182,7 +157,6 @@
 						$year  = date( 'Y',$time ); 
 						$news_date = "[$day $month $year]";
 						$words = explode(' ',$news['text']);
-
 						if(count($words) > 20 && 20 > 0) {
 							$text = implode(' ',array_slice($words, 0, 20)).'...';
 						}
@@ -200,26 +174,15 @@
 						echo '</div>';
 					}
 				  ?>
-				  
-				 
-				  
-				  
-				  
-				 
 			   	</div>
 			</div>
 			<hr>
 		</div>
 		
 		<?php include_once "include/footer.php"; ?>
-		<script>
-		$(".spoiler-trigger").click(function() {
-			$(this).parent().next().collapse('toggle');
-		});
-		</script>
+		
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
-
-		
+		<script src="js/script.js"></script>
 	</body>
 </html>
