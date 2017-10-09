@@ -132,6 +132,14 @@
 
 		<script src="js/sweetalert.min.js"></script>
 		<link rel="stylesheet" href="css/my.css">
+		
+		<link href="https://cdn.jsdelivr.net/npm/suggestions-jquery@17.10.0/dist/css/suggestions.min.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<!--[if lt IE 10]>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.1/jquery.xdomainrequest.min.js"></script>
+		<![endif]-->
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/suggestions-jquery@17.10.0/dist/js/jquery.suggestions.min.js"></script>
+
 
 
 		<style>
@@ -179,14 +187,8 @@
 		<?php echo $error_msg; ?>
 		<?php include_once "include/head.php"; ?>
 
-
-
 		<div class="container" style="padding-bottom: 50px;">
-
-
-
-
-					<?php
+				<?php
 					if ($is_auth == 1) {
 						if ($is_admin == 1) {
 						?>
@@ -216,7 +218,18 @@
 											<form method="GET" role="form" id="AddUser">
 												<div class="form-group">
 													<label for="InputFIO">ФИО</label>
-													<input name="fio" type="text" class="form-control" id="InputFIO" placeholder="ФИО">
+													<input name="fio" type="text" class="form-control" placeholder="ФИО" id="InputFIO">
+													<script type="text/javascript">
+														$("#InputFIO").suggestions({
+															token: "33e20f2df5ca93e3cd57af7da34cd903e45a5218",
+															type: "NAME",
+															count: 5,
+															/* Вызывается, когда пользователь выбирает одну из подсказок */
+															onSelect: function(suggestion) {
+																console.log(suggestion);
+															}
+														});
+													</script>
 												</div>
 												<div class="form-group">
 													<label for="InputUcastok">Номер участка</label>
@@ -448,6 +461,8 @@
 
 
 		</div>
+		
+		
 
 		<?php include_once "include/footer.php"; ?>
 
@@ -514,9 +529,7 @@
 
 		</script>
 
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
-
+		
 
 	</body>
 </html>
