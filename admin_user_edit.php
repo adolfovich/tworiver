@@ -37,6 +37,7 @@
 														u.sch_num, 
 														u.sch_plomb_num, 
 														u.balans, 
+														u.start_indications, 
 														uc.num, 
 														uc.date_start 
 													FROM users u, users_contracts uc WHERE u.id = ".$_GET['edit_user']." AND u.id = uc.user AND uc.date_end IS NULL") or die(mysql_error());
@@ -53,7 +54,9 @@
 					$user_sch_plomb_num = $user_data['sch_plomb_num'];
 					$user_contract_num = $user_data['num'];
 					$user_contract_date = $user_data['date_start'];
+					$user_start_indications = $user_data['start_indications'];
 				}
+				//var_dump($user_start_indications);
 			}
 			
 			
@@ -72,6 +75,7 @@
 				$add_tarif2 = $_GET['tarif2'];
 				$add_contract_num = $_GET['contract_num'];
 				$add_contract_date = $_GET['contract_date'];
+				$add_sch_start_ind = $_GET['sch_start_ind'];
 				
 				$q_upd_user = "UPDATE users SET 
 												name = '$add_fio', 
@@ -80,7 +84,8 @@
 												uchastok = '$add_uchastok', 
 												sch_model = '$add_sch_model', 
 												sch_num = '$add_sch_num', 
-												sch_plomb_num = '$add_sch_pl_num' WHERE id = $edit_user";
+												sch_plomb_num = '$add_sch_pl_num',  
+												start_indications = '$add_sch_start_ind' WHERE id = $edit_user";
 				//echo $q_upd_user;
 				mysql_query($q_upd_user) or die(mysql_error());
 				
@@ -227,6 +232,20 @@
 													<label for="InputSchPlumbNum">Номер пломбы</label>
 													<input name="sch_pl_num" type="text" class="form-control" id="InputSchPlumbNum" value="<?php echo $user_sch_plomb_num; ?>">
 												</div>
+												
+												<?php
+													if ($user_start_indications != 0) {
+														$disabled = 'disabled';
+													}
+												?>
+												
+												<div class="form-group">
+													<label for="InputSchStartInd">Начальные показания</label>
+													<input name="sch_start_ind" type="text" class="form-control" id="InputSchStartInd" value="<?php echo $user_start_indications; ?>" <?php echo $disabled; ?>>
+												</div>
+												
+												
+												
 												
 												<div class="form-group">
 													<label for="InputContractNum">Договор на электропотребление</label>
