@@ -28,6 +28,11 @@
 				header("Location: admin_contacts.php");
 			}
 			
+			if (isset($_POST['editedContact']) && $_POST['editedContact'] != 0) {
+				mysql_query("UPDATE contacts SET name = '".$_POST['editName']."', post = '".$_POST['editPost']."', phone = '".$_POST['editPhone']."', email = '".$_POST['editEmail']."' WHERE id = " . $_POST['editedContact']) or die(mysql_error()); 
+				$error_msg = '<script type="text/javascript">swal("", "Контакт изменен ", "success")</script>';
+			}
+			
 		}
 	}
 	
@@ -170,6 +175,7 @@
 											<th>Телефон</th>
 											<th>Email</th>
 											<th></th>
+											<th></th>
 										</tr>
 										<?php
 										while ($contacts = mysql_fetch_assoc($result_contacts)) {
@@ -177,7 +183,49 @@
 											echo '<td>'.$contacts['name'].'</td>';
 											echo '<td>'.$contacts['post'].'</td>';
 											echo '<td>'.$contacts['phone'].'</td>';
-											echo '<td>'.$contacts['email'].'</td>';
+											echo '<td>'.$contacts['email'].'</td>';											
+											echo '<td><a href="#editContact'.$contacts['id'].'" data-toggle="modal"><i class="fa fa-pencil" aria-hidden="true" title="Редактировать контакт"></i></a>
+											<!-- HTML-код модального окна -->
+												<div id="editContact'.$contacts['id'].'" class="modal fade">
+												  <div class="modal-dialog">
+													<div class="modal-content">
+													  <!-- Заголовок модального окна -->
+													  <div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+														<h4 class="modal-title">Редактирование контакта</h4>
+													  </div>
+													  <!-- Основное содержимое модального окна -->
+													  <div class="modal-body">
+														<form method="POST" role="form" id="formEditContact'.$contacts['id'].'">
+															<input name="editedContact" type="hidden" value="'.$contacts['id'].'">
+															<div class="form-group">
+																<label for="editName">ФИО</label>
+																<input name="editName" type="text" class="form-control" id="editName" value="'.$contacts['name'].'">
+															</div>
+															<div class="form-group">
+																<label for="editPost">Должность</label>
+																<input name="editPost" type="text" class="form-control" id="editPost" value="'.$contacts['post'].'">
+															</div>
+															<div class="form-group">
+																<label for="editPhone">Телефон</label>
+																<input name="editPhone" type="text" class="form-control" id="editPhone" value="'.$contacts['phone'].'">
+															</div>
+															<div class="form-group">
+																<label for="editEmail">Email</label>
+																<input name="editEmail" type="text" class="form-control" id="editEmail" value="'.$contacts['email'].'">
+															</div>
+														</form>
+													  </div>
+													  <!-- Футер модального окна -->
+													  <div class="modal-footer">
+														<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+														<button type="button" class="btn btn-primary" onclick="document.getElementById(\'formEditContact'.$contacts['id'].'\').submit(); return false;" >Сохранить</button>
+													  </div>
+													</div>
+												  </div>
+												</div>
+											
+											</td>';
 											echo '<td><a class="del_user" href="#" onclick="ConfirmDelContact('.$contacts['id'].')"><i class="fa fa-trash" aria-hidden="true" title="Удалить контакт"></i></a></td>';
 											echo '</tr>';
 										}
