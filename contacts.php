@@ -23,7 +23,21 @@
 	}*/
 	
 	$curdate = date("Y-m-d");
-	$result_news = mysql_query("SELECT * FROM news WHERE date_end IS NULL OR date_end < $curdate") or die(mysql_error());
+	
+	$result_requisites = mysql_query("SELECT * FROM requisites") or die(mysql_error());
+	while ($requisites = mysql_fetch_assoc($result_requisites)) {
+		$r_name = $requisites['name'];	
+		$r_addres = $requisites['addres'];
+		$r_addres_post = $requisites['addres_post'];
+		$r_inn = $requisites['inn'];
+		$r_kpp = $requisites['kpp'];
+		$r_bank_name = $requisites['bank_name'];
+		$r_bank_bik = $requisites['bank_bik']; 	
+		$r_bank_ks = $requisites['bank_ks'];
+		$r_bank_rs = $requisites['bank_rs'];
+	}
+	
+	$result_contacts = mysql_query("SELECT * FROM contacts") or die(mysql_error());
 	
 	$q_user_detail = "SELECT * FROM users WHERE email = '".$_COOKIE["user"]."'";
 		
@@ -168,22 +182,28 @@
 				<div class="col-md-12">
 				  <h2>Контакты</h2>
 				  <hr>
-				  <p><strong>Председатель правления:</strong> Хакало Владимир Олегович</p>
-				  <p><strong>Тел.:</strong> +7-918-450-38-81</p>
-				  <p><strong>Email:</strong> hakalo@bk.ru</p>
-				  			  
-			   	</div>
+				</div>				
+				<?php
+					while ($contacts = mysql_fetch_assoc($result_contacts)) {
+						echo '<div class="col-md-6">';
+						echo '<p><strong>'.$contacts['post'].':</strong> '.$contacts['name'].'</p>';
+						echo '<p><strong>Тел.:</strong> '.$contacts['phone'].'</p>';
+						echo '<p><strong>Email:</strong> '.$contacts['email'].'</p>';
+						echo '</div>';
+					}
+				?>
 				<div class="col-md-12">
 				  <h2>Реквизиты</h2>
 				  <hr>
-				  <p><strong>Садоводческое некоммерческое товарищество «Двуречье»</strong></p>
-				  <p><strong>Юридический адрес:</strong> 353910, Краснодарский край,г. Новороссийск, пр-т Ленина д.47а</p>
-				  <p><strong>ИНН:</strong> 2315139264</p>
-				  <p><strong>КПП:</strong> 231501001</p>
-				  <p><strong>р/с:</strong> 40703810800230000041</p>
-				  <p><strong>Банк:</strong> КБ «Кубань Кредит» ООО</p>
-				  <p><strong>БИК:</strong> 040349722</p>
-				  <p><strong>к/с:</strong> 30101810200000000722</p>
+				  <p><strong><?php echo $r_name; ?></strong></p>
+				  <p><strong>Юридический адрес:</strong> <?php echo $r_addres; ?></p>
+				  <p><strong>Почтовый адрес:</strong> <?php echo $r_addres_post; ?></p>
+				  <p><strong>ИНН:</strong> <?php echo $r_inn; ?></p>
+				  <p><strong>КПП:</strong> <?php echo $r_kpp; ?></p>
+				  <p><strong>р/с:</strong> <?php echo $r_bank_rs; ?></p>
+				  <p><strong>Банк:</strong> <?php echo $r_bank_name; ?></p>
+				  <p><strong>БИК:</strong> <?php echo $r_bank_bik; ?></p>
+				  <p><strong>к/с:</strong> <?php echo $r_bank_ks; ?></p>
 				  			  
 			   	</div>
 			</div>
