@@ -87,7 +87,7 @@
 				   <?php if ($is_auth == 1) { ?>
 				  <?php
 					//ищем всех пользователей у кого баланс по электричеству меньше нуля
-					$result_debtos = mysql_query("SELECT * FROM users WHERE balans < 0") or die(mysql_error());
+					$result_debtos = mysql_query("SELECT * FROM users WHERE balans < 0 AND is_del = 0") or die(mysql_error());
 				  ?>
 				  <div class="panel panel-default">
 					<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
@@ -108,7 +108,7 @@
 				  <p></p>
 				  <?php
 					//ищем всех пользователей у кого баланс по членским меньше нуля
-					$result_debtos = mysql_query("SELECT * FROM users WHERE membership_balans < 0") or die(mysql_error());
+					$result_debtos = mysql_query("SELECT * FROM users WHERE membership_balans < 0 AND is_del = 0") or die(mysql_error());
 				  ?>
 				  <div class="panel panel-default">
 					<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
@@ -128,8 +128,8 @@
 				  </div>
 				  <p></p>
 				  <?php
-					//ищем всех пользователей у кого баланс по членским меньше нуля
-					$result_debtos = mysql_query("SELECT * FROM users WHERE target_balans < 0") or die(mysql_error());
+					//ищем всех пользователей у кого баланс по целевым меньше нуля
+					$result_debtos = mysql_query("SELECT * FROM users WHERE target_balans < 0 AND is_del = 0") or die(mysql_error());
 				  ?>
 				  <div class="panel panel-default">
 					<div class="panel-heading spoiler-trigger" data-toggle="collapse" style="padding: 0; border: none; background: none;">
