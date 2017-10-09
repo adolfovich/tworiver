@@ -250,11 +250,11 @@
 												</div>
 												<div class="form-group">
 													<label for="InputStartIndications">Начальный баланс</label>
-													<input name="start_ind" type="text" class="form-control" id="InputStartIndications" value="0">
+													<input name="start_bal" type="text" class="form-control" id="InputStartIndications" value="0">
 												</div>
 												<div class="form-group">
 													<label for="InputStartBalans">Начальные показания счетчика</label>
-													<input name="start_bal" type="text" class="form-control" id="InputStartBalans" value="0">
+													<input name="start_ind" type="text" class="form-control" id="InputStartBalans" value="0">
 												</div>
 												<div class="form-group">
 													<label for="InputContractNum">Договор на электропотребление</label>
