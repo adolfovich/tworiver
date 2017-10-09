@@ -75,9 +75,11 @@
 				$add_tarif2 = $_GET['tarif2'];
 				$add_contract_num = $_GET['contract_num'];
 				$add_contract_date = $_GET['contract_date'];
-				$add_sch_start_ind = $_GET['sch_start_ind'];
 				
-				$q_upd_user = "UPDATE users SET 
+				
+				if (isset($_GET['sch_start_ind']) && strlen($_GET['sch_start_ind']) != 0) {
+					$add_sch_start_ind = $_GET['sch_start_ind'];
+					$q_upd_user = "UPDATE users SET 
 												name = '$add_fio', 
 												email = '$add_email', 
 												phone='$add_phone', 
@@ -86,6 +88,19 @@
 												sch_num = '$add_sch_num', 
 												sch_plomb_num = '$add_sch_pl_num',  
 												start_indications = '$add_sch_start_ind' WHERE id = $edit_user";
+				}
+				else {
+					$q_upd_user = "UPDATE users SET 
+												name = '$add_fio', 
+												email = '$add_email', 
+												phone='$add_phone', 
+												uchastok = '$add_uchastok', 
+												sch_model = '$add_sch_model', 
+												sch_num = '$add_sch_num', 
+												sch_plomb_num = '$add_sch_pl_num' WHERE id = $edit_user";
+				}
+				
+				
 				//echo $q_upd_user;
 				mysql_query($q_upd_user) or die(mysql_error());
 				
