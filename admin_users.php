@@ -17,7 +17,7 @@
 			$is_admin = $user_is_admin['is_admin'];
 		}
 
-		//выбираем существующие тарифы
+		
 
 
 
@@ -27,8 +27,11 @@
 				$error_msg = '<script type="text/javascript">swal("", "Счетчик заменен", "success")</script>';
 			}
 			
+			//Выгружаем из базы тарифы на электроэнергию
 			$result_tarifs = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
-			$result_tarifs2 = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
+			while ($row = mysql_fetch_assoc($result_tarifs)){
+				$tarifs_arr[]=$row;
+			}
 
 			if (isset($_GET['del_user']) && strlen($_GET['del_user'])!=0) {
 				//Ставим пользователю пометку об удалении
@@ -48,8 +51,6 @@
 				$add_sch_pl_num = $_GET['sch_pl_num'];
 				$add_start_ind = $_GET['start_ind'];
 				$add_start_bal = $_GET['start_bal'];
-				$add_tarif1 = $_GET['tarif1'];
-				$add_tarif2 = $_GET['tarif2'];
 				$add_contract_num = $_GET['contract_num'];
 				$add_contract_date = $_GET['contract_date'];
 
@@ -60,7 +61,7 @@
 					$phone = substr($add_phone, 1);
 				}
 
-				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_indications = $add_start_ind, start_balans = $add_start_bal";
+				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_balans = $add_start_bal";
 				//echo $q_add_user;
 				mysql_query($q_add_user) or die(mysql_error());
 
@@ -71,19 +72,23 @@
 				//shell_exec("curl -H 'PddToken: WXDQN7U72I7E5YYIZBGIQIJC6KR7O4X2WUYB2J5WRHT7ZVO4RPNQ' -d 'domain=tworiver.ru&login=".$email_user_name."&password=".$_GET['password']."' 'https://pddimp.yandex.ru/api2/admin/email/add'");
 
 				$add_user_id = mysql_insert_id();
-				//добавляем пользователю основной тариф
+				//добавляем пользователю тарифы
 
-				$q_add_tarif1 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = $add_tarif1";
-
-				mysql_query($q_add_tarif1) or die(mysql_error());
-
-
-				if ($add_tarif2 != 0) {
-					//echo 'Добавляем тариф2';
-
-					$q_add_tarif2 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = $add_tarif2";
-
+				if (isset($_GET['tarif1']) && strlen($_GET['tarif1']) != 0 && $_GET['tarif1'] != 0) {
+					$q_add_tarif1 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = ".$_GET['tarif1'].", start_indications = ". $_GET['start_ind1'];
+					mysql_query($q_add_tarif1) or die(mysql_error());
+				}
+				if (isset($_GET['tarif2']) && strlen($_GET['tarif2']) != 0 && $_GET['tarif2'] != 0) {
+					$q_add_tarif2 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = ".$_GET['tarif2'].", start_indications = ". $_GET['start_ind2'];
 					mysql_query($q_add_tarif2) or die(mysql_error());
+				}
+				if (isset($_GET['tarif3']) && strlen($_GET['tarif3']) != 0 && $_GET['tarif3'] != 0) {
+					$q_add_tarif3 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = ".$_GET['tarif3'].", start_indications = ". $_GET['start_ind3'];
+					mysql_query($q_add_tarif3) or die(mysql_error());
+				}
+				if (isset($_GET['tarif4']) && strlen($_GET['tarif4']) != 0 && $_GET['tarif4'] != 0) {
+					$q_add_tarif4 = "INSERT INTO users_tarifs SET user = $add_user_id, tarif = ".$_GET['tarif4'].", start_indications = ". $_GET['start_ind4'];
+					mysql_query($q_add_tarif4) or die(mysql_error());
 				}
 
 				//Добавляем пользователю договор на энергопотребление
@@ -262,13 +267,10 @@
 													<input name="sch_pl_num" type="text" class="form-control" id="InputSchPlumbNum" placeholder="Номер пломбы">
 												</div>
 												<div class="form-group">
-													<label for="InputStartIndications">Начальный баланс</label>
-													<input name="start_bal" type="text" class="form-control" id="InputStartIndications" value="0">
+													<label for="InputStartBalans">Начальный баланс</label>
+													<input name="start_bal" type="text" class="form-control" id="InputStartBalans" value="0">
 												</div>
-												<div class="form-group">
-													<label for="InputStartBalans">Начальные показания счетчика</label>
-													<input name="start_ind" type="text" class="form-control" id="InputStartBalans" value="0">
-												</div>
+												
 												<div class="form-group">
 													<label for="InputContractNum">Договор на электропотребление</label>
 													<input name="contract_num" type="text" class="form-control" id="InputContractNum" placeholder="Номер договора">
@@ -276,25 +278,137 @@
 													<input name="contract_date" type="date" class="form-control" id="InputContractNum" placeholder="дата договора">
 												</div>
 												<div class="form-group">
-													<label for="InputTarif1">Основной тариф</label>
-													<select class="form-control" name="tarif1" id="InputTarif1">
-														<?php
-														while ($tarif = mysql_fetch_assoc($result_tarifs)) {
-															echo '<option value="'.$tarif['id'].'">'.$tarif['name'].'</option>';
-														}
-														?>
+													<label for="InputСolTarif">Количество тарифов счетчика</label>
+													<select class="form-control" name="colTarif" id="InputСolTarif" onChange="selectColTarifs(this.value)">
+														<option selected>1</option>
+														<option>2</option>
+														<option>3</option>
+														<option>4</option>
 													</select>
 												</div>
-												<div class="form-group">
-													<label for="InputTarif2">Дополнительный тариф</label>
-													<select class="form-control" name="tarif2" id="InputTarif2">
-														<option value="0">Нет</option>
-														<?php
-														while ($tarif2 = mysql_fetch_assoc($result_tarifs2)) {
-															echo '<option value="'.$tarif2['id'].'">'.$tarif2['name'].'</option>';
+												<script>
+													function selectColTarifs(colTarifs) {
+														//alert(colTarifs);
+														if (colTarifs == 1) {
+															document.getElementById('formTarif2').style.display="none";
+															document.getElementById('InputTarif2').disabled="disabled";
+															document.getElementById('InputStartIndications2').disabled="disabled";
+															document.getElementById('formTarif3').style.display="none";
+															document.getElementById('InputTarif3').disabled="disabled";
+															document.getElementById('InputStartIndications3').disabled="disabled";
+															document.getElementById('formTarif4').style.display="none";
+															document.getElementById('InputTarif4').disabled="disabled";
+															document.getElementById('InputStartIndications4').disabled="disabled";
 														}
-														?>
-													</select>
+														else if (colTarifs == 2) {
+															document.getElementById('formTarif2').style.display="block";
+															document.getElementById('InputTarif2').disabled="";
+															document.getElementById('InputStartIndications2').disabled="";
+															document.getElementById('formTarif3').style.display="none";
+															document.getElementById('InputTarif3').disabled="disabled";
+															document.getElementById('InputStartIndications3').disabled="disabled";
+															document.getElementById('formTarif4').style.display="none";
+															document.getElementById('InputTarif4').disabled="disabled";
+															document.getElementById('InputStartIndications4').disabled="disabled";
+														}
+														else if (colTarifs == 3) {
+															document.getElementById('formTarif2').style.display="block";
+															document.getElementById('InputTarif2').disabled="";
+															document.getElementById('InputStartIndications2').disabled="";
+															document.getElementById('formTarif3').style.display="block";
+															document.getElementById('InputTarif3').disabled="";
+															document.getElementById('InputStartIndications3').disabled="";
+															document.getElementById('formTarif4').style.display="none";
+															document.getElementById('InputTarif4').disabled="disabled";
+															document.getElementById('InputStartIndications4').disabled="disabled";
+														}
+														else if (colTarifs == 4) {
+															document.getElementById('formTarif2').style.display="block";
+															document.getElementById('InputTarif2').disabled="";
+															document.getElementById('InputStartIndications2').disabled="";
+															document.getElementById('formTarif3').style.display="block";
+															document.getElementById('InputTarif3').disabled="";
+															document.getElementById('InputStartIndications3').disabled="";
+															document.getElementById('formTarif4').style.display="block";
+															document.getElementById('InputTarif4').disabled="";
+															document.getElementById('InputStartIndications4').disabled="";
+														}
+													}
+												</script>
+												<div class="form-group">
+													<div class="row">
+														<div class="col-sm-5">
+															<label for="InputTarif1">Тариф 1</label>
+															<select class="form-control" name="tarif1" id="InputTarif1">
+																<?php
+																foreach ($tarifs_arr as $value) {
+																	echo '<option value="'.$value['id'].'">'.$value['name'].'</option>';
+																}
+																?>
+															</select>
+														</div>
+														<div class="col-sm-7">
+															<label for="InputStartIndications1">Начальные показания по тарифу 1</label>
+															<input name="start_ind1" type="text" class="form-control" id="InputStartIndications1" value="0">
+														</div>
+													</div>
+												</div>
+												<div class="form-group" style="display:none;" id="formTarif2">
+													<div class="row">
+														<div class="col-sm-5">
+															<label for="InputTarif2">Тариф 2</label>
+															<select class="form-control" name="tarif2" id="InputTarif2">
+																<option>Нет</option>
+																<?php
+																foreach ($tarifs_arr as $value) {
+																	echo '<option value="'.$value['id'].'">'.$value['name'].'</option>';
+																}																
+																?>
+															</select>
+														</div>
+														<div class="col-sm-7">
+															<label for="InputStartIndications2">Начальные показания по тарифу 2</label>
+															<input name="start_ind2" type="text" class="form-control" id="InputStartIndications2" value="0">
+														</div>
+													</div>
+												</div>
+												<div class="form-group" style="display:none;" id="formTarif3">
+													<div class="row">
+														<div class="col-sm-5">
+															<label for="InputTarif3">Тариф 3</label>
+															<select class="form-control" name="tarif3" id="InputTarif3">
+																<option>Нет</option>
+																<?php
+																foreach ($tarifs_arr as $value) {
+																	echo '<option value="'.$value['id'].'">'.$value['name'].'</option>';
+																}
+																?>
+															</select>
+														</div>
+														<div class="col-sm-7">
+															<label for="InputStartIndications3">Начальные показания по тарифу 3</label>
+															<input name="start_ind3" type="text" class="form-control" id="InputStartIndications3" value="0">
+														</div>
+													</div>
+												</div>
+												<div class="form-group" style="display:none;" id="formTarif4">
+													<div class="row">
+														<div class="col-sm-5">
+															<label for="InputTarif4">Тариф 4</label>
+															<select class="form-control" name="tarif4" id="InputTarif4">
+																<option>Нет</option>
+																<?php
+																foreach ($tarifs_arr as $value) {
+																	echo '<option value="'.$value['id'].'">'.$value['name'].'</option>';
+																}
+																?>
+															</select>
+														</div>
+														<div class="col-sm-7">
+															<label for="InputStartIndications4">Начальные показания по тарифу 4</label>
+															<input name="start_ind4" type="text" class="form-control" id="InputStartIndications4" value="0">
+														</div>
+													</div>
 												</div>
 
 											</form>

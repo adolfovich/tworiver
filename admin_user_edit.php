@@ -71,59 +71,33 @@
 				$add_sch_pl_num = $_GET['sch_pl_num'];
 				$add_start_ind = $_GET['start_ind'];
 				$add_start_bal = $_GET['start_bal'];
-				$add_tarif1 = $_GET['tarif1'];
-				$add_tarif2 = $_GET['tarif2'];
+				/*$add_tarif1 = $_GET['tarif1'];
+				$add_tarif2 = $_GET['tarif2'];*/
 				$add_contract_num = $_GET['contract_num'];
 				$add_contract_date = $_GET['contract_date'];
 				
+				$q_upd_user = "UPDATE users SET 
+											name = '$add_fio', 
+											email = '$add_email', 
+											phone='$add_phone', 
+											uchastok = '$add_uchastok', 
+											sch_model = '$add_sch_model', 
+											sch_num = '$add_sch_num', 
+											sch_plomb_num = '$add_sch_pl_num' 
+								WHERE id = $edit_user";
 				
-				if (isset($_GET['sch_start_ind']) && strlen($_GET['sch_start_ind']) != 0) {
-					$add_sch_start_ind = $_GET['sch_start_ind'];
-					$q_upd_user = "UPDATE users SET 
-												name = '$add_fio', 
-												email = '$add_email', 
-												phone='$add_phone', 
-												uchastok = '$add_uchastok', 
-												sch_model = '$add_sch_model', 
-												sch_num = '$add_sch_num', 
-												sch_plomb_num = '$add_sch_pl_num',  
-												start_indications = '$add_sch_start_ind' WHERE id = $edit_user";
-				}
-				else {
-					$q_upd_user = "UPDATE users SET 
-												name = '$add_fio', 
-												email = '$add_email', 
-												phone='$add_phone', 
-												uchastok = '$add_uchastok', 
-												sch_model = '$add_sch_model', 
-												sch_num = '$add_sch_num', 
-												sch_plomb_num = '$add_sch_pl_num' WHERE id = $edit_user";
-				}
 				
 				
 				//echo $q_upd_user;
 				mysql_query($q_upd_user) or die(mysql_error());
 				
-				
-				//Удаляем тарифы пользователя 
-				mysql_query("DELETE FROM users_tarifs WHERE user = $edit_user") or die(mysql_error());
-				
-				//Добавляем основной тариф
-				//echo 'Добавляем тариф1';
-				//echo '<br>';
-				$q_add_tarif1 = "INSERT INTO users_tarifs SET user = $edit_user, tarif = $add_tarif1";
-				//echo $q_add_tarif1;
-				//echo '<br>';
-				mysql_query($q_add_tarif1) or die(mysql_error());
-				
-				
-				if ($add_tarif2 != 0) {
-					//echo 'Добавляем тариф2';
-					//echo '<br>';
-					$q_add_tarif2 = "INSERT INTO users_tarifs SET user = $edit_user, tarif = $add_tarif2";
-					//echo $q_add_tarif2;
-					mysql_query($q_add_tarif2) or die(mysql_error());
+				//Проверяем изменились ли начальные показания по какому-нибудь из 4х тарифов
+				for ($i = 1; $i <= 4; $i++) {
+					if (isset($_GET['editStartIndications'.$i]) && $_GET['editStartIndications'.$i] != '0.00' && $_GET['editStartIndications'.$i] != 0)  {
+						mysql_query("UPDATE users_tarifs SET start_indications = '".$_GET['editStartIndications'.$i]."' WHERE id = ".$_GET['editStartIndicationsId'.$i]) or die(mysql_error());
+					}
 				}
+				
 				
 				//Проверяем изменился ли договор
 				if ($user_contract_num != $add_contract_num) {
@@ -133,9 +107,6 @@
 					mysql_query("INSERT INTO users_contracts SET user = $edit_user, type = 1, num = '$add_contract_num', date_start = '$add_contract_date'") or die(mysql_error());
 				}
 				
-				//Добавляем пользователю договор на энергопотребление
-				//$q_add_contract = "INSERT INTO users_contracts SET user = $add_user_id, type = 1, num = '$add_contract_num', date_start = '$add_contract_date'";
-				//mysql_query($q_add_contract) or die(mysql_error());
 				
 				echo '<script type="text/javascript">swal("", "Пользователь сохранен", "success")</script>';
 				
@@ -246,22 +217,7 @@
 												<div class="form-group">
 													<label for="InputSchPlumbNum">Номер пломбы</label>
 													<input name="sch_pl_num" type="text" class="form-control" id="InputSchPlumbNum" value="<?php echo $user_sch_plomb_num; ?>">
-												</div>
-												
-												<?php
-													if ($user_start_indications != 0) {
-														$disabled = 'disabled';
-													}
-												?>
-												
-												<div class="form-group">
-													<label for="InputSchStartInd">Начальные показания</label>
-													<input name="sch_start_ind" type="text" class="form-control" id="InputSchStartInd" value="<?php echo $user_start_indications; ?>" <?php echo $disabled; ?>>
-												</div>
-												
-												
-												
-												
+												</div>												
 												<div class="form-group">
 													<label for="InputContractNum">Договор на электропотребление</label>
 													<input name="contract_num" type="text" class="form-control" id="InputContractNum" value="<?php echo $user_contract_num; ?>">
@@ -269,89 +225,47 @@
 													<input name="contract_date" type="date" class="form-control" id="InputContractNum" value="<?php echo $user_contract_date; ?>">
 												</div>
 												
+												<?php
+												$result_curent_tarifs = mysql_query("SELECT t.name, t.id, ut.start_indications, ut.id as utid FROM tarifs t, users_tarifs ut WHERE t.id = ut.tarif AND ut.user = $edit_user") or die(mysql_error());
+												//Выгружаем из базы тарифы на электроэнергию
+												$result_tarifs = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
+												while ($row = mysql_fetch_assoc($result_tarifs)){
+													$tarifs_arr[]=$row;
+												}
 												
 												
+												for ($i = 1; $i <= mysql_num_rows($result_curent_tarifs); $i++) {
+													echo '<div class="form-group">';
+														echo '<div class="row">';
+															echo '<div class="col-sm-5">';
+															echo '<label for="editTarif'.$i.'">Тариф '.$i.'</label>';
+															echo '<select class="form-control" id="editTarif'.$i.'" disabled>';
+															foreach ($tarifs_arr as $value) {
+																if (mysql_result($result_curent_tarifs, $i-1, 1) == $value['id']){
+																	echo '<option value="'.$value['id'].'" selected>'.$value['name'].'</option>';
+																}
+																else {
+																	echo '<option value="'.$value['id'].'">'.$value['name'].'</option>';
+																}
+															}
+															echo '</select>';
+														echo '</div>';
+														echo '<div class="col-sm-7">';
+															echo '<label for="InputStartIndications'.$i.'">Начальные показания по тарифу '.$i.'</label>';
+															if (mysql_result($result_curent_tarifs, $i-1, 2) == 0) {
+																echo '<input name="editStartIndicationsId'.$i.'" type="hidden" value="'.mysql_result($result_curent_tarifs, $i-1, 3).'">';
+																echo '<input name="editStartIndications'.$i.'" type="text" class="form-control" id="InputStartIndications'.$i.'" value="'. mysql_result($result_curent_tarifs, $i-1, 2).'">';
+															}
+															else {
+																echo '<input type="text" class="form-control" id="InputStartIndications'.$i.'" value="'. mysql_result($result_curent_tarifs, $i-1, 2).'" disabled>';
+															}
+														echo '</div>';
+														echo '</div>';
+													echo '</div>';
 												
-														<?php
-														$result_tarifs = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
+												}
 														
-														$result_curent_tarifs = mysql_query("SELECT t.name FROM tarifs t, users_tarifs ut WHERE t.id = ut.tarif AND ut.user = $edit_user") or die(mysql_error());
-														
-														if (mysql_num_rows($result_curent_tarifs) == 1) {
-															echo '<div class="form-group">';
-															echo '<label for="InputTarif1">Основной тариф</label>';
-															echo '<select class="form-control" name="tarif1" id="InputTarif1">';
-															$result_curent_tarif1 = mysql_query("SELECT t.id FROM tarifs t, users_tarifs ut WHERE t.id = ut.tarif AND ut.user = $edit_user LIMIT 1") or die(mysql_error());
-															while ($curent_tarif = mysql_fetch_assoc($result_curent_tarif1)) {
-																$curent_tarif_id = $curent_tarif['id'];
-																
-															}
-															while ($tarif = mysql_fetch_assoc($result_tarifs)) {
-																if ($curent_tarif_id == $tarif['id']) {
-																	echo '<option value="'.$tarif['id'].'" selected="selected">'.$tarif['name'].'</option>';
-																}
-																else {
-																	echo '<option value="'.$tarif['id'].'">'.$tarif['name'].'</option>';
-																}
-															}
-															echo '</select>';
-															echo '</div>';
-															echo '<div class="form-group">';
-															echo '<label for="InputTarif2">Дополнительный тариф</label>';
-															echo '<select class="form-control" name="tarif2" id="InputTarif2">';
-															$result_tarifs2 = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
-															echo '<option value="0">Нет</option>';
-															while ($tarif2 = mysql_fetch_assoc($result_tarifs2)) {
-																
-																	echo '<option value="'.$tarif2['id'].'">'.$tarif2['name'].'</option>';
-																
-															}
-															echo '</select>';
-															echo '</div>';
-														}
-														else if (mysql_num_rows($result_curent_tarifs) == 2) {
-															echo '<div class="form-group">';
-															echo '<label for="InputTarif1">Основной тариф</label>';
-															echo '<select class="form-control" name="tarif1" id="InputTarif1">';
-															$result_curent_tarif1 = mysql_query("SELECT t.id FROM tarifs t, users_tarifs ut WHERE t.id = ut.tarif AND ut.user = $edit_user LIMIT 1") or die(mysql_error());
-															while ($curent_tarif = mysql_fetch_assoc($result_curent_tarif1)) {
-																$curent_tarif_id = $curent_tarif['id'];
-															}
-															while ($tarif = mysql_fetch_assoc($result_tarifs)) {
-																if ($curent_tarif_id == $tarif['id']) {
-																	echo '<option value="'.$tarif['id'].'" selected="selected">'.$tarif['name'].'</option>';
-																}
-																else {
-																	echo '<option value="'.$tarif['id'].'">'.$tarif['name'].'</option>';
-																}
-															}
-															echo '</select>';
-															echo '</div>';
-															
-															echo '<div class="form-group">';
-															echo '<label for="InputTarif2">Дополнительный тариф</label>';
-															echo '<select class="form-control" name="tarif2" id="InputTarif2">';
-															$result_tarifs2 = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
-															$result_curent_tarif2 = mysql_query("SELECT t.id FROM tarifs t, users_tarifs ut WHERE t.id = ut.tarif AND ut.user = $edit_user ORDER BY t.id DESC LIMIT 1") or die(mysql_error());
-															while ($curent_tarif = mysql_fetch_assoc($result_curent_tarif2)) {
-																$curent_tarif_id = $curent_tarif['id'];
-															}
-															while ($tarif2 = mysql_fetch_assoc($result_tarifs2)) {
-																if ($curent_tarif_id == $tarif2['id']) {
-																	echo '<option value="'.$tarif2['id'].'" selected="selected">'.$tarif2['name'].'</option>';
-																}
-																else {
-																	echo '<option value="'.$tarif2['id'].'">'.$tarif2['name'].'</option>';
-																}
-															}
-															echo '</select>';
-															echo '</div>';
-														}
-														
-														
-														
-														
-														?>
+												?>
 													
 												
 												<button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o" aria-hidden="true"></i> Сохранить</button>

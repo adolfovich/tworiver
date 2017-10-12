@@ -53,7 +53,8 @@
 					$result_prev_inications = mysql_query("SELECT * FROM Indications WHERE user = ".$selected_user." AND tarif = ".$_GET['tarif']." ORDER BY id DESC LIMIT 1") or die(mysql_error());
 					
 					if (mysql_num_rows($result_prev_inications) == 0) {
-						$result_user_start_indications = mysql_query("SELECT * FROM users WHERE id = ".$selected_user) or die(mysql_error());
+						//$result_user_start_indications = mysql_query("SELECT * FROM users WHERE id = ".$selected_user) or die(mysql_error());
+						$result_user_start_indications = mysql_query("SELECT * FROM users_tarifs WHERE user = ".$selected_user." AND tarif = ".$_GET['tarif']) or die(mysql_error());
 						while ($start_indications = mysql_fetch_assoc($result_user_start_indications)) {
 							$prev_inication = $start_indications['start_indications'];
 						}						
