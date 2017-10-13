@@ -22,12 +22,45 @@
 		
 		
 		if ($is_admin == 1) {
-			
-			
-			
-				
-			
-			
+			if (isset($_POST['text']) && strlen($_POST['text']) != 0) {
+					if ($_POST['dateEnd'] == '') {
+						$dateEnd = '';
+					}
+					else {
+						$dateEnd = ", date_end = '".$_POST['dateEnd']."'";
+					}
+					if (isset($_POST['important']) && $_POST['important'] == 'on') {
+						$important = ', important = 1';
+					}
+					else {
+						$important = '';
+					}
+					
+					$q_ins_news = "INSERT INTO news SET header = '".$_POST['theme']."', text = '".$_POST['text']."' $dateEnd $important";
+					mysql_query($q_ins_news) or die(mysql_error());
+					$error_msg = '<script type="text/javascript">swal("", "Новость добавлена ", "success")</script>';
+			}
+			if (isset($_POST['editedNews'])) {
+				if ($_POST['editedDateEnd'] == '') {
+					$dateEnd = '';
+				}
+				else {
+					$dateEnd = ", date_end = '".$_POST['editedDateEnd']."'";
+				}
+				if (isset($_POST['editedImportant']) && $_POST['editedImportant'] == 'on') {
+					$important = ', important = 1';
+				}
+				else {
+					$important = ', important = 0';
+				}
+				$q_upd_news = "UPDATE news SET header = '".$_POST['editedTheme']."', text = '".$_POST['editedText']."' $dateEnd $important WHERE id = " . $_POST['editedNews'];
+				//echo $q_upd_news;
+				mysql_query($q_upd_news) or die(mysql_error());
+				$error_msg = '<script type="text/javascript">swal("", "Новость отредактирована ", "success")</script>';
+			}
+			if (isset($_GET['del_news']) && strlen($_GET['del_news']) != 0 && $_GET['del_news'] != 0){
+				mysql_query("UPDATE news SET is_del = 1 WHERE id = " . $_GET['del_news']) or die(mysql_error());
+			}
 		}
 	}
 	
@@ -143,20 +176,27 @@
 										  </div>
 										  <!-- Основное содержимое модального окна -->
 										  <div class="modal-body">
-											<form enctype="multipart/form-data" method="POST" id="addContactForm">
+											<form enctype="multipart/form-data" method="POST" id="addNewsForm">
 												<div class="form-group">
 													<label for="theme">Тема</label>
-													<input type="text" name="theme" class="form-control">
+													<input type="text" name="theme" class="form-control" value="<?php echo $_POST['theme']; ?>" id="addTheme">
 												</div>
 												<div class="form-group">
 													<label for="dateEnd">Дата окончания публикации</label>
-													<input type="date" name="dateEnd" class="form-control">
+													<input type="date" name="dateEnd" class="form-control" value="<?php echo $_POST['dateEnd']; ?>">
 												</div>
 												<div class="form-group">
 													<div class="col-sm-offset-2 col-sm-10">
 													  <div class="checkbox">
 														<label>
-														  <input name="important" type="checkbox"> Важная
+														  <?php
+														  if (isset($_POST['important']) && $_POST['important'] == 'on'){
+															echo '<input name="important" type="checkbox" checked> Важная';
+														  }
+														  else {
+															echo '<input name="important" type="checkbox"> Важная';
+														  }
+														  ?>
 														</label>
 													  </div>
 													</div>
@@ -165,7 +205,7 @@
 												
 												<div class="form-group">
 													<label for="text">Текст</label>
-													<textarea name="text" class="form-control" rows="3"></textarea>
+													<textarea name="text" class="form-control" rows="3" id="addText"><?php echo $_POST['theme']; ?></textarea>
 													
 													
 												</div>																				
@@ -175,7 +215,20 @@
 										  <!-- Футер модального окна -->
 										  <div class="modal-footer">
 											<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-											<button type="button" class="btn btn-primary" onclick="document.getElementById('addContactForm').submit(); return false;" >Сохранить</button>
+											<button type="button" class="btn btn-primary" onclick="checkAddForm()" >Сохранить</button>
+											<script>
+												function checkAddForm() {
+													var theme = document.getElementById('addTheme').value.length;
+													
+													if (theme == 0) {
+														swal("Внимание!", "Тема не может быть пустой", "error");
+													}
+													
+													else {
+														document.getElementById('addNewsForm').submit(); return false;
+													}													
+												}
+											</script>
 										  </div>
 										</div>
 									  </div>
@@ -199,21 +252,19 @@
 											echo '<tr>';
 											echo '<td>'.date( 'd.m.Y',strtotime($news['date_crate'])).'</td>';
 											echo '<td>'.$news['header'].'</td>';
-											$words = explode(' ',$news['text']);
-											if(count($words) > 20 && 20 > 0) {
-												$text = implode(' ',array_slice($words, 0, 20)).'...';
-											}
-											echo '<td>'.$text.'</td>';
+											echo '<td>'.substr($news['text'], 0, 300).'</td>';
 											if (is_null($news['date_end'])) {
-												echo '<td>Не устоновлена</td>';
+												echo '<td>Не установлена</td>';
 												$date_end = '';
-												
+											}
+											else if (date( 'Y-m-d',strtotime($news['date_end'])) < $curdate) {
+												echo '<td class="bg-danger">'.date( 'd.m.Y',strtotime($news['date_end'])).'</td>';
+												$date_end = date( 'Y-m-d',strtotime($news['date_end']));
 											}
 											else {
 												echo '<td>'.date( 'd.m.Y',strtotime($news['date_end'])).'</td>';
 												$date_end = date( 'Y-m-d',strtotime($news['date_end']));
 											}
-											
 											if ($news['important'] == 1) {
 												echo '<td style="text-align: center;"><input type="checkbox" checked disabled></td>';
 											}
@@ -237,21 +288,21 @@
 															<input name="editedNews" type="hidden" value="'.$news['id'].'">
 															<div class="form-group">
 																<label for="theme">Тема</label>
-																<input type="text" name="theme" class="form-control" value="'.$news['header'].'">
+																<input type="text" name="editedTheme" class="form-control" value="'.$news['header'].'">
 															</div>
 															<div class="form-group">
 																<label for="dateEnd">Дата окончания публикации</label>
-																<input type="date" name="dateEnd" class="form-control" value="'.$date_end.'">
+																<input type="date" name="editedDateEnd" class="form-control" value="'.$date_end.'">
 															</div>
 															<div class="form-group">
 																<div class="col-sm-offset-2 col-sm-10">
 																  <div class="checkbox">
 																	<label>';
 																	if ($news['important'] == 1) {
-																		echo '<input name="important" type="checkbox" checked> Важная';
+																		echo '<input name="editedIimportant" type="checkbox" checked> Важная';
 																	}
 																	else {
-																		echo '<input name="important" type="checkbox"> Важная';
+																		echo '<input name="editedImportant" type="checkbox"> Важная';
 																	}
 																	  
 											echo '					</label>
@@ -260,7 +311,7 @@
 															  </div>
 															<div class="form-group">
 																<label for="text">Текст</label>
-																<textarea name="text" class="form-control" rows="3">'.$news['text'].'</textarea>
+																<textarea name="editedText" class="form-control" rows="3">'.$news['text'].'</textarea>
 															</div>	
 														</form>
 													  </div>
@@ -277,6 +328,29 @@
 											echo '</tr>';
 										}
 										?>
+										<script>
+										function ConfirmDelNews(news_id)
+										{
+											swal({
+												title: 'Удалить новость?',
+												text: 'Восстановление будет невозможно!',
+												type: 'warning',
+												showCancelButton: true,
+												confirmButtonColor: '#dd6b55',
+												cancelButtonColor: '#999',
+												confirmButtonText: 'Да, удалить',
+												cancelButtonText: 'Отмена',
+												closeOnConfirm: false
+											}, function() {
+												swal(
+												  'Выполнено!',
+												  'Новость удалена.',
+												  'success'
+												);
+												document.location.href = "admin_news.php?del_news="+news_id;
+											})
+										}
+										</script>
 									</table>
 								</div>
 							</div>
