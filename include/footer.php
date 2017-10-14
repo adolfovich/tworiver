@@ -1,8 +1,30 @@
 <?php include_once "changelog.php"; ?>
 
-<nav class="navbar-fixed-bottom" style="background: #ddd;">
-	<div class="navbar-inner">
-		<div class="container" style="padding: 20px;">
+
+<style>
+html {
+  position: relative;
+  min-height: 100%;
+}
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 80px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 70px;
+  background-color: #f5f5f5;
+  padding-top: 10px;
+}
+</style>
+
+
+<footer class="footer">
+
+		<div class="container">
 			<div class="col-md-4">
 				Система управления СНТ "Двуречье" <?php echo date("Y"); ?><br>&copy; Все права защищены. 
 			</div>
@@ -48,8 +70,7 @@
 				<!-- /Yandex.Metrika counter -->
 			</div>
 		</div>
-	</div>
-</nav>
+</footer>
 
 <!-- HTML-код модального окна -->
 <div id="changelog" class="modal fade">

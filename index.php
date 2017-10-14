@@ -68,7 +68,7 @@
 		<div class="jumbotron" id="header">
 			<div class="container" ></div>
 		</div>
-		<div class="container" style="padding-bottom: 50px;">
+		<div class="container">
 			<div class="row">
 				<div class="col-md-8">
 					<h2>Историческая справка</h2>

@@ -192,7 +192,7 @@
 		<?php echo $error_msg; ?>
 		<?php include_once "include/head.php"; ?>
 
-		<div class="container" style="padding-bottom: 50px;">
+		<div class="container">
 				<?php
 					if ($is_auth == 1) {
 						if ($is_admin == 1) {

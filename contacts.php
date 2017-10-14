@@ -176,7 +176,7 @@
 			<div class="container" ></div>
 		</div>
 		
-		<div class="container" style="padding-bottom: 50px;">
+		<div class="container">
 			<div class="row">
 				
 				<div class="col-md-12">

@@ -103,7 +103,7 @@
 		  </div>
 		</div>
 		
-		<div class="container" style="padding-bottom: 100px;">
+		<div class="container">
 			
 			<div class="row">
 				<div class="col-md-12">
