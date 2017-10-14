@@ -35,8 +35,14 @@
 					else {
 						$important = '';
 					}
+					if (isset($_POST['discussed']) && $_POST['discussed'] == 'on') {
+						$discussed = ', discussed = 1';
+					}
+					else {
+						$discussed = '';
+					}
 					
-					$q_ins_news = "INSERT INTO news SET header = '".$_POST['theme']."', text = '".$_POST['text']."' $dateEnd $important";
+					$q_ins_news = "INSERT INTO news SET header = '".$_POST['theme']."', text = '".$_POST['text']."', preview = '".$_POST['preview']."' $dateEnd $important $discussed";
 					mysql_query($q_ins_news) or die(mysql_error());
 					$error_msg = '<script type="text/javascript">swal("", "Новость добавлена ", "success")</script>';
 			}
@@ -53,7 +59,13 @@
 				else {
 					$important = ', important = 0';
 				}
-				$q_upd_news = "UPDATE news SET header = '".$_POST['editedTheme']."', text = '".$_POST['editedText']."' $dateEnd $important WHERE id = " . $_POST['editedNews'];
+				if (isset($_POST['editedDiscussed']) && $_POST['editedDiscussed'] == 'on') {
+					$discussed = ', discussed = 1';
+				}
+				else {
+					$discussed = ', discussed = 0';
+				}
+				$q_upd_news = "UPDATE news SET header = '".$_POST['editedTheme']."', text = '".$_POST['editedText']."', preview = '".$_POST['editedPreview']."'  $dateEnd $important $discussed WHERE id = " . $_POST['editedNews'];
 				//echo $q_upd_news;
 				mysql_query($q_upd_news) or die(mysql_error());
 				$error_msg = '<script type="text/javascript">swal("", "Новость отредактирована ", "success")</script>';
@@ -201,13 +213,30 @@
 													  </div>
 													</div>
 												  </div>
+												  <div class="form-group">
+													<div class="col-sm-offset-2 col-sm-10">
+													  <div class="checkbox">
+														<label>
+														  <?php
+														  if (isset($_POST['discussed']) && $_POST['discussed'] == 'on'){
+															echo '<input name="discussed" type="checkbox" checked> Обсуждение';
+														  }
+														  else {
+															echo '<input name="discussed" type="checkbox"> Обсуждение';
+														  }
+														  ?>
+														</label>
+													  </div>
+													</div>
+												  </div>
 																								
-												
+												<div class="form-group">
+													<label for="preview">Текст для предварительного просмотра</label>
+													<textarea name="preview" class="form-control" rows="2" id="addPreview"><?php echo $_POST['preview']; ?></textarea>
+												</div>
 												<div class="form-group">
 													<label for="text">Текст</label>
-													<textarea name="text" class="form-control" rows="3" id="addText"><?php echo $_POST['theme']; ?></textarea>
-													
-													
+													<textarea name="text" class="form-control" rows="3" id="addText"><?php echo $_POST['text']; ?></textarea>
 												</div>																				
 												
 											</form>
@@ -239,11 +268,12 @@
 									<h4>Существующие новости</h3>
 									<table class="table table-condensed">
 										<tr>
-											<th>Дата публикации</th>
-											<th>Тема</th>
-											<th>Текст</th>
-											<th>Дата окончания публикации</th>
-											<th>Важная</th>
+											<th style="text-align: center;">Дата публикации</th>
+											<th style="text-align: center;">Тема</th>
+											
+											<th style="text-align: center;">Дата окончания публикации</th>
+											<th style="text-align: center;">Важная</th>
+											<th style="text-align: center;">Обсуждение</th>
 											<th></th>
 											<th></th>
 										</tr>
@@ -252,7 +282,7 @@
 											echo '<tr>';
 											echo '<td>'.date( 'd.m.Y',strtotime($news['date_crate'])).'</td>';
 											echo '<td>'.$news['header'].'</td>';
-											echo '<td>'.substr($news['text'], 0, 300).'</td>';
+											
 											if (is_null($news['date_end'])) {
 												echo '<td>Не установлена</td>';
 												$date_end = '';
@@ -266,6 +296,12 @@
 												$date_end = date( 'Y-m-d',strtotime($news['date_end']));
 											}
 											if ($news['important'] == 1) {
+												echo '<td style="text-align: center;"><input type="checkbox" checked disabled></td>';
+											}
+											else {
+												echo '<td style="text-align: center;"><input type="checkbox" disabled></td>';
+											}
+											if ($news['discussed'] == 1) {
 												echo '<td style="text-align: center;"><input type="checkbox" checked disabled></td>';
 											}
 											else {
@@ -296,19 +332,38 @@
 															</div>
 															<div class="form-group">
 																<div class="col-sm-offset-2 col-sm-10">
-																  <div class="checkbox">
-																	<label>';
-																	if ($news['important'] == 1) {
-																		echo '<input name="editedIimportant" type="checkbox" checked> Важная';
-																	}
-																	else {
-																		echo '<input name="editedImportant" type="checkbox"> Важная';
-																	}
+																	<div class="checkbox">
+																		<label>';
+																		if ($news['important'] == 1) {
+																			echo '<input name="editedIimportant" type="checkbox" checked> Важная';
+																		}
+																		else {
+																			echo '<input name="editedImportant" type="checkbox"> Важная';
+																		}
 																	  
-											echo '					</label>
-															  </div>
+											echo '						</label>
+																	</div>
 																</div>
-															  </div>
+															</div>
+															<div class="form-group">
+																<div class="col-sm-offset-2 col-sm-10">
+																	<div class="checkbox">
+																		<label>';
+																		if ($news['discussed'] == 1) {
+																			echo '<input name="editedDiscussed" type="checkbox" checked> Обсуждение';
+																		}
+																		else {
+																			echo '<input name="editedDiscussed" type="checkbox"> Обсуждение';
+																		}
+																	  
+											echo '						</label>
+																	</div>
+																</div>
+															</div>
+															<div class="form-group">
+																<label for="text">Текст</label>
+																<textarea name="editedPreview" class="form-control" rows="3">'.$news['preview'].'</textarea>
+															</div>	
 															<div class="form-group">
 																<label for="text">Текст</label>
 																<textarea name="editedText" class="form-control" rows="3">'.$news['text'].'</textarea>

@@ -156,11 +156,6 @@
 						$day   = date( 'j',$time ); 
 						$year  = date( 'Y',$time ); 
 						$news_date = "[$day $month $year]";
-						$words = explode(' ',$news['text']);
-						if(count($words) > 20 && 20 > 0) {
-							$text = implode(' ',array_slice($words, 0, 20)).'...';
-						}
-											
 						if ($news['important'] == 1) {
 							echo '<div class="bg-danger" style="padding: 10px; border-radius: 10px;">';
 						}
@@ -169,8 +164,14 @@
 						}
 						echo '<h3>'.$news['header'].'</h3>';
 						echo '<span class="news_date">'.$news_date.'</span>';
-						echo '<p>'. $text .'</p>';
+						echo '<p>'. $news['preview'] .'</p>'; //
 						echo '<a class="btn btn-default navbar-btn" href="news.php?news='.$news['id'].'"> Подробнее </a>';
+						if ($news['discussed'] == 1) {
+							if ($is_auth == 1) {
+								$result_count_comment = mysql_query("SELECT COUNT(*) FROM news_comments WHERE news = ".$news['id']." AND is_del = 0") or die(mysql_error());
+								echo '   <a class="btn btn-info" href="news.php?news='.$news['id'].'#comments"> Обсуждение <span class="badge pull-right" style="background: red; color: #ffffff; margin-top: 3px; margin-left: 5px;">'.mysql_result($result_count_comment, 0).'</span></a>';
+							}
+						}
 						echo '</div>';
 					}
 				  ?>
