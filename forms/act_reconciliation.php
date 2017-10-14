@@ -27,8 +27,8 @@
 ?>
 
 <!DOCTYPE html>
-<!-- <html lang="ru" onMouseOver="window.close();"> -->
-<html>
+<html lang="ru" onMouseOver="window.close();">
+
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -51,7 +51,7 @@
       }
     </style>
 	
-	<div class="container" style="width: 100%;">
+	<div class="container" style="width: 100%;"">
 		<div class="row">
 			<div class="col-md-12">
 					
@@ -196,6 +196,9 @@
 			</div>
 		</div>
 	</div>
-	
+	<script>
+		window.print();
+
+	</script>
 	</body>
 </html>

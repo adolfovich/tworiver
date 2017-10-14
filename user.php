@@ -561,6 +561,7 @@
 												<ul class="nav nav-tabs">
 												  <li class="active"><a href="#indications" data-toggle="tab">Детализация показаний</a></li>
 												  <li><a href="#payments" data-toggle="tab">Детализация платежей</a></li>
+												  <li><a href="#acts" data-toggle="tab">Акты сверки</a></li>
 												</ul>
 												<!-- Tab panes -->
 												<div class="tab-content">
@@ -587,18 +588,6 @@
 																}
 															?>
 														</table>
-														<h4>Акты сверки</h4>
-														
-														<?php
-														if(mysql_num_rows($result_acts) > 0) {
-															while ($acts = mysql_fetch_assoc($result_acts)) {
-																echo '<p><a href="'.$acts['path'].'" target="_blank">'.date( 'd.m.Y',strtotime($acts['date'])).' - '.$acts['comment'].'</a></p>';
-															}
-														}
-														else {
-															echo '<p>Актов не найдено</p>';
-														}
-														?>
 													</div>
 												  <div class="tab-pane fade" id="payments">
 													<h4>Начальный баланс: <?php echo $start_balans; ?> руб.</h4>
@@ -621,6 +610,21 @@
 																}
 														?>
 													</table>
+												  </div>
+												  <div class="tab-pane fade" id="acts">
+														<p></p>
+														<a href="forms/act_reconciliation.php?user=<?php echo $user_id; ?>" class="btn btn-default" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Распечатать акт сверки</a>
+														<p></p>
+														<?php
+														if(mysql_num_rows($result_acts) > 0) {
+															while ($acts = mysql_fetch_assoc($result_acts)) {
+																echo '<p><a href="'.$acts['path'].'" target="_blank">'.date( 'd.m.Y',strtotime($acts['date'])).' - '.$acts['comment'].'</a></p>';
+															}
+														}
+														else {
+															echo '<p>Актов не найдено</p>';
+														}
+														?>
 												  </div>
 												</div>
 											</div>
