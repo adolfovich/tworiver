@@ -88,14 +88,43 @@
 								<div class="col-md-6">
 								  <h3>Должники</h3>
 								  <p></p>
+								  <h4><u>Электроэнергия</u></h4>
+								  <p></p>
 								  <?php 
+									$sum_debtos = 0;
+									
 									//ищем всех пользователей у кого баланс меньше нуля
 									$result_debtos = mysql_query("SELECT * FROM users WHERE balans < 0") or die(mysql_error());
 		
 									while ($debtos = mysql_fetch_assoc($result_debtos)) {
 										echo '<p><strong>'. $debtos['name'].', участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['balans'].'</span></strong></p>';
+										$sum_debtos = $sum_debtos + $debtos['balans'];
 									}
 								  ?>
+								  <h4><u>Членские взносы</u></h4>
+								  <p></p>
+								  <?php 
+									//ищем всех пользователей у кого баланс меньше нуля
+									$result_debtos = mysql_query("SELECT * FROM users WHERE membership_balans < 0") or die(mysql_error());
+		
+									while ($debtos = mysql_fetch_assoc($result_debtos)) {
+										echo '<p><strong>'. $debtos['name'].', участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['membership_balans'].'</span></strong></p>';
+										$sum_debtos = $sum_debtos + $debtos['membership_balans'];
+									}
+								  ?>
+								  <h4><u>Целевые взносы</u></h4>
+								  <p></p>
+								  <?php 
+									//ищем всех пользователей у кого баланс меньше нуля
+									$result_debtos = mysql_query("SELECT * FROM users WHERE target_balans < 0") or die(mysql_error());
+		
+									while ($debtos = mysql_fetch_assoc($result_debtos)) {
+										echo '<p><strong>'. $debtos['name'].', участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['target_balans'].'</span></strong></p>';
+										$sum_debtos = $sum_debtos + $debtos['target_balans'];
+									}
+								  ?>
+								  <p></p>
+								  <h3><strong>Итого по СНТ: <span style="color: red;"><?php echo $sum_debtos; ?></span></strong></h3>
 								</div>
 								<div class="col-md-4">
 								
