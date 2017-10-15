@@ -196,7 +196,7 @@
 											echo '<tr>';
 											echo '<td>'.date( 'm.Y',strtotime($reports['date'])).'</td>';
 											echo '<td>'.$reports['name'].'</td>';
-											echo '<td>'.$reports['path'].'</td>';
+											echo '<td><a href="'.$reports['path'].'" target="_blank">'.$reports['path'].'</a></td>';
 											echo '<td><a class="del_user" href="#" onclick="ConfirmDelReport('.$reports['id'].')"><i class="fa fa-trash" aria-hidden="true" title="Удалить файл"></i></a></td>';
 											echo '</tr>';
 										}
