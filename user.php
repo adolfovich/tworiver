@@ -554,6 +554,17 @@
 											  <p><strong>Номер: </strong><?php echo $user_sch_num;?></p>
 											  <p><strong>Пломба №: </strong><?php echo $user_sch_plomb_num;?></p>
 											</div>
+										
+											<?php $result_all_tarifs = mysql_query("SELECT * FROM tarifs") or die(mysql_error()); ?>
+										
+											<div class="col-md-6">
+											  <h3>Текущие тарифы на энергопотребление</h3>
+											  <?php
+											  while ($all_tarifs = mysql_fetch_assoc($result_all_tarifs)) {
+												  echo '<p>'.$all_tarifs['name'].' - '.$all_tarifs['price'].' р/кВт*ч</p>';
+											  }
+											  ?>									  
+											</div>
 										</div>
 										<div class="row">
 											<div class="col-md-12">
