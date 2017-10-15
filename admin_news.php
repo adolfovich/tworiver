@@ -53,7 +53,7 @@
 				else {
 					$dateEnd = ", date_end = '".$_POST['editedDateEnd']."'";
 				}
-				if (isset($_POST['editedImportant']) && $_POST['editedImportant'] == 'on') {
+				if (isset($_POST['editedIimportant']) && $_POST['editedIimportant'] == 'on') {
 					$important = ', important = 1';
 				}
 				else {
