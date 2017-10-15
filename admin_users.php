@@ -1,6 +1,7 @@
 <?php
 
 	include_once "core/db_connect.php";
+	include_once "core/func.php";
 	include_once "include/auth.php";
 
 
@@ -33,6 +34,21 @@
 				$tarifs_arr[]=$row;
 			}
 
+			//загрузка акта сверки
+			if (isset($_FILES['addActFile']['tmp_name'])) {
+				$uploaddir = 'uploads/';
+				$uploadfile = $uploaddir . generatestr(12).'.pdf';
+				if ($_FILES['addActFile']['type'] != 'application/pdf') {
+					$error_msg = '<script type="text/javascript">swal("Внимание!", "Файл не является PDF документом", "error")</script>';					
+				}
+				else if (move_uploaded_file($_FILES['addActFile']['tmp_name'], $uploadfile)) {
+					$q_file_path = "INSERT INTO acts SET user = ".$_POST['addActUch'].", date = '".$_POST['addActDate']."', comment = '".$_POST['addActComment']."', path = '$uploadfile'";
+					mysql_query($q_file_path) or die(mysql_error());
+					$error_msg = '<script type="text/javascript">swal("", "Файл загружен ", "success")</script>';
+					
+				}
+			}
+			
 			if (isset($_GET['del_user']) && strlen($_GET['del_user'])!=0) {
 				//Ставим пользователю пометку об удалении
 				mysql_query("UPDATE users SET is_del = 1 WHERE id = ".$_GET['del_user']) or die(mysql_error());
@@ -189,7 +205,11 @@
 
 	</head>
 	<body>
-		<?php echo $error_msg; ?>
+		<?php 		
+		if (isset($error_msg)) {
+			echo $error_msg; 
+		}		
+		?>
 		<?php include_once "include/head.php"; ?>
 
 		<div class="container">
@@ -462,32 +482,78 @@
 										
 										$result_acts = mysql_query("SELECT * FROM acts WHERE user = ".$users['id']) or die(mysql_error());
 										
-										if(mysql_num_rows($result_acts) > 0) {
-											echo '<td class="center">';
-												echo '<a href="#acts-'.$users['id'].'" onhover="" onclick="showActs('.$users['id'].')">';
-													echo '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>';
-												echo '</a>';
-												echo '<div name="acts-'.$users['id'].'" id="acts-'.$users['id'].'" class="acts">';
-													echo '<table>';
-														echo '<tr>';
-															echo '<td style="font-size: 12px; color: #000000; text-align: left;">Акты</td>';
-															echo '<td style="font-size: 12px; color: #000000;"><a class="close" href="#" onclick="closeActs('.$users['id'].')">X</a></td>';
-														echo '</tr>';
-														while ($acts = mysql_fetch_assoc($result_acts)) {
-															echo '<tr>
-																	<td><a href="'.$acts['path'].'" target="_blank">'.date( 'd.m.Y',strtotime($acts['date'])).' - '.$acts['comment'].'</a></td>
-																	<td></td>
-																</tr>';
-														}
-													echo '</table>';
-												echo '	</div>';
-											echo '</td>';
-										}
-										else {
-											echo '<td class="center">';
+										echo '<td class="center">';
+											echo '<a href="#acts-'.$users['id'].'" onhover="" onclick="showActs('.$users['id'].')">';
 												echo '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>';
-											echo '</td>';
-										}
+											echo '</a>';
+											echo '<div name="acts-'.$users['id'].'" id="acts-'.$users['id'].'" class="acts">';
+												echo '<table>';
+													echo '<tr>';
+														echo '<td style="font-size: 12px; color: #000000; text-align: left;">Акты</td>';
+														echo '<td style="font-size: 12px; color: #000000;"><a class="close" href="#" onclick="closeActs('.$users['id'].')">X</a></td>';
+													echo '</tr>';
+													echo '<tr>';
+														echo '<td style="padding-bottom: 10px;">';
+															echo '<a href="forms/act_reconciliation.php?user='.$users['id'].'" class="btn btn-default" target="_blank">Распечатать акт</a>';
+														echo '</td>';
+														echo '<td style="padding-bottom: 10px;">';
+															echo '<a href="#addAct'.$users['id'].'" class="btn btn-default" data-toggle="modal">Загрузить акт</a>';
+														echo '</td>';
+													echo '</tr>';
+													while ($acts = mysql_fetch_assoc($result_acts)) {
+														echo '<tr>
+																<td colspan="2"><a href="'.$acts['path'].'" target="_blank">'.date( 'd.m.Y',strtotime($acts['date'])).' - '.$acts['comment'].'</a></td>
+																
+															</tr>';
+													}
+												echo '</table>';
+												?>
+												
+												<div id="addAct<?php echo $users['id']; ?>" class="modal fade">
+												  <div class="modal-dialog">
+													<div class="modal-content">
+													  <!-- Заголовок модального окна -->
+													  <div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+														<h4 class="modal-title">Загрузка акта сверки</h4>
+													  </div>
+													  <!-- Основное содержимое модального окна -->
+													  <div class="modal-body">
+														<form enctype="multipart/form-data" method="POST" id="addActForm<?php echo $users['id']; ?>">
+															<div class="form-group">
+																<label for="addActUch">Участок</label>
+																<input type="hidden" name="addActUch" class="form-control" value="<?php echo $users['id']; ?>">
+																<input type="text" class="form-control" value="<?php echo $users['uchastok'] .' - '. $users['name']; ?> " disabled>  
+															</div>
+															<div class="form-group">
+																<label for="addActComment">Комментарий</label>
+																<input type="text" name="addActComment" class="form-control">
+															</div>
+															<div class="form-group">
+																<label for="addActDate">Дата акта сверки</label>
+																<input type="date" name="addActDate" class="form-control">
+															</div>
+															<div class="form-group">
+																<label for="addActFile">Файл акта сверки</label>
+																<input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
+																<input type="file" name="addActFile" class="form-control" id="InputFile"/>
+															</div>
+														</form>
+													  </div>
+													  <!-- Футер модального окна -->
+													  <div class="modal-footer">
+														<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+														<button type="button" class="btn btn-primary" onclick="document.getElementById('addActForm<?php echo $users['id']; ?>').submit(); return false;" >Загрузить</button>
+														
+													  </div>
+													</div>
+												  </div>
+												</div>
+												
+												<?php
+											echo '	</div>';
+										echo '</td>';
+										
 										echo '<td>'. $users['balans'].'</td>';
 										echo '<td class="center"><button href="#" class="btn btn-danger btn-xs" onclick="ConfirmCounterReplace('.$users['id'].')" >Замена счетчика</button></td>';
 										echo '<td class="center"><a href="admin_user_edit.php?edit_user='.$users['id'].'"><i class="fa fa-pencil" aria-hidden="true" title="Редактировать пользователя"></i></a></td>';
