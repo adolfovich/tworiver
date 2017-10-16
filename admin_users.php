@@ -42,7 +42,7 @@
 					$error_msg = '<script type="text/javascript">swal("Внимание!", "Файл не является PDF документом", "error")</script>';					
 				}
 				else if (move_uploaded_file($_FILES['addActFile']['tmp_name'], $uploadfile)) {
-					$q_file_path = "INSERT INTO acts SET user = ".$_POST['addActUch'].", date = '".$_POST['addActDate']."', comment = '".$_POST['addActComment']."', path = '$uploadfile'";
+					$q_file_path = "INSERT INTO acts SET user = ".$_POST['addActUch'].", date = '".$_POST['addActDate']."', comment = '".$_POST['addActComment']."', path = '$uploadfile', type = " . $_POST['addActType'];
 					mysql_query($q_file_path) or die(mysql_error());
 					$error_msg = '<script type="text/javascript">swal("", "Файл загружен ", "success")</script>';
 					
@@ -492,7 +492,7 @@
 										echo '<td>'. $users['sch_plomb_num'].'</td>';
 										
 										$result_acts = mysql_query("SELECT * FROM acts WHERE user = ".$users['id']) or die(mysql_error());
-										
+										$result_acts_type = mysql_query("SELECT * FROM acts_type") or die(mysql_error());
 										echo '<td class="center">';
 											echo '<a href="#acts-'.$users['id'].'" onhover="" onclick="showActs('.$users['id'].')">';
 												echo '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>';
@@ -505,7 +505,19 @@
 													echo '</tr>';
 													echo '<tr class="user-acts">';
 														echo '<td style="padding-bottom: 10px;">';
-															echo '<a href="forms/act_reconciliation.php?user='.$users['id'].'" class="btn btn-default" target="_blank">Распечатать акт</a>';
+															//echo '<a href="forms/act_reconciliation.php?user='.$users['id'].'" class="btn btn-default" target="_blank">Распечатать акт</a>';
+														echo '<div class="btn-group">
+																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+																	Распечатать акт
+																	<span class="caret"></span>
+																  </button>
+																<ul class="dropdown-menu">';
+																  while ($acts_type = mysql_fetch_assoc($result_acts_type)) {
+																		echo '<li><a href="'.$acts_type['link'].'?user='.$users['id'].'" target="_blank">'.$acts_type['name'].'</a></li>';
+																	}
+														
+														echo	'</ul>
+															  </div>';
 														echo '</td>';
 														echo '<td style="padding-bottom: 10px;">';
 															echo '<a href="#addAct'.$users['id'].'" class="btn btn-default" data-toggle="modal">Загрузить акт</a>';
@@ -535,6 +547,17 @@
 																<label for="addActUch">Участок</label>
 																<input type="hidden" name="addActUch" class="form-control" value="<?php echo $users['id']; ?>">
 																<input type="text" class="form-control" value="<?php echo $users['uchastok'] .' - '. $users['name']; ?> " disabled>  
+															</div>
+															<?php $result_acts_type = mysql_query("SELECT * FROM acts_type") or die(mysql_error()); ?>
+															<div class="form-group">
+																<label for="addActComment">Тип акта</label>
+																<select name="addActType" class="form-control">
+																	<?php 
+																	while ($acts_type = mysql_fetch_assoc($result_acts_type)) {
+																		echo '<option value="'.$acts_type['id'].'">'.$acts_type['name'].'</option>';
+																	}
+																	?>
+																</select>
 															</div>
 															<div class="form-group">
 																<label for="addActComment">Комментарий</label>

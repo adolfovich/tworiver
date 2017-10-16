@@ -33,7 +33,7 @@
 			else if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 				
 				//var_dump($uploadfile);
-				$q_file_path = "INSERT INTO acts SET user = ".$_POST['user'].", date = '".$_POST['date']."', comment = '".$_POST['comment']."', path = '$uploadfile'";
+				$q_file_path = "INSERT INTO acts SET user = ".$_POST['user'].", date = '".$_POST['date']."', comment = '".$_POST['comment']."', path = '$uploadfile', type = 1";
 				//echo $q_file_path;
 				mysql_query($q_file_path) or die(mysql_error());
 				mysql_query("UPDATE users SET sch_step = 2 WHERE id =".$_POST['user']) or die(mysql_error());
