@@ -1,7 +1,16 @@
 <?php
 	
 	include_once "core/db_connect.php";
+	include_once "core/recaptchalib.php";
 	include_once "include/auth.php";
+	
+	//секретный ключ
+	$secret = "6LdOkzQUAAAAADSeamepVShDILj6NaQPDE714tSZ";
+	//ответ
+	$response = null;
+	//проверка секретного ключа
+	$reCaptcha = new ReCaptcha($secret);
+	
 	
 	$month_name = array(
 		1 => 'января', 
@@ -67,43 +76,53 @@
 			if (isset($_POST['input_subject']) && strlen($_POST['input_subject']) > 0) {
 				if (isset($_POST['input_text']) && strlen($_POST['input_text']) > 0) {
 					if (isset($_POST['input_email']) && strlen($_POST['input_text']) > 0) {
-										
-						$name = trim($_POST['input_name']);
-						$sub = trim($_POST['input_subject']);
-						$text = trim($_POST['input_text']);
-						$email = trim($_POST['input_email']);
-
-
-						date_default_timezone_set('Etc/UTC');
-						require 'core/PHPM/PHPMailerAutoload.php';
-						$mail = new PHPMailer;
-						$mail->isSMTP();
-						$mail->CharSet = "utf-8";
-						$mail->SMTPDebug = 0;
-						$mail->Debugoutput = 'html';
-						$mail->Host = "smtp.yandex.ru";
-						$mail->Port = 465;
-						$mail->SMTPSecure = 'ssl';
-						$mail->SMTPAuth = true;
-						$mail->Username = "robot@tworiver.ru";
-						$mail->Password = "6hg3mVBzBCru";
-						//$mail->Password = "6hg3m";
-						$mail->setFrom('robot@tworiver.ru', 'Система управления СНТ');
-						$mail->addAddress('adolfovich.alexashka@gmail.com');
-						$mail->addAddress('hakalo@bk.ru');
-						$mail->Subject = $sub;
-						$mail->Body    = "<b>Имя:</b> $name<hr><b>Email:</b> $email<hr><b>Сообщение:</b> $text";
-						$mail->IsHTML(true); 
-						if (!$mail->send()) {
-						   $error_msg = '<script type="text/javascript">swal("", "Письмо не отправлено '.$mail->ErrorInfo.'", "error")</script>';
-						} else {
-							$error_msg = '<script type="text/javascript">swal("", "Письмо отправлено", "success")</script>';
-							unset($_POST['input_name']);
-							unset($_POST['input_subject']); 
-							unset($_POST['input_text']);
-							unset($_POST['input_email']);
-						}
+						if ($_POST["g-recaptcha-response"]) {
+							$response = $reCaptcha->verifyResponse(
+								$_SERVER["REMOTE_ADDR"],
+								$_POST["g-recaptcha-response"]
+							);
+						}				
+						if ($response != null && $response->success) {
 						
+							$name = trim($_POST['input_name']);
+							$sub = trim($_POST['input_subject']);
+							$text = trim($_POST['input_text']);
+							$email = trim($_POST['input_email']);
+
+
+							date_default_timezone_set('Etc/UTC');
+							require 'core/PHPM/PHPMailerAutoload.php';
+							$mail = new PHPMailer;
+							$mail->isSMTP();
+							$mail->CharSet = "utf-8";
+							$mail->SMTPDebug = 0;
+							$mail->Debugoutput = 'html';
+							$mail->Host = "smtp.yandex.ru";
+							$mail->Port = 465;
+							$mail->SMTPSecure = 'ssl';
+							$mail->SMTPAuth = true;
+							$mail->Username = "robot@tworiver.ru";
+							$mail->Password = "6hg3mVBzBCru";
+							//$mail->Password = "6hg3m";
+							$mail->setFrom('robot@tworiver.ru', 'Система управления СНТ');
+							$mail->addAddress('adolfovich.alexashka@gmail.com');
+							$mail->addAddress('hakalo@bk.ru');
+							$mail->Subject = $sub;
+							$mail->Body    = "<b>Имя:</b> $name<hr><b>Email:</b> $email<hr><b>Сообщение:</b> $text";
+							$mail->IsHTML(true); 
+							if (!$mail->send()) {
+							   $error_msg = '<script type="text/javascript">swal("", "Письмо не отправлено '.$mail->ErrorInfo.'", "error")</script>';
+							} else {
+								$error_msg = '<script type="text/javascript">swal("", "Письмо отправлено", "success")</script>';
+								unset($_POST['input_name']);
+								unset($_POST['input_subject']); 
+								unset($_POST['input_text']);
+								unset($_POST['input_email']);
+							}
+						}
+						else {
+							$error_msg = '<script type="text/javascript">swal("", "Ошибка проверки на робота", "error")</script>';
+						}
 					}
 					else {
 						$error_msg = '<script type="text/javascript">swal("", "Не заполнено поле Email", "error")</script>';
@@ -252,7 +271,9 @@
 						<div class="col-sm-10">
 						  <textarea name="input_text" class="form-control" rows="5" id="input_text"><?php echo $text; ?></textarea>
 						</div>
-					  </div>					  
+					  </div>
+					  <div class="g-recaptcha" data-sitekey="6LdOkzQUAAAAAFzCX0LrwRiczr49spcUG7nrFWY1"></div>	
+					
 					  <div class="form-group">
 						<div class="col-sm-offset-2 col-sm-10">
 						  <button type="submit" class="btn btn-default">Отправить</button>
@@ -265,10 +286,12 @@
 		</div>
 		
 		<?php include_once "include/footer.php"; ?>
-
+		<script>
+		
+		</script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
-
+		<script src='https://www.google.com/recaptcha/api.js'></script>
 		
 	</body>
 </html>

@@ -160,6 +160,7 @@
 		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.1/jquery.xdomainrequest.min.js"></script>
 		<![endif]-->
 		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/suggestions-jquery@17.10.0/dist/js/jquery.suggestions.min.js"></script>
+		<script type="text/javascript" src="js/jquery.uitablefilter.js"></script>
 
 
 
@@ -227,7 +228,7 @@
 							<div class="row">
 								<div class="col-md-12">
 								  <h3>Список пользователей</h3>
-									<div class="table-responsive">
+									<div class="table-responsive" style="overflow: hidden;">
 									<a href="#myModal" class="btn btn-primary" data-toggle="modal"><i class="fa fa-plus" aria-hidden="true"></i> Добавить пользователя</a>
 									<!-- HTML-код модального окна -->
 									<div id="myModal" class="modal fade">
@@ -442,12 +443,21 @@
 									  </div>
 									</div>
 									<br><br>
+									<form id="filter-form" class="form-horizontal" role="form">
+										<div class="form-group">
+											<label class="col-sm-2 control-label">Поиск по таблице</label>
+											<div class="col-sm-10">
+												<input name="filter" id="filter" type="text" class="form-control" placeholder="номер участка, ФИО или номер телефона">
+											</div>
+										</div>
+									</form>
+
 								  <?php
 									//выбираем всех пользователей
 									$result_all_users = mysql_query("SELECT u.id, u.uchastok, u.name, u.phone, u.sch_model, u.sch_num, u.sch_plomb_num, u.balans, uc.num, uc.date_start FROM users u, users_contracts uc WHERE u.is_del = 0 AND u.id = uc.user AND uc.date_end IS NULL ORDER BY CONVERT(u.uchastok,SIGNED)") or die(mysql_error());
 
 
-									echo '<table class="table table-condensed">';
+									echo '<table class="table table-condensed" style="margin-bottom: 0px;">';
 									echo '<tr>';
 									echo '<th>Участок</th>';
 									echo '<th>ФИО</th>';
@@ -462,13 +472,14 @@
 									echo '<th></th>';
 									echo '<th></th>';
 									echo '</tr>';
-
+									echo '</table>';
+									echo '<table class="table table-condensed table-users">';
 									while ($users = mysql_fetch_assoc($result_all_users)) {
 										if ($users['balans'] >= 0) {
-											echo '<tr>';
+											echo '<tr class="table-tr">';
 										}
 										else {
-											echo '<tr class="danger">';
+											echo '<tr class="table-tr danger">';
 										}
 										
 										echo '<td>'. $users['uchastok'].'</td>';
@@ -487,12 +498,12 @@
 												echo '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>';
 											echo '</a>';
 											echo '<div name="acts-'.$users['id'].'" id="acts-'.$users['id'].'" class="acts">';
-												echo '<table>';
-													echo '<tr>';
+												echo '<table class="user-acts">';
+													echo '<tr class="user-acts">';
 														echo '<td style="font-size: 12px; color: #000000; text-align: left;">Акты</td>';
 														echo '<td style="font-size: 12px; color: #000000;"><a class="close" href="#" onclick="closeActs('.$users['id'].')">X</a></td>';
 													echo '</tr>';
-													echo '<tr>';
+													echo '<tr class="user-acts">';
 														echo '<td style="padding-bottom: 10px;">';
 															echo '<a href="forms/act_reconciliation.php?user='.$users['id'].'" class="btn btn-default" target="_blank">Распечатать акт</a>';
 														echo '</td>';
@@ -501,7 +512,7 @@
 														echo '</td>';
 													echo '</tr>';
 													while ($acts = mysql_fetch_assoc($result_acts)) {
-														echo '<tr>
+														echo '<tr class="user-acts">
 																<td colspan="2"><a href="'.$acts['path'].'" target="_blank">'.date( 'd.m.Y',strtotime($acts['date'])).' - '.$acts['comment'].'</a></td>
 																
 															</tr>';
@@ -568,7 +579,10 @@
 									<script>
 										function showActs(userId) {
 											showDiv = document.getElementById('acts-'+userId);
+											$( ".acts" ).css({"display":"none"});
+											$( ".user-acts" ).css({"display":"table-row"}); //user-acts
 											showDiv.style.display="block";
+											
 										}
 										function closeActs(userId) {
 											showDiv = document.getElementById('acts-'+userId);
@@ -645,7 +659,32 @@
 		
 
 		<?php include_once "include/footer.php"; ?>
+		
+		<script>
+		$(function() {
+		
+		  var theTable = $('table.table-users')
+		
+		  $("#filter").keyup(function() {
+		
+			$.uiTableFilter( theTable, this.value );
+		
+		  })
+		
+		 $('#filter-form').submit(function(){
+		
+			theTable.find("tbody > tr.:visible > td:eq(1)").mousedown();
+		
+			return false;
+		
+		  }).focus();
+		
+		});
 
+		</script>
+		
+		
+		
 		<script>
 		function makeRand(max){
 		        // Generating random number from 0 to max (argument)
