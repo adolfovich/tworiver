@@ -561,7 +561,7 @@
 											  <h3>Текущие тарифы на энергопотребление</h3>
 											  <?php
 											  while ($all_tarifs = mysql_fetch_assoc($result_all_tarifs)) {
-												  echo '<p>'.$all_tarifs['name'].' - '.$all_tarifs['price'].' р/кВт*ч</p>';
+												  echo '<p>'.$all_tarifs['name'].' - <span style="color: red;">'.$all_tarifs['price'].' р/кВт*ч</span></p>';
 											  }
 											  ?>									  
 											</div>
