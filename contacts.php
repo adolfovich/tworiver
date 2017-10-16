@@ -272,7 +272,7 @@
 						  <textarea name="input_text" class="form-control" rows="5" id="input_text"><?php echo $text; ?></textarea>
 						</div>
 					  </div>
-					  <div class="g-recaptcha" data-sitekey="6LdOkzQUAAAAAFzCX0LrwRiczr49spcUG7nrFWY1"></div>	
+					  <div class="g-recaptcha" data-sitekey="6LdOkzQUAAAAAFzCX0LrwRiczr49spcUG7nrFWY1" style="margin-left: 160px; margin-bottom: 10px;"></div>	
 					
 					  <div class="form-group">
 						<div class="col-sm-offset-2 col-sm-10">
