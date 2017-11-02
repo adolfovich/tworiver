@@ -17,6 +17,9 @@
 		
 		if ($is_admin == 1) {
 			
+			
+			
+			
 			if (isset($_GET['del_ind'])) {
 				//Удаляем показания
 				mysql_query("DELETE FROM Indications WHERE id = ".$_GET['del_ind']) or die(mysql_error());
@@ -43,7 +46,12 @@
 			if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
 				
 				$selected_user = $_GET['select_user'];
-				//$q_indications = ;
+				
+				//Выбираем последний акт сверки по электроэнергии
+				$result_last_act = mysql_query("SELECT date FROM acts WHERE type = 1 AND user = $selected_user ORDER BY date DESC LIMIT 1") or die(mysql_error());
+				$last_act_date = mysql_result($result_last_act, 0);
+				//echo 'actdate '.$last_act_date;
+				
 				$result_indications = mysql_query("SELECT i.id, i.additional_sum, i.date, i.Indications, i.additional as price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = ".$_GET['select_user']." AND i.tarif = t.id") or die(mysql_error());
 				$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = ".$_GET['select_user']) or die(mysql_error());
 				
@@ -156,6 +164,8 @@
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
 
 		<link rel="stylesheet" href="css/font-awesome.min.css">
 
@@ -174,6 +184,9 @@
 			}
 			.news_date {
 				color: #777;
+			}
+			.form_error {
+				color: red;
 			}
 		</style>
 		
@@ -202,7 +215,7 @@
 							</div>
 							<div class="row">
 								<div class="col-md-12">
-								  <h3>Показания</h3>
+									<h3>Показания</h3>
 									<form method="GET">
 										<div class="form-group">
 											<label for="InputFIO">Выбрать пользователя</label>
@@ -216,7 +229,7 @@
 													}
 													else {
 														echo '<option value="'.$select_user['id'].'">'.$select_user['uchastok'].' '.$select_user['name'].'</option>';
-													}//uchastok
+													}
 													
 													
 												}
@@ -232,49 +245,150 @@
 									
 									<a href="#addInd" class="btn btn-primary" data-toggle="modal" <?= $disabled_button;?>><i class="fa fa-plus" aria-hidden="true"></i> Добавить показания</a>
 									<a href="#addPay" class="btn btn-primary" data-toggle="modal" <?= $disabled_button;?>><i class="fa fa-plus" aria-hidden="true"></i> Добавить платеж</a>
-									<br><br>
+									<br><br>	
 									
+									<!-- HTML-код модального окна -->
+									<div id="addPay" class="modal fade">
+									  <div class="modal-dialog">
+										<div class="modal-content">
+										  <!-- Заголовок модального окна -->
+										  <div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+											<h4 class="modal-title">Добавление платежа</h4>
+										  </div>
+										  <!-- Основное содержимое модального окна -->
+										  <div class="modal-body">
+											<form method="GET" role="form" id="AddPayment">
+												
+												<div class="form-group">
+													<label for="payment_date">Дата</label>
+													<input name="payment_date" type="date" class="form-control" id="payment_date" value="<?php echo $curdate; ?>">
+												</div>
+												<div class="form-group">
+													<label for="sum">Сумма</label>
+													<input name="sum" type="text" class="form-control" id="sum" placeholder="0,00">
+												</div>
+												<div class="form-group">
+													<label for="base">Основание</label>
+													<input name="base" type="text" class="form-control" id="base" placeholder="Основание" value="Ручной ввод">
+												</div>
+												<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
+												<div class="form_error" id="AddPaymentError"></div>
+											</form>
+										  </div>
+										  <!-- Футер модального окна -->
+										  <div class="modal-footer">
+											<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+											<button type="button" class="btn btn-primary" onclick="checkAddPayment()">Сохранить</button>
+											<script>
+												function checkAddPayment() {													
+													if (new Date(document.getElementById('payment_date').value) <= new Date("<?= $last_act_date;?>")) {
+														document.getElementById('AddPaymentError').innerHTML = 'Дата платежа находится в закрытом периоде';
+													} else {
+														document.getElementById('AddPayment').submit(); return false;
+													}
+												}												
+											</script>
+										  </div>
+										</div>
+									  </div>
+									</div>
+									<!-- HTML-код модального окна -->
+									<div id="addInd" class="modal fade">
+									  <div class="modal-dialog">
+										<div class="modal-content">
+										  <!-- Заголовок модального окна -->
+										  <div class="modal-header">
+											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+											<h4 class="modal-title">Добавление показаний</h4>
+										  </div>
+										  <!-- Основное содержимое модального окна -->
+										  <div class="modal-body">
+											<form method="GET" role="form" id="AddIndications">
+												<div class="form-group">
+													<label for="tarif">Тариф</label>
+													<select class="form-control" name="tarif" id="tarif" onchange="getTarifPrice(this.value)">
+														<?php
+														while ($user_tarif = mysql_fetch_assoc($result_user_tarifs)) {
+															$user_tarif_price = $user_tarif['price'];
+															echo '<option value="'.$user_tarif['id'].'">'.$user_tarif['name'].'</option>';
+														}
+														?>
+													</select>
+												</div>
+												<div class="form-group">
+													<label for="indications_date">Дата</label>
+													<input name="ind_date" type="date" class="form-control" id="indications_date" value="<?php echo $curdate; ?>">
+												</div>
+												<div class="form-group">
+													<label for="indications">Показания</label>
+													<input name="indications" type="text" class="form-control" id="indications" placeholder="0,00">
+												</div>
+												<div class="form-group">
+													<label for="price">Стоимость</label>
+													<input name="price" type="text" class="form-control" id="price" placeholder="0,00">
+												</div>
+												<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
+												<div class="form_error" id="AddIndicationsError"></div>
+											</form>
+										  </div>
+										  <!-- Футер модального окна -->
+										  <div class="modal-footer">
+											<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+											<button type="button" class="btn btn-primary" onclick="document.getElementById('AddIndications').submit(); return false;" >Сохранить</button>
+											<script>
+												function checkAddPayment() {													
+													if (new Date(document.getElementById('indications_date').value) <= new Date("<?= $last_act_date;?>")) {
+														document.getElementById('AddIndicationsError').innerHTML = 'Дата показаний находится в закрытом периоде';
+													} else {
+														document.getElementById('AddIndications').submit(); return false;
+													}
+												}												
+											</script>
+										  </div>
+										</div>
+									  </div>
+									</div>
+												
+																		
 									<ul class="nav nav-tabs">
-									  <li class="active"><a href="#indications" data-toggle="tab">Показания</a></li>
+									  <li class="active"><a href="#indications11" data-toggle="tab" >Показания</a></li>
 									  <li><a href="#paymets" data-toggle="tab">Платежи</a></li>
 									</ul>
-									<!-- Tab panes -->
+									
 									<div class="tab-content">
-										<div class="tab-pane fade in active" id="indications">
-											<br>
+									  <div class="tab-pane fade in active" id="indications11">
+										<br>
 											<?php 
 											if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
-												echo '<div class="table-responsive">';
-												
+												echo '<div class="table-responsive">';												
 												echo '<table class="table table-condensed">';
 												echo '<tr>';
 												echo '<th>Дата</th>';
 												echo '<th>Тариф</th>';
-												echo '<th>Показания</th>';
-												
+												echo '<th>Показания</th>';												
 												echo '<th>Начислено</th>';
 												echo '<th></th>';
-												echo '</tr>';
-												
+												echo '</tr>';												
 												while ($indications = mysql_fetch_assoc($result_indications)) {
 													$date_indications = date( 'd.m.Y',strtotime($indications['date']));
 													echo '<tr>';
 													echo '<td>'. $date_indications.'</td>';
 													echo '<td>'. $indications['tarif'].' - '.$indications['price'].' руб/кВт*ч</td>';
-													echo '<td>'. $indications['Indications'].'</td>';
-													
+													echo '<td>'. $indications['Indications'].'</td>';													
 													echo '<td>'. $indications['additional_sum'].'</td>';
-													//echo '<td><a href="#" class="btn btn-primary" data-toggle="modal" disabled="disabled"><i class="fa fa-rub" aria-hidden="true"></i> Оплатить</a></td>';
-													echo '<td><a class="del_user" href="#" onclick="ConfirmDelInd('.$indications['id'].','.$selected_user.','.$indications['additional_sum'].')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
-													echo '</tr>';
-												}
-												echo '</table>';
-												//echo '<br>';
+													if (strtotime($indications['date']) <= strtotime($last_act_date)) {
+														echo '<td style="text-align:center"><span class="fa-stack fa-lg"><i class="fa fa-trash fa-stack-1x" aria-hidden="true"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span></td>';
+													}
+													else {														
+														echo '<td style="text-align:center"><a class="del_user" href="#" onclick="ConfirmDelInd('.$indications['id'].','.$selected_user.','.$indications['additional_sum'].')"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a></td>';
+													}													
+													echo '</tr>';												}
+												echo '</table>';												
 												echo '';
 												echo '</div>';
 											}
-											?>
-											
+											?>											
 											<script>
 												function ConfirmDelInd(ind_id, user_id, sum) 
 												{
@@ -298,87 +412,38 @@
 													})
 												}
 											</script>
-											
-											
-											<!-- HTML-код модального окна -->
-											<div id="addInd" class="modal fade">
-											  <div class="modal-dialog">
-												<div class="modal-content">
-												  <!-- Заголовок модального окна -->
-												  <div class="modal-header">
-													<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-													<h4 class="modal-title">Добавление показаний</h4>
-												  </div>
-												  <!-- Основное содержимое модального окна -->
-												  <div class="modal-body">
-													<form method="GET" role="form" id="AddIndications">
-														<div class="form-group">
-															<label for="tarif">Тариф</label>
-															<select class="form-control" name="tarif" id="tarif" onchange="getTarifPrice(this.value)">
-																<?php
-																while ($user_tarif = mysql_fetch_assoc($result_user_tarifs)) {
-																	$user_tarif_price = $user_tarif['price'];
-																	echo '<option value="'.$user_tarif['id'].'">'.$user_tarif['name'].'</option>';
-																}
-																?>
-															</select>
-														</div>
-														<div class="form-group">
-															<label for="indications_date">Дата</label>
-															<input name="ind_date" type="date" class="form-control" id="indications_date" value="<?php echo $curdate; ?>">
-														</div>
-														<div class="form-group">
-															<label for="indications">Показания</label>
-															<input name="indications" type="text" class="form-control" id="indications" placeholder="0,00">
-														</div>
-														<div class="form-group">
-															<label for="price">Стоимость</label>
-															<input name="price" type="text" class="form-control" id="price" placeholder="0,00">
-														</div>
-														<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
-													</form>
-												  </div>
-												  <!-- Футер модального окна -->
-												  <div class="modal-footer">
-													<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-													<button type="button" class="btn btn-primary" onclick="document.getElementById('AddIndications').submit(); return false;" >Сохранить</button>
-												  </div>
-												</div>
-											  </div>
-											</div>
-										</div>
-										<div class="tab-pane fade" id="paymets">
+									  </div>
+									  <div class="tab-pane fade" id="paymets">
 										<br>
 											<?php 
 											if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
-												echo '<div class="table-responsive">';
-												
+												echo '<div class="table-responsive">';												
 												echo '<table class="table table-condensed">';
 												echo '<tr>';
 												echo '<th>Дата</th>';
 												echo '<th>Сумма</th>';
-												echo '<th>Основание</th>';
-												
+												echo '<th>Основание</th>';												
 												echo '<th></th>';
-												echo '</tr>';
-												
+												echo '</tr>';												
 												while ($user_payments = mysql_fetch_assoc($result_user_payments)) {
 													$date_payment = date( 'd.m.Y',strtotime($user_payments['date']));
 													echo '<tr>';
 													echo '<td>'. $date_payment.'</td>';
 													echo '<td>'. $user_payments['sum'].'</td>';
-													echo '<td>'. $user_payments['base'].'</td>';
-													
-													echo '<td><a class="del_user" href="#" onclick="ConfirmDelPay('.$user_payments['id'].','.$selected_user.','.$user_payments['sum'].')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
+													echo '<td>'. $user_payments['base'].'</td>';													
+													if (strtotime($user_payments['date']) <= strtotime($last_act_date)) {
+														echo '<td style="text-align:center"><span class="fa-stack fa-lg"><i class="fa fa-trash fa-stack-1x" aria-hidden="true"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span></td>';
+													}
+													else {														
+														echo '<td style="text-align:center"><a class="del_user" href="#" onclick="ConfirmDelPay('.$user_payments['id'].','.$selected_user.','.$user_payments['sum'].')"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a></td>';
+													}
 													echo '</tr>';
 												}
-												echo '</table>';
-												
+												echo '</table>';												
 												echo '';
 												echo '</div>';
 											}
-											?>
-											
+											?>											
 											<script>
 												function ConfirmDelPay(payment_id, user_id, sum) 
 												{
@@ -402,50 +467,19 @@
 													})
 												}
 											</script>
+									  </div>
+									  
+									
+									<!-- Tab panes
+									<div class="tab-content">
+										<div class="tab-pane fade in active" id="indications">
 											
-											
-											<!-- HTML-код модального окна -->
-											<div id="addPay" class="modal fade">
-											  <div class="modal-dialog">
-												<div class="modal-content">
-												  <!-- Заголовок модального окна -->
-												  <div class="modal-header">
-													<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-													<h4 class="modal-title">Добавление платежа</h4>
-												  </div>
-												  <!-- Основное содержимое модального окна -->
-												  <div class="modal-body">
-													<form method="GET" role="form" id="AddPayment">
-														
-														<div class="form-group">
-															<label for="payment_date">Дата</label>
-															<input name="payment_date" type="date" class="form-control" id="payment_date" value="<?php echo $curdate; ?>">
-														</div>
-														<div class="form-group">
-															<label for="sum">Сумма</label>
-															<input name="sum" type="text" class="form-control" id="sum" placeholder="0,00">
-														</div>
-														<div class="form-group">
-															<label for="base">Основание</label>
-															<input name="base" type="text" class="form-control" id="base" placeholder="Основание" value="Ручной ввод">
-														</div>
-														<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
-													</form>
-												  </div>
-												  <!-- Футер модального окна -->
-												  <div class="modal-footer">
-													<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-													<button type="button" class="btn btn-primary" onclick="document.getElementById('AddPayment').submit(); return false;" >Сохранить</button>
-												  </div>
-												</div>
-											  </div>
-											</div>
 										</div>
-									</div>
-									
-									
+										<div class="tab-pane fade" id="paymets">
+																						
+										</div>											
+									</div>	 -->
 								</div>
-								
 							</div>
 						
 						<?php 
@@ -508,8 +542,7 @@
 		</script>
 		
 		
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
+		
 
 		
 	</body>
