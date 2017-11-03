@@ -280,15 +280,15 @@
 										<?php
 										while ($news = mysql_fetch_assoc($result_news)) {
 											echo '<tr>';
-											echo '<td>'.date( 'd.m.Y',strtotime($news['date_crate'])).'</td>';
+											echo '<td style="text-align: center;">'.date( 'd.m.Y',strtotime($news['date_crate'])).'</td>';
 											echo '<td>'.$news['header'].'</td>';
 											
 											if (is_null($news['date_end'])) {
-												echo '<td>Не установлена</td>';
+												echo '<td style="text-align: center;">Не установлена</td>';
 												$date_end = '';
 											}
 											else if (date( 'Y-m-d',strtotime($news['date_end'])) < $curdate) {
-												echo '<td class="bg-danger">'.date( 'd.m.Y',strtotime($news['date_end'])).'</td>';
+												echo '<td class="bg-danger" style="text-align: center;">'.date( 'd.m.Y',strtotime($news['date_end'])).'</td>';
 												$date_end = date( 'Y-m-d',strtotime($news['date_end']));
 											}
 											else {
