@@ -21,6 +21,12 @@ if (isset($_COOKIE["session"]) && isset($_COOKIE["user"])) {
 	$result_session = mysql_query("SELECT session FROM users WHERE email = '".$_COOKIE["user"]."'") or die(mysql_error());
 	if (mysql_result($result_session, 0) == $_COOKIE["session"]) {
 		$is_auth = 1;
+		$sid = md5(uniqid(rand(5,10), true));
+		//обновляем сессию в базе
+		mysql_query("UPDATE users SET session = '$sid' WHERE email = '".$_COOKIE["user"]."'") or die(mysql_error());
+		// обновляем сессию в куках
+		setcookie("session", $sid, time()+3600);  /* срок действия 1 час */
+		
 		
 	}
 	
@@ -70,11 +76,11 @@ if (isset($_POST['auth']) && $_POST['auth'] == '1') {
 					// добавить в куки сессию
 					setcookie("session", $sid, time()+3600);  /* срок действия 1 час */
 					// добавляем в куки email
-					setcookie("user", $user_email, time()+3600);  /* срок действия 1 час */
+					setcookie("user", $user_email, time()+2592000);  /* срок действия 30 дней */
 					// добавляем в куки имя
-					setcookie("user_name", $user_name, time()+3600);  /* срок действия 1 час */
+					setcookie("user_name", $user_name, time()+2592000);  /* срок действия 30 дней */
 					// добавляем в куки если адми
-					setcookie("user_is_admin", $user_is_admin, time()+3600);  /* срок действия 1 час */
+					setcookie("user_is_admin", $user_is_admin, time()+2592000);  /* срок действия 30 дней */
 					
 					$location = "Location: ".$_SERVER["REQUEST_URI"];
 					header($location);
