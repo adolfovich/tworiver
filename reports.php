@@ -19,6 +19,14 @@
 	);
 
 	$curdate = date("Y-m-d");
+	
+	$curyearform = date("Y");
+	
+	$curyear = date("Y");
+	
+	if (isset($_GET['report_year'])) {
+		$curyear = $_GET['report_year'];
+	}
 
 	if ($is_auth == 1) {}
 	
@@ -87,9 +95,30 @@
 						<h2>Отчеты о финансовой и хозяйственной деятельности СНТ</h2>
 					</div>
 				</div>
-				<?php $result_reports_fhd = mysql_query("SELECT * FROM reports_fhd ORDER BY date") or die(mysql_error()); ?>
+				<?php 
+				$nextyear = $curyear + 1; 
+				$q_reports_fhd = "SELECT * FROM reports_fhd WHERE date BETWEEN '".$curyear."-01-01' AND '".$nextyear."-01-01' ORDER BY date";
+				//echo $q_reports_fhd;
+				$result_reports_fhd = mysql_query($q_reports_fhd) or die(mysql_error()); 
+				?>
 				<div class="row">
 					<div class="col-md-12">
+					<form class="form-inline" id="changeYear" method="GET">
+						<b>Выбор года </b>
+						<select name="report_year" class="form-control" onChange="document.getElementById('changeYear').submit();">
+						<?php
+						for ($i = $curyearform; $i >= $curyearform - 10; $i--) {
+							if ($i == $curyear) {
+								echo '<option selected="selected">'.$i.'</option>';
+							}
+							else {
+								echo '<option>'.$i.'</option>';
+							}							
+						}
+						?>
+						</select>
+					</form>
+					<br>
 						<table class="table table-condensed">
 							<tr>
 								<th>Период</th>
