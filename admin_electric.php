@@ -43,40 +43,25 @@
 			//выбираем всех пользователей 
 			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0 ORDER BY CONVERT(uchastok,SIGNED)") or die(mysql_error());
 			
-			if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
-				
-				$selected_user = $_GET['select_user'];
-				
-				//Выбираем последний акт сверки по электроэнергии
-				$result_last_act = mysql_query("SELECT date FROM acts WHERE type = 1 AND user = $selected_user ORDER BY date DESC LIMIT 1") or die(mysql_error());
-				$last_act_date = mysql_result($result_last_act, 0);
-				//echo 'actdate '.$last_act_date;
-				
-				$result_indications = mysql_query("SELECT i.id, i.additional_sum, i.date, i.Indications, i.additional as price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = ".$_GET['select_user']." AND i.tarif = t.id") or die(mysql_error());
-				$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = ".$_GET['select_user']) or die(mysql_error());
-				
-				//Выбираем все тарифы пользователя
-				$result_user_tarifs = mysql_query("SELECT t.id, t.name FROM users_tarifs ut, tarifs t WHERE user = ".$_GET['select_user']." AND ut.tarif = t.id") or die(mysql_error());
-				
-				
-			}
-			if (isset($_GET['sum']) && strlen($_GET['sum']) == 0) {
+			
+			if (isset($_GET['payment_sum']) && strlen($_GET['payment_sum']) == 0) {
 				$error_msg = '<script type="text/javascript">swal("Внимание!", "Не введена сумма", "error")</script>';
 			}
-			else if (isset($_GET['sum']) && $_GET['sum'] == 0) {
+			else if (isset($_GET['payment_sum']) && $_GET['payment_sum'] == 0) {
 				$error_msg = '<script type="text/javascript">swal("Внимание!", "Сумма не может быть равна нулю", "error")</script>';
 			}
-			else if (isset($_GET['sum'])){
+			else if (isset($_GET['payment_sum'])){
 				//Приводим сумму к float 
-				$sum = str_replace(",", ".", $_GET['sum']);
+				$sum = str_replace(",", ".", $_GET['payment_sum']);
 				$sum = (float)$sum;
 				
 				//Добавляем платеж пользователю 
-				$q_add_payment = "INSERT INTO payments SET user = ".$selected_user.", sum = $sum, date = '".$_GET['payment_date']."',	base = '".$_GET['base']."'";
+				$q_add_payment = "INSERT INTO payments SET user = ".$_GET['select_user'].", sum = $sum, date = '".$_GET['payment_date']."',	base = '".mysql_real_escape_string($_GET['payment_base'])."'";
+				var_dump($q_add_payment);
 				mysql_query($q_add_payment) or die(mysql_error());
 				
 				//Обновляем баланс пользователя
-				$q_upd_balans = "UPDATE users u SET u.balans = (u.balans + $sum), u.total_balance = (u.total_balance + $sum) WHERE u.id = ".$selected_user; 
+				$q_upd_balans = "UPDATE users u SET u.balans = (u.balans + $sum), u.total_balance = (u.total_balance + $sum) WHERE u.id = ".$_GET['select_user']; 
 				//echo $q_upd_balans;
 				mysql_query($q_upd_balans) or die(mysql_error());
 				
@@ -89,11 +74,11 @@
 				}
 				else {
 					//Выбираем предыдущие показания
-					$result_prev_inications = mysql_query("SELECT * FROM Indications WHERE user = ".$selected_user." AND tarif = ".$_GET['tarif']." ORDER BY id DESC LIMIT 1") or die(mysql_error());
+					$result_prev_inications = mysql_query("SELECT * FROM Indications WHERE user = ".$_GET['select_user']." AND tarif = ".$_GET['tarif']." ORDER BY id DESC LIMIT 1") or die(mysql_error());
 					
 					if (mysql_num_rows($result_prev_inications) == 0) {
 						//$result_user_start_indications = mysql_query("SELECT * FROM users WHERE id = ".$selected_user) or die(mysql_error());
-						$result_user_start_indications = mysql_query("SELECT * FROM users_tarifs WHERE user = ".$selected_user." AND tarif = ".$_GET['tarif']) or die(mysql_error());
+						$result_user_start_indications = mysql_query("SELECT * FROM users_tarifs WHERE user = ".$_GET['select_user']." AND tarif = ".$_GET['tarif']) or die(mysql_error());
 						while ($start_indications = mysql_fetch_assoc($result_user_start_indications)) {
 							$prev_inication = $start_indications['start_indications'];
 						}						
@@ -124,11 +109,11 @@
 					//Проверяем что бы новые показания былыи больше предыдущих
 					if ($diff_inication > 0) {
 						//Добавляем показания пользователю 
-						$q_add_inications = "INSERT INTO Indications SET user = ".$selected_user.", tarif = ".$_GET['tarif'].", Indications = '".$inication."',	additional = $price, additional_sum = (".$diff_inication."*$price), date = '".$_GET['ind_date']."'";
+						$q_add_inications = "INSERT INTO Indications SET user = ".$_GET['select_user'].", tarif = ".$_GET['tarif'].", Indications = '".$inication."',	additional = $price, additional_sum = (".$diff_inication."*$price), date = '".$_GET['ind_date']."'";
 						//echo $q_add_inications;
 						mysql_query($q_add_inications) or die(mysql_error());
 						//Обновляем баланс пользователя
-						$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - (".$diff_inication."*$price)), u.total_balance = (u.total_balance - (".$diff_inication."*$price)) WHERE u.id = ".$selected_user;
+						$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - (".$diff_inication."*$price)), u.total_balance = (u.total_balance - (".$diff_inication."*$price)) WHERE u.id = ".$_GET['select_user'];
 						mysql_query($q_upd_balans) or die(mysql_error());
 						
 						
@@ -140,6 +125,23 @@
 					
 					
 				}
+				
+			}
+			if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
+				
+				$selected_user = $_GET['select_user'];
+				
+				//Выбираем последний акт сверки по электроэнергии
+				$result_last_act = mysql_query("SELECT date FROM acts WHERE type = 1 AND user = $selected_user ORDER BY date DESC LIMIT 1") or die(mysql_error());
+				$last_act_date = mysql_result($result_last_act, 0);
+				//echo 'actdate '.$last_act_date;
+				
+				$result_indications = mysql_query("SELECT i.id, i.additional_sum, i.date, i.Indications, i.additional as price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = ".$_GET['select_user']." AND i.tarif = t.id") or die(mysql_error());
+				$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = ".$_GET['select_user']) or die(mysql_error());
+				
+				//Выбираем все тарифы пользователя
+				$result_user_tarifs = mysql_query("SELECT t.id, t.name FROM users_tarifs ut, tarifs t WHERE user = ".$_GET['select_user']." AND ut.tarif = t.id") or die(mysql_error());
+				
 				
 			}
 			
@@ -259,18 +261,17 @@
 										  <!-- Основное содержимое модального окна -->
 										  <div class="modal-body">
 											<form method="GET" role="form" id="AddPayment">
-												
 												<div class="form-group">
 													<label for="payment_date">Дата</label>
 													<input name="payment_date" type="date" class="form-control" id="payment_date" value="<?php echo $curdate; ?>">
 												</div>
 												<div class="form-group">
-													<label for="sum">Сумма</label>
-													<input name="sum" type="text" class="form-control" id="sum" placeholder="0,00">
+													<label for="payment_sum">Сумма</label>
+													<input name="payment_sum" type="text" class="form-control" id="payment_sum" placeholder="0,00">
 												</div>
 												<div class="form-group">
-													<label for="base">Основание</label>
-													<input name="base" type="text" class="form-control" id="base" placeholder="Основание" value="Ручной ввод">
+													<label for="payment_base">Основание</label>
+													<input name="payment_base" type="text" class="form-control" id="payment_base" placeholder="Основание" value="Ручной ввод">
 												</div>
 												<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
 												<div class="form_error" id="AddPaymentError"></div>
@@ -279,13 +280,15 @@
 										  <!-- Футер модального окна -->
 										  <div class="modal-footer">
 											<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-											<button type="button" class="btn btn-primary" onclick="checkAddPayment()">Сохранить</button>
+											<button type="button" class="btn btn-primary" onclick="checkAddPayment(); return false;">Сохранить</button>
 											<script>
 												function checkAddPayment() {													
 													if (new Date(document.getElementById('payment_date').value) <= new Date("<?= $last_act_date;?>")) {
 														document.getElementById('AddPaymentError').innerHTML = 'Дата платежа находится в закрытом периоде';
+													} else if (document.getElementById('payment_sum').value == 0 || document.getElementById('payment_sum').value.length == 0) {
+														document.getElementById('AddPaymentError').innerHTML = 'Сумма не может быть пустой или равна нулю';
 													} else {
-														document.getElementById('AddPayment').submit(); return false;
+														document.getElementById('AddPayment').submit();
 													}
 												}												
 											</script>
@@ -335,11 +338,15 @@
 										  <!-- Футер модального окна -->
 										  <div class="modal-footer">
 											<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-											<button type="button" class="btn btn-primary" onclick="document.getElementById('AddIndications').submit(); return false;" >Сохранить</button>
+											<button type="button" class="btn btn-primary" onclick="checkAddIndications(); return false;" >Сохранить</button>
 											<script>
-												function checkAddPayment() {													
+												function checkAddIndications() {													
 													if (new Date(document.getElementById('indications_date').value) <= new Date("<?= $last_act_date;?>")) {
 														document.getElementById('AddIndicationsError').innerHTML = 'Дата показаний находится в закрытом периоде';
+													} else if (document.getElementById('indications').value.length == 0 || document.getElementById('indications').value == 0) {
+														document.getElementById('AddIndicationsError').innerHTML = 'Показания не могут быть пустыми или равняться нулю';
+													} else if (document.getElementById('price').value.length == 0 || document.getElementById('price').value == 0) {
+														document.getElementById('AddIndicationsError').innerHTML = 'Стоимость не может быть пустой или равняться нулю';
 													} else {
 														document.getElementById('AddIndications').submit(); return false;
 													}

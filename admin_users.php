@@ -4,36 +4,22 @@
 	include_once "core/func.php";
 	include_once "include/auth.php";
 
-
-
 	$curdate = date("Y-m-d");
 
 	if ($is_auth == 1) {
-
-
-
 		$result_user_is_admin = mysql_query("SELECT is_admin FROM users WHERE email = '".$_COOKIE["user"]."'") or die(mysql_error());
-
 		while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 			$is_admin = $user_is_admin['is_admin'];
 		}
-
-		
-
-
-
 		if ($is_admin == 1) {
-
 			if (isset($_GET['change_counter']) && $_GET['change_counter'] == 1) {
 				$error_msg = '<script type="text/javascript">swal("", "Счетчик заменен", "success")</script>';
 			}
-			
 			//Выгружаем из базы тарифы на электроэнергию
 			$result_tarifs = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
 			while ($row = mysql_fetch_assoc($result_tarifs)){
 				$tarifs_arr[]=$row;
 			}
-
 			//загрузка акта сверки
 			if (isset($_FILES['addActFile']['tmp_name'])) {
 				$uploaddir = 'uploads/';
@@ -42,21 +28,17 @@
 					$error_msg = '<script type="text/javascript">swal("Внимание!", "Файл не является PDF документом", "error")</script>';					
 				}
 				else if (move_uploaded_file($_FILES['addActFile']['tmp_name'], $uploadfile)) {
-					$q_file_path = "INSERT INTO acts SET user = ".$_POST['addActUch'].", date = '".$_POST['addActDate']."', comment = '".$_POST['addActComment']."', path = '$uploadfile', type = " . $_POST['addActType'];
+					$q_file_path = "INSERT INTO acts SET user = ".$_POST['addActUch'].", date_start = '".$_POST['addActDateStart']."', date_end = '".$_POST['addActDateEnd']."', comment = '".$_POST['addActComment']."', path = '$uploadfile', type = " . $_POST['addActType'];
 					mysql_query($q_file_path) or die(mysql_error());
 					$error_msg = '<script type="text/javascript">swal("", "Файл загружен ", "success")</script>';
-					
 				}
 			}
-			
 			if (isset($_GET['del_user']) && strlen($_GET['del_user'])!=0) {
 				//Ставим пользователю пометку об удалении
 				mysql_query("UPDATE users SET is_del = 1 WHERE id = ".$_GET['del_user']) or die(mysql_error());
 				header("Location: admin_users.php");
 			}
-
 			if (isset($_GET['fio']) && strlen($_GET['fio'])!=0) {
-				
 				$add_fio = $_GET['fio'];
 				$add_email = $_GET['email'];
 				$add_phone = $_GET['phone'];
@@ -116,12 +98,9 @@
 				//echo $sms_text;
 				//shell_exec("curl http://195.128.126.48/sendsms.php?user=sador1&pwd=d3330&sadr=SNT&dadr=$add_phone&text=$sms_text");
 
-
 				$error_msg = '<script type="text/javascript">swal("", "Пользователь добавлен ", "success")</script>';
 				
 				header("Location: admin_users.php");
-				
-				///echo '111';
 
 			}
 
@@ -145,7 +124,7 @@
 		<!-- Optional theme -->
 		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 		<!-- Latest compiled and minified JavaScript -->
-		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		
 
 		<link rel="stylesheet" href="css/font-awesome.min.css">
 
@@ -161,7 +140,7 @@
 		<![endif]-->
 		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/suggestions-jquery@17.10.0/dist/js/jquery.suggestions.min.js"></script>
 		<script type="text/javascript" src="js/jquery.uitablefilter.js"></script>
-
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
 
 
 		<style>
@@ -494,7 +473,7 @@
 										$result_acts = mysql_query("SELECT * FROM acts WHERE user = ".$users['id']) or die(mysql_error());
 										$result_acts_type = mysql_query("SELECT * FROM acts_type") or die(mysql_error());
 										echo '<td class="center">';
-											echo '<a href="#acts-'.$users['id'].'" onhover="" onclick="showActs('.$users['id'].')">';
+											echo '<a href="#acts-'.$users['id'].'" onhover="" onclick="showActs('.$users['id'].'); return false;">';
 												echo '<i class="fa fa-file-pdf-o" aria-hidden="true"></i>';
 											echo '</a>';
 											echo '<div name="acts-'.$users['id'].'" id="acts-'.$users['id'].'" class="acts">';
@@ -505,7 +484,6 @@
 													echo '</tr>';
 													echo '<tr class="user-acts">';
 														echo '<td style="padding-bottom: 10px;">';
-															//echo '<a href="forms/act_reconciliation.php?user='.$users['id'].'" class="btn btn-default" target="_blank">Распечатать акт</a>';
 														echo '<div class="btn-group">
 																<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
 																	Распечатать акт
@@ -513,7 +491,8 @@
 																  </button>
 																<ul class="dropdown-menu">';
 																  while ($acts_type = mysql_fetch_assoc($result_acts_type)) {
-																		echo '<li><a href="'.$acts_type['link'].'?user='.$users['id'].'" target="_blank">'.$acts_type['name'].'</a></li>';
+																		//echo '<li><a href="'.$acts_type['link'].'?user='.$users['id'].'" target="_blank">'.$acts_type['name'].'</a></li>';
+																		echo '<li><a href="#" onClick="printAct(\''.$acts_type['name'].'\',\''.$acts_type['link'].'\', '.$users['id'].', '.$acts_type['id'].')">'.$acts_type['name'].'</a></li>';
 																	}
 														
 														echo	'</ul>
@@ -531,6 +510,41 @@
 													}
 												echo '</table>';
 												?>
+												
+												<!-- HTML-код модального окна -->
+												<div id="printAct" class="modal fade">
+												  <div class="modal-dialog">
+													<div class="modal-content">
+													  <!-- Заголовок модального окна -->
+													  <div class="modal-header">
+														<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+														<h4 class="modal-title">Создание акта сверки по </h4>
+														<h4 class="modal-title" id="printActHeader"></h4>
+													  </div>
+													  <!-- Основное содержимое модального окна -->
+													  <div class="modal-body">
+														<form id="printActForm">
+															<div class="form-group">
+																<label for="actDateFrom">Дата начала периода</label>
+																<input type="date" class="form-control" id="actDateFrom" onChange="checkAct(document.getElementById('actUser').value, this.value, document.getElementById('actTypeId').value)">
+															</div>
+															<div class="form-group">
+																<label for="actDateTo">Дата окончания периода</label>
+																<input type="date" class="form-control" id="actDateTo" onChange="checkAct(document.getElementById('actUser').value, this.value, document.getElementById('actTypeId').value)">
+															</div>
+															<input type="hidden" id="actUser">
+															<input type="hidden" id="linkforact">
+															<input type="hidden" id="actTypeId">
+														</form>
+													  </div>
+													  <!-- Футер модального окна -->
+													  <div class="modal-footer">
+														<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+														<a href="#" class="btn btn-primary" onclick="openAct(); return false;">Печать</a>
+													  </div>
+													</div>
+												  </div>
+												</div>
 												
 												<div id="addAct<?php echo $users['id']; ?>" class="modal fade">
 												  <div class="modal-dialog">
@@ -551,7 +565,7 @@
 															<?php $result_acts_type = mysql_query("SELECT * FROM acts_type") or die(mysql_error()); ?>
 															<div class="form-group">
 																<label for="addActComment">Тип акта</label>
-																<select name="addActType" class="form-control">
+																<select name="addActType" class="form-control" id="addActType-<?= $users['id']; ?>">
 																	<?php 
 																	while ($acts_type = mysql_fetch_assoc($result_acts_type)) {
 																		echo '<option value="'.$acts_type['id'].'">'.$acts_type['name'].'</option>';
@@ -564,8 +578,12 @@
 																<input type="text" name="addActComment" class="form-control">
 															</div>
 															<div class="form-group">
-																<label for="addActDate">Дата акта сверки</label>
-																<input type="date" name="addActDate" class="form-control">
+																<label for="addActDateStart">Дата начала акта сверки</label>
+																<input type="date" name="addActDateStart" class="form-control" onChange="checkAct(<?= $users['id']; ?>, this.value, document.getElementById('addActType-<?= $users['id']; ?>').value)">
+															</div>
+															<div class="form-group">
+																<label for="addActDateEnd">Дата окончания акта сверки</label>
+																<input type="date" name="addActDateEnd" class="form-control" onChange="checkAct(<?= $users['id']; ?>, this.value, document.getElementById('addActType-<?= $users['id']; ?>').value)">
 															</div>
 															<div class="form-group">
 																<label for="addActFile">Файл акта сверки</label>
@@ -583,7 +601,8 @@
 													</div>
 												  </div>
 												</div>
-												
+												<script>
+												</script>
 												<?php
 											echo '	</div>';
 										echo '</td>';
@@ -770,7 +789,49 @@
 
 
 		</script>
-
+		<script>
+			function printAct(actType,link111,userId,actTypeId){
+				//alert(actType+', '+link111+','+userId);
+				$("#printAct").modal('show');
+				document.getElementById('printActHeader').innerHTML = actType;
+				document.getElementById('linkforact').value = link111;
+				document.getElementById('actUser').value = userId;
+				document.getElementById('actTypeId').value = actTypeId;
+				
+			}
+			function openAct() {
+				var dateFrom = document.getElementById('actDateFrom').value;
+				var dateTo = document.getElementById('actDateTo').value;
+				var link111 = document.getElementById('linkforact').value;
+				var user = document.getElementById('actUser').value;
+				
+				window.open(link111+'?user='+user+'&datefrom='+dateFrom+'&dateto='+dateTo,'_blank');
+			}
+		</script>
+		<script>
+			function checkAct(userAct,dateAct,typeAct){
+				$.post(
+				  "ajax/check_act_date.php",
+				  {
+					dateAct: dateAct,
+					userAct: userAct,
+					typeAct: typeAct
+				  },
+				  onAjaxSuccess
+				);
+											 
+				function onAjaxSuccess(data)
+				{
+				  if (data == 403) {
+					swal(
+					  'Ошибка!',
+					  'Дата находится в закрытом периоде.',
+					  'error'
+					);
+				  }
+				}
+			}
+												</script>
 		
 
 	</body>

@@ -3,6 +3,8 @@
 	include_once "../core/func.php";
 	
 	$user_id = $_GET['user'];
+	$date_from = $_GET['datefrom'];
+	$date_to = $_GET['dateto'];
 	
 	//выбираем данные по пользователю
 	$result_user_data = mysql_query("SELECT * FROM users WHERE id = $user_id") or die(mysql_error());
@@ -25,7 +27,7 @@
 	}
 	
 	//Выбираем все членские взносы
-	$result_user_contributions = mysql_query("SELECT * FROM users_contributions WHERE user = $user_id AND contribution_type = 1") or die(mysql_error());
+	$result_user_contributions = mysql_query("SELECT * FROM users_contributions WHERE user = $user_id AND contribution_type = 1 AND date BETWEEN '$date_from' AND '$date_to'") or die(mysql_error());
 	//users_contributions
 	
 	$sum = 0;
@@ -34,7 +36,7 @@
 
 <!DOCTYPE html>
 <!-- <html lang="ru" onMouseOver="window.close();"> -->
-<html>
+<html lang="ru" onMouseOver="window.close();">
 
 	<head>
 		<meta charset="utf-8">
@@ -64,7 +66,10 @@
 					
 				<table style="width: 100%;">
 					<tr>
-						<td colspan="3" style="text-align: center;"><h4>Акт сверки оплаты по членским взносам</h4></td>
+						<td colspan="3" style="text-align: center;">
+							<h4>Акт сверки оплаты по членским взносам</h4>
+							<h4>за период с <?= date( 'd.m.Y',strtotime($date_from)); ?> по <?= date( 'd.m.Y',strtotime($date_to)); ?></h4>
+						</td>
 					</tr>
 					<tr>
 						<td style="text-align: left;"><h5>СНТ "Двуречье"</h5></td>
@@ -173,7 +178,7 @@
 		</div>
 	</div>
 	<script>
-		//window.print();
+		window.print();
 
 	</script>
 	</body>
