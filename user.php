@@ -19,6 +19,15 @@
 	);
 
 	$curdate = date("Y-m-d");
+	
+	if (isset($_GET['ind_period'])) {
+		$curmonth = $_GET['ind_period'];
+	}
+	else {
+		$curmonth = date("Y-m");
+	}
+	
+	//echo $curmonth;
 
 	if ($is_auth == 1) {
 
@@ -185,7 +194,8 @@
 			.news_date {
 				color: #777;
 			}
-			
+			th {text-align:center; vertical-align: middle !important; border: 1px rgb(221, 221, 221) solid;}
+			td {text-align:center; vertical-align: middle !important;}
 		</style>
 		
 		<script>
@@ -578,27 +588,88 @@
 												<div class="tab-content">
 												  <div class="tab-pane fade in active" id="indications">
 														<h4>Начальные показания: <?php echo $start_indications; ?> кВт*ч</h4>
-														<table class="table table-striped">
-															<tr>
-																<th>Дата</th>
-																<th>Тариф</th>
-																<th>Показания кВт*ч</th>
-																<th>Сумма по тарифу руб.</th>
-															</tr>
-															<?php
-																//Выбираем все показания пользователя
-																$result_user_all_indications = mysql_query("SELECT i.id, i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND t.id = i.tarif") or die(mysql_error());
-																while ($user_all_indications = mysql_fetch_assoc($result_user_all_indications)) {
-																	$ind_date = date("d.m.Y", strtotime($user_all_indications['date']));
-																	echo '<tr>';
-																	echo '<td>'.$ind_date.'</td>';
-																	echo '<td>'.$user_all_indications['tarif'].' - '.$user_all_indications['additional'].' руб./кВт*ч</td>';
-																	echo '<td>'.$user_all_indications['Indications'].'</td>';
-																	echo '<td>'.$user_all_indications['additional_sum'].'</td>';
-																	echo '</tr>';
-																}
-															?>
-														</table>
+														
+														<!---------------------------------------->
+														<form class="form-inline" id="ind_period">
+															<label class="" for="inlineFormInput">Месяц/год</label>&nbsp&nbsp
+															<input class="form-control" type="month" name="ind_period" value="<?= $curmonth; ?>" onChange="document.getElementById('ind_period').submit()">
+															<input name="select_user" type="hidden" value="<?= $selected_user; ?>">
+														</form>
+														<br>
+														<ul class="nav nav-tabs">
+														<?php
+														//Выбираем все существующие тарифы
+														$active = 1;
+														$all_tarifs_result = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
+														while ($all_tarifs = mysql_fetch_assoc($all_tarifs_result)) {
+															if ($active == 1) {
+																echo '<li class="active"><a href="#'.$all_tarifs['id_waviot'].'" data-toggle="tab" >'.$all_tarifs['name'].'</a></li>';
+															}
+															else {
+																echo '<li><a href="#'.$all_tarifs['id_waviot'].'" data-toggle="tab" >'.$all_tarifs['name'].'</a></li>';
+															}
+															$active = 0;
+														}
+														?>
+														</ul>
+														<div class="tab-content">
+														<?php
+														//Выбираем все существующие тарифы
+														$active = 1;
+														$all_tarifs_result = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
+														while ($all_tarifs = mysql_fetch_assoc($all_tarifs_result)) {
+															if ($active == 1) {
+																echo '<div class="tab-pane fade in active" id="'.$all_tarifs['id_waviot'].'">';
+															}
+															else {
+																echo '<div class="tab-pane fade" id="'.$all_tarifs['id_waviot'].'">';
+															}
+															
+															echo '<table class="table table-condensed">';
+															echo '<tr>';
+															echo '<th rowspan="2">Дата</th>';
+															echo '<th rowspan="2">Тариф</th>';
+															echo '<th colspan="3">Показания</th>';
+															echo '<th rowspan="2">Цена</th>';
+															echo '<th rowspan="2">Начислено</th>';
+															
+															echo '</tr>';
+															echo '<tr>';
+															echo '<th>Начало</th>';
+															echo '<th>Конец</th>';
+															echo '<th>Расход</th>';
+															echo '</tr>';
+															
+															////////////////
+															$result_indications = mysql_query("SELECT i.auto, i.id, i.additional_sum, i.date, i.prev_indications, i.Indications, i.additional as price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND t.id_waviot = '".$all_tarifs['id_waviot']."' AND i.tarif = t.id AND i.date BETWEEN '".$curmonth."-01' AND '".$curmonth."-31'") or die(mysql_error());
+															
+															while ($indications = mysql_fetch_assoc($result_indications)) {
+																$date_indications = date( 'd.m.Y',strtotime($indications['date']));
+																echo '<tr>';
+																echo '<td>'. $date_indications.'</td>';
+																echo '<td>'. $indications['tarif'].'</td>';
+																echo '<td>'. $indications['prev_indications'].'</td>';
+																echo '<td>'. $indications['Indications'].'</td>';
+																echo '<td>'.($indications['Indications'] - $indications['prev_indications']).'</td>';													
+																echo '<td>'. $indications['price'].'</td>';
+																echo '<td>'. $indications['additional_sum'].'</td>';
+																
+																echo '</tr>';
+																
+															}	
+															////////////////
+															
+														echo '</table>';
+														echo '</div>';
+														$active = 0;
+														}								
+														?>		
+														
+														</div>
+														<!---------------------------------------->
+														
+														
+														
 													</div>
 												  <div class="tab-pane fade" id="payments">
 													<h4>Начальный баланс: <?php echo $start_balans; ?> руб.</h4>

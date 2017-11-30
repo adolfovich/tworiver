@@ -20,7 +20,7 @@
 		if ($is_admin == 1) {
 			if (isset($_POST['name']) && strlen($_POST['name']) != 0) {
 										
-					$q_ins_tarifs = "INSERT INTO tarifs SET name = '".$_POST['name']."', price = '".$_POST['price']."'";
+					$q_ins_tarifs = "INSERT INTO tarifs SET name = '".$_POST['name']."', price = '".$_POST['price']."', id_waviot = '".$_POST['id_waviot']."'";
 					mysql_query($q_ins_tarifs) or die(mysql_error());
 					$error_msg = '<script type="text/javascript">swal("", "Тариф добавлен ", "success")</script>';
 					header("Location: admin_tarifs.php");
@@ -28,7 +28,7 @@
 //print_r($_POST);
 			if (isset($_POST['editedTarifs'])) {
 				
-				$q_upd_tarifs = "UPDATE tarifs SET name = '".$_POST['editedName']."', price = '".$_POST['editedPrice']."' WHERE id = " . $_POST['editedTarifs'];
+				$q_upd_tarifs = "UPDATE tarifs SET name = '".$_POST['editedName']."', price = '".$_POST['editedPrice']."', id_waviot = '".$_POST['editedId_waviot']."'  WHERE id = " . $_POST['editedTarifs'];
 				//echo $q_upd_tarifs;
 				mysql_query($q_upd_tarifs) or die(mysql_error());
 				header("Location: admin_tarifs.php");
@@ -159,6 +159,10 @@
 													<label for="price">Цена</label>
 													<input type="text" name="price" class="form-control" value="<?php echo $_POST['price']; ?>" id="addPrice">
 												</div>
+												<div class="form-group">
+													<label for="id_waviot">№ тарифа в ВАВИОТ</label>
+													<input type="text" name="id_waviot" class="form-control" value="<?php echo $_POST['id_waviot']; ?>" id="id_waviot">
+												</div>
 											</form>
 										  </div>
 										  <!-- Футер модального окна -->
@@ -224,8 +228,11 @@
 																<label for="price">Цена</label>
 																<input type="text" name="editedPrice" class="form-control changePrice" value="'.$tarifs['price'].'">
 															</div>
-															
-																</form>
+															<div class="form-group">
+																<label for="editedId_waviot">№ тарифа в ВАВИОТ</label>
+																<input type="text" name="editedId_waviot" class="form-control" value="'.$tarifs['id_waviot'].'" id="editedId_waviot">
+															</div>
+														</form>
 													  </div>
 													  <!-- Футер модального окна -->
 													  <div class="modal-footer">
