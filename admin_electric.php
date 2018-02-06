@@ -1,52 +1,52 @@
 <?php
-	
+
 	include_once "core/db_connect.php";
 	include_once "include/auth.php";
-	
+
 	$curdate = date("Y-m-d");
-	
+
 	$curdate1 = date("d.m.Y");
-	
+
 	if (isset($_GET['ind_period'])) {
 		$curmonth = $_GET['ind_period'];
 	}
 	else {
 		$curmonth = date("Y-m");
 	}
-		
-	if ($is_auth == 1) { 
-	
+
+	if ($is_auth == 1) {
+
 		$result_user_is_admin = mysql_query("SELECT is_admin FROM users WHERE email = '".$_COOKIE["user"]."'") or die(mysql_error());
-		
+
 		while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 			$is_admin = $user_is_admin['is_admin'];
 		}
-		
+
 		if ($is_admin == 1) {
-			
+
 			if (isset($_GET['del_ind'])) {
 				//Удаляем показания
 				mysql_query("DELETE FROM Indications WHERE id = ".$_GET['del_ind']) or die(mysql_error());
-				//Откатываем баланс 
+				//Откатываем баланс
 				mysql_query("UPDATE users SET balans = (balans + ".$_GET['sum']."), total_balance = (total_balance + ".$_GET['sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
-				
-				
+
+
 				header("Location: admin_electric.php?select_user=".$_GET['select_user']);
 			}
-			if (isset($_GET['del_payment'])) {  
+			if (isset($_GET['del_payment'])) {
 				//echo 'Удаляем платеж';
 				mysql_query("DELETE FROM payments WHERE id = ".$_GET['del_payment']) or die(mysql_error());
 				//echo 'Откатываем баланс';
-				mysql_query("UPDATE users SET balans = (balans - ".$_GET['del_sum']."), total_balance = (total_balance - ".$_GET['del_sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error()); 
-				
+				mysql_query("UPDATE users SET balans = (balans - ".$_GET['del_sum']."), total_balance = (total_balance - ".$_GET['del_sum'].") WHERE id = ".$_GET['select_user']) or die(mysql_error());
+
 				//header("Location: admin_payments.php?select_user=".$_GET['select_user']);
 			}
-			
-			
-			//выбираем всех пользователей 
+
+
+			//выбираем всех пользователей
 			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0 ORDER BY CONVERT(uchastok,SIGNED)") or die(mysql_error());
-			
-			
+
+
 			if (isset($_GET['payment_sum']) && strlen($_GET['payment_sum']) == 0) {
 				$error_msg = '<script type="text/javascript">swal("Внимание!", "Не введена сумма", "error")</script>';
 			}
@@ -54,20 +54,20 @@
 				$error_msg = '<script type="text/javascript">swal("Внимание!", "Сумма не может быть равна нулю", "error")</script>';
 			}
 			else if (isset($_GET['payment_sum'])){
-				//Приводим сумму к float 
+				//Приводим сумму к float
 				$sum = str_replace(",", ".", $_GET['payment_sum']);
 				$sum = (float)$sum;
-				
-				//Добавляем платеж пользователю 
+
+				//Добавляем платеж пользователю
 				$q_add_payment = "INSERT INTO payments SET user = ".$_GET['select_user'].", sum = $sum, date = '".$_GET['payment_date']."',	base = '".mysql_real_escape_string($_GET['payment_base'])."'";
 				var_dump($q_add_payment);
 				mysql_query($q_add_payment) or die(mysql_error());
-				
+
 				//Обновляем баланс пользователя
-				$q_upd_balans = "UPDATE users u SET u.balans = (u.balans + $sum), u.total_balance = (u.total_balance + $sum) WHERE u.id = ".$_GET['select_user']; 
+				$q_upd_balans = "UPDATE users u SET u.balans = (u.balans + $sum), u.total_balance = (u.total_balance + $sum) WHERE u.id = ".$_GET['select_user'];
 				//echo $q_upd_balans;
 				mysql_query($q_upd_balans) or die(mysql_error());
-				
+
 				header("Location: admin_electric.php?select_user=".$_GET['select_user']);
 			}
 			//если отправлена форма с новыми показаниями
@@ -78,41 +78,41 @@
 				else {
 					//Выбираем предыдущие показания
 					$result_prev_inications = mysql_query("SELECT * FROM Indications WHERE user = ".$_GET['select_user']." AND tarif = ".$_GET['tarif']." ORDER BY id DESC LIMIT 1") or die(mysql_error());
-					
+
 					if (mysql_num_rows($result_prev_inications) == 0) {
 						//$result_user_start_indications = mysql_query("SELECT * FROM users WHERE id = ".$selected_user) or die(mysql_error());
 						$result_user_start_indications = mysql_query("SELECT * FROM users_tarifs WHERE user = ".$_GET['select_user']." AND tarif = ".$_GET['tarif']) or die(mysql_error());
 						while ($start_indications = mysql_fetch_assoc($result_user_start_indications)) {
 							$prev_inication = $start_indications['start_indications'];
-						}						
+						}
 					}
 					else {
 						while ($prev_inications = mysql_fetch_assoc($result_prev_inications)) {
 							$prev_inication = $prev_inications['Indications'];
 						}
-					}	
-					
-					//Приводим показания к float 
+					}
+
+					//Приводим показания к float
 					$prev_inication = (float)$prev_inication;
 					$inication = str_replace(",", ".", $_GET['indications']);
 					$inication = (float)$inication;
-					
-					//Приводим стоимость к float 
+
+					//Приводим стоимость к float
 					$price = str_replace(",", ".", $_GET['price']);
 					$price = (float)$price;
-					
+
 					$diff_inication = $inication - $prev_inication;
-					
+
 					//Проверяем что бы новые показания былыи больше предыдущих
 					if ($diff_inication > 0) {
-						//Добавляем показания пользователю 
+						//Добавляем показания пользователю
 						$q_add_inications = "INSERT INTO Indications SET user = ".$_GET['select_user'].", tarif = ".$_GET['tarif'].", Indications = '".$inication."', prev_indications = '".$prev_inication."',	additional = $price, additional_sum = (".$diff_inication."*$price), date = '".$_GET['ind_date']."'";
 						//echo $q_add_inications;
 						mysql_query($q_add_inications) or die(mysql_error());
 						//Обновляем баланс пользователя
 						$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - (".$diff_inication."*$price)), u.total_balance = (u.total_balance - (".$diff_inication."*$price)) WHERE u.id = ".$_GET['select_user'];
-						mysql_query($q_upd_balans) or die(mysql_error());						
-						
+						mysql_query($q_upd_balans) or die(mysql_error());
+
 						header("Location: admin_electric.php?select_user=".$_GET['select_user']);
 					}
 					else {
@@ -121,23 +121,23 @@
 				}
 			}
 			if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
-				
+
 				$selected_user = $_GET['select_user'];
-				
+
 				//Выбираем последний акт сверки по электроэнергии
 				$result_last_act = mysql_query("SELECT date_end FROM acts WHERE type = 1 AND user = $selected_user ORDER BY date_end DESC LIMIT 1") or die(mysql_error());
 				$last_act_date = mysql_result($result_last_act, 0);
 				//echo 'actdate '.$last_act_date;
-				
+
 				$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = ".$_GET['select_user']) or die(mysql_error());
-								
+
 				//Выбираем все тарифы пользователя
 				$result_user_tarifs = mysql_query("SELECT t.id, t.name FROM users_tarifs ut, tarifs t WHERE user = ".$_GET['select_user']." AND ut.tarif = t.id") or die(mysql_error());
 			}
-			
+
 		}
 	}
-	
+
 ?>
 
 <!DOCTYPE html>
@@ -147,7 +147,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Система управления СНТ</title>
-		
+
 		<script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
 		<!-- Latest compiled and minified CSS -->
@@ -162,10 +162,10 @@
 		<link rel="stylesheet" href="css/font-awesome.min.css">
 
 		<link rel="stylesheet" href="css/sweetalert.css">
-		
+
 		<script src="js/sweetalert.min.js"></script>
 		<link rel="stylesheet" href="css/my.css">
-	
+
 		<style>
 			#header {
 				background: url(img/header.jpg);
@@ -182,15 +182,15 @@
 			th {text-align:center; vertical-align: middle !important; border: 1px rgb(221, 221, 221) solid;}
 			td {text-align:center; vertical-align: middle !important;}
 		</style>
-		
+
 	</head>
 	<body>
 		<?php echo $error_msg; ?>
 		<?php include_once "include/head.php"; ?>
-		
+
 		<div class="container">
-			<?php 
-				if ($is_auth == 1) { 
+			<?php
+				if ($is_auth == 1) {
 				if ($is_admin == 1) {
 			?>
 			<div class="row">
@@ -226,7 +226,7 @@
 					?>
 					<a href="#addInd" class="btn btn-primary" data-toggle="modal" <?= $disabled_button;?>><i class="fa fa-plus" aria-hidden="true"></i> Добавить показания</a>
 					<a href="#addPay" class="btn btn-primary" data-toggle="modal" <?= $disabled_button;?>><i class="fa fa-plus" aria-hidden="true"></i> Добавить платеж</a>
-					<br><br>	
+					<br><br>
 					<!-- HTML-код модального окна -->
 					<div id="addPay" class="modal fade">
 						<div class="modal-dialog">
@@ -317,32 +317,57 @@
 					<div class="tab-content">
 						<div class="tab-pane fade in active" id="indications11">
 							<br>
-							<?php 
+							<?php
 							if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
 							?>
-							<div class="table-responsive">												
+							<div class="table-responsive">
 								<form class="form-inline" id="ind_period">
-									<label class="" for="inlineFormInput">Месяц/год</label>&nbsp&nbsp
-									<input class="form-control" type="month" name="ind_period" value="<?= $curmonth; ?>" onChange="document.getElementById('ind_period').submit()">
-									<input name="select_user" type="hidden" value="<?= $selected_user; ?>">
+									<label for="inlineFormInput">Месяц/год</label> &nbsp;&nbsp;
+									<input name="ind_period" id="ind_period_input" class="form-control" type="month" value="<?= $curmonth; ?>" onChange="changeIndPeriod()">
+									<input name="ind_select_user" id="ind_user_input" type="hidden" value="<?= $selected_user; ?>">
 								</form>
+								<script>
+									function changeIndPeriod() {
+										var month = document.getElementById('ind_period_input').value;
+										var user = document.getElementById('ind_user_input').value;
+										//alert(month+' '+user);
+
+										$.post(
+										  "core/select_ind.php",
+										  {
+										    month: month,
+										    user: user
+										  },
+										  onAjaxSuccess
+										);
+
+										function onAjaxSuccess(data)
+										{
+										  //alert(data);
+											document.getElementById('ind_contaner').innerHTML = data;
+										}
+									}
+								</script>
+
+
 								<br>
-								<ul class="nav nav-tabs">
-								<?php
-								//Выбираем все существующие тарифы
-								$active = 1;
-								$all_tarifs_result = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
-								while ($all_tarifs = mysql_fetch_assoc($all_tarifs_result)) {
-									if ($active == 1) {
-										echo '<li class="active"><a href="#'.$all_tarifs['id_waviot'].'" data-toggle="tab" >'.$all_tarifs['name'].'</a></li>';
+								<div id='ind_contaner'>
+									<ul class="nav nav-tabs">
+									<?php
+									//Выбираем все существующие тарифы
+									$active = 1;
+									$all_tarifs_result = mysql_query("SELECT * FROM tarifs") or die(mysql_error());
+									while ($all_tarifs = mysql_fetch_assoc($all_tarifs_result)) {
+										if ($active == 1) {
+											echo '<li class="active"><a href="#'.$all_tarifs['id_waviot'].'" data-toggle="tab" >'.$all_tarifs['name'].'</a></li>';
+										}
+										else {
+											echo '<li><a href="#'.$all_tarifs['id_waviot'].'" data-toggle="tab" >'.$all_tarifs['name'].'</a></li>';
+										}
+										$active = 0;
 									}
-									else {
-										echo '<li><a href="#'.$all_tarifs['id_waviot'].'" data-toggle="tab" >'.$all_tarifs['name'].'</a></li>';
-									}
-									$active = 0;
-								}
-								?>
-								</ul>
+									?>
+									</ul>
 								<div class="tab-content">
 								<?php
 								//Выбираем все существующие тарифы
@@ -355,7 +380,7 @@
 									else {
 										echo '<div class="tab-pane fade" id="'.$all_tarifs['id_waviot'].'">';
 									}
-									
+
 									echo '<table class="table table-condensed">';
 									echo '<tr>';
 									echo '<th rowspan="2">Дата</th>';
@@ -371,7 +396,7 @@
 									echo '<th>Расход</th>';
 									echo '</tr>';
 									$result_indications = mysql_query("SELECT i.auto, i.id, i.additional_sum, i.date, i.prev_indications, i.Indications, i.additional as price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = ".$_GET['select_user']." AND t.id_waviot = '".$all_tarifs['id_waviot']."' AND i.tarif = t.id AND i.date BETWEEN '".$curmonth."-01' AND '".$curmonth."-31'") or die(mysql_error());
-									
+
 									while ($indications = mysql_fetch_assoc($result_indications)) {
 										$date_indications = date( 'd.m.Y',strtotime($indications['date']));
 										echo '<tr>';
@@ -379,66 +404,67 @@
 										echo '<td>'. $indications['tarif'].'</td>';
 										echo '<td>'. $indications['prev_indications'].'</td>';
 										echo '<td>'. $indications['Indications'].'</td>';
-										echo '<td>'.($indications['Indications'] - $indications['prev_indications']).'</td>';													
+										echo '<td>'.($indications['Indications'] - $indications['prev_indications']).'</td>';
 										echo '<td>'. $indications['price'].'</td>';
 										echo '<td>'. $indications['additional_sum'].'</td>';
 										if (strtotime($indications['date']) <= strtotime($last_act_date) || $indications['auto'] == 1) {
 											echo '<td style="text-align:center"><span class="fa-stack fa-lg"><i class="fa fa-trash fa-stack-1x" aria-hidden="true"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span></td>';
 										}
-										else {														
+										else {
 											echo '<td style="text-align:center"><a class="del_user" href="#" onclick="ConfirmDelInd('.$indications['id'].','.$selected_user.','.$indications['additional_sum'].')"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a></td>';
 										}
 										echo '</tr>';
-										
+
 									}
 								echo '</table>';
 								echo '</div>';
 								$active = 0;
-								}								
-								?>		
-								
+								}
+								?>
+
 								</div>
 							<?php
 							}
-							?>											
+							?>
 							</div>
+						</div>
 						<div class="tab-pane fade" id="paymets">
 							<br>
-							<?php 
+							<?php
 							if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
-								echo '<div class="table-responsive">';												
+								echo '<div class="table-responsive">';
 								echo '<table class="table table-condensed">';
 								echo '<tr>';
 								echo '<th>Дата</th>';
 								echo '<th>Сумма</th>';
-								echo '<th>Основание</th>';												
+								echo '<th>Основание</th>';
 								echo '<th></th>';
-								echo '</tr>';												
+								echo '</tr>';
 								while ($user_payments = mysql_fetch_assoc($result_user_payments)) {
 									$date_payment = date( 'd.m.Y',strtotime($user_payments['date']));
 									echo '<tr>';
 									echo '<td>'. $date_payment.'</td>';
 									echo '<td>'. $user_payments['sum'].'</td>';
-									echo '<td>'. $user_payments['base'].'</td>';													
+									echo '<td>'. $user_payments['base'].'</td>';
 									if (strtotime($user_payments['date']) <= strtotime($last_act_date)) {
 										echo '<td style="text-align:center"><span class="fa-stack fa-lg"><i class="fa fa-trash fa-stack-1x" aria-hidden="true"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span></td>';
 									}
-									else {														
+									else {
 										echo '<td style="text-align:center"><a class="del_user" href="#" onclick="ConfirmDelPay('.$user_payments['id'].','.$selected_user.','.$user_payments['sum'].')"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a></td>';
 									}
 									echo '</tr>';
 								}
-								echo '</table>';												
+								echo '</table>';
 								echo '</div>';
 							}
-							?>											
+							?>
 						</div>
 					</div>
 				</div>
-				<?php 
+				<?php
 						}
-					} 
-					else 
+					}
+					else
 					{
 				?>
 				<div class="col-md-12">
@@ -447,12 +473,39 @@
 				<?php
 				}
 				?>
-			
+
 		</div>
-		
+
 		<?php include_once "include/footer.php"; ?>
 
 		<script>
+		// prepare the form when the DOM is ready
+		$(document).ready(function() {
+
+		// Setup the ajax indicator
+		$('body').append('<div id="ajaxBusy"><p><img src="img/load.gif"></p></div>');
+
+		$('#ajaxBusy').css({
+			display:"none",
+			margin:"0px",
+			paddingLeft:"0px",
+			paddingRight:"0px",
+			paddingTop:"0px",
+			paddingBottom:"0px",
+			position:"absolute",
+			right:"50%",
+			top:"500px",
+			 width:"auto"
+		});
+		});
+
+		// Ajax activity indicator bound to ajax start/stop document events
+		$(document).ajaxStart(function(){
+		$('#ajaxBusy').show();
+		}).ajaxStop(function(){
+		$('#ajaxBusy').hide();
+		});
+
 			function ConfirmDelPay(payment_id, user_id, sum) {
 				swal({
 					title: 'Удалить платеж?',
@@ -473,7 +526,7 @@
 					document.location.href = "admin_electric.php?del_payment="+payment_id+"&select_user="+user_id+"&del_sum="+sum;
 				})
 			}
-			
+
 			function ConfirmDelInd(ind_id, user_id, sum) {
 				swal({
 					title: 'Удалить показания?',
@@ -494,8 +547,8 @@
 					document.location.href = "admin_electric.php?del_ind="+ind_id+"&select_user="+user_id+"&sum="+sum;
 				})
 			}
-			
-			function checkAddIndications() {													
+
+			function checkAddIndications() {
 				if (new Date(document.getElementById('indications_date').value) <= new Date("<?= $last_act_date;?>")) {
 					document.getElementById('AddIndicationsError').innerHTML = 'Дата показаний находится в закрытом периоде';
 				} else if (document.getElementById('indications').value.length == 0 || document.getElementById('indications').value == 0) {
@@ -505,9 +558,9 @@
 				} else {
 					document.getElementById('AddIndications').submit(); return false;
 				}
-			}												
-			
-			function checkAddPayment() {													
+			}
+
+			function checkAddPayment() {
 				if (new Date(document.getElementById('payment_date').value) <= new Date("<?= $last_act_date;?>")) {
 					document.getElementById('AddPaymentError').innerHTML = 'Дата платежа находится в закрытом периоде';
 				} else if (document.getElementById('payment_sum').value == 0 || document.getElementById('payment_sum').value.length == 0) {
@@ -515,8 +568,8 @@
 				} else {
 					document.getElementById('AddPayment').submit();
 				}
-			}												
-			
+			}
+
 			function getXmlHttp(){
 			  var xmlhttp;
 			  try {
@@ -533,20 +586,20 @@
 			  }
 			  return xmlhttp;
 			}
-			
+
 			function getTarifPrice(tarif) {
-				var req = getXmlHttp()  
-				req.onreadystatechange = function() {  
-					if (req.readyState == 4) { 
-						if(req.status == 200) { 
+				var req = getXmlHttp()
+				req.onreadystatechange = function() {
+					if (req.readyState == 4) {
+						if(req.status == 200) {
 							document.getElementById("price").value = req.responseText;
 						}
 					}
 				}
-				req.open('GET', 'ajax/get_user_tarif.php?tarif='+tarif, true);  
-				req.send(null);  
+				req.open('GET', 'ajax/get_user_tarif.php?tarif='+tarif, true);
+				req.send(null);
 			}
-			
+
 			var price = document.getElementById("tarif").value;
 			getTarifPrice(price);
 
