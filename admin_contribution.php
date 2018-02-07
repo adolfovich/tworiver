@@ -732,7 +732,7 @@
 		
 		
 		
-		<?php include_once "include/footer.php"; ?>
+		
 		
 		<script>
 		$('#membership a').click(function (e) {
