@@ -102,7 +102,7 @@
 							}
 						}
 					}
-					else {echo 'Нет показаний<br>';}
+					else {echo 'Нет тарифа в базе<br>';}
 				}
 				
 				$last_date = date("Y-m-d", strtotime('+1 day', strtotime($last_date)));
