@@ -61,7 +61,7 @@
 			}
 			
 			if (isset($_POST['sch_model']) && strlen($_POST['sch_model']) != 0) {
-				mysql_query("UPDATE users SET sch_model = '".$_POST['sch_model']."', sch_num = '".$_POST['sch_num']."', sch_plomb_num = '".$_POST['sch_plomb_num']."' WHERE id =".$_POST['user']) or die(mysql_error());
+				mysql_query("UPDATE users SET sch_model = '".$_POST['sch_model']."', sch_num = '".$_POST['sch_num']."', sch_plomb_num = '".$_POST['sch_plomb_num']."', modem_num = '".$_POST['modem_num']."' WHERE id =".$_POST['user']) or die(mysql_error());
 				mysql_query("UPDATE users SET sch_step = 0 WHERE id =".$_POST['user']) or die(mysql_error());
 				mysql_query("DELETE FROM Indications WHERE user =".$_POST['user']) or die(mysql_error());
 				mysql_query("DELETE FROM payments WHERE user =".$_POST['user']) or die(mysql_error());
@@ -233,28 +233,32 @@
 										<h3>Шаг 3</h3>
 										<h4>Ввести данные нового счетчика</h4>
 										<form role="form" method="POST">
-										  <div class="form-group">
-											<label for="sch_model">Модель счетчика</label>
-											<input name="sch_model" type="text" class="form-control" id="sch_model" placeholder="Модель счетчика">
-										  </div>
-										  <div class="form-group">
-											<label for="sch_num">Номер счетчика</label>
-											<input name="sch_num" type="text" class="form-control" id="sch_num" placeholder="Номер счетчика">
-										  </div>
-										  <div class="form-group">
-											<label for="sch_plomb_num">Номер пломбы</label>
-											<input name="sch_plomb_num" type="text" class="form-control" id="sch_plomb_num" placeholder="Номер пломбы">
-										  </div>
-										  <input type="hidden" name="user" value="<?php echo $change_user; ?>">
-										<div class="form-group">
-											<label for="InputСolTarif">Количество тарифов счетчика</label>
-											<select class="form-control" name="colTarif" id="InputСolTarif" onChange="selectColTarifs(this.value)">
-												<option selected>1</option>
-												<option>2</option>
-												<option>3</option>
-												<option>4</option>
-											</select>
-										</div>
+											<div class="form-group">
+												<label for="sch_model">Модель счетчика</label>
+												<input name="sch_model" type="text" class="form-control" id="sch_model" placeholder="Модель счетчика">
+											</div>
+											<div class="form-group">
+												<label for="sch_num">Номер счетчика</label>
+												<input name="sch_num" type="text" class="form-control" id="sch_num" placeholder="Номер счетчика">
+											</div>
+											<div class="form-group">
+												<label for="sch_plomb_num">Номер пломбы</label>
+												<input name="sch_plomb_num" type="text" class="form-control" id="sch_plomb_num" placeholder="Номер пломбы">
+											</div>
+											<div class="form-group">
+												<label for="modem_num">Номер модема</label>
+												<input name="modem_num" type="text" class="form-control" id="modem_num" placeholder="Номер пломбы">
+											</div>
+											<input type="hidden" name="user" value="<?php echo $change_user; ?>">
+											<div class="form-group">
+												<label for="InputСolTarif">Количество тарифов счетчика</label>
+												<select class="form-control" name="colTarif" id="InputСolTarif" onChange="selectColTarifs(this.value)">
+													<option selected>1</option>
+													<option>2</option>
+													<option>3</option>
+													<option>4</option>
+												</select>
+											</div>
 										<script>
 													function selectColTarifs(colTarifs) {
 														//alert(colTarifs);

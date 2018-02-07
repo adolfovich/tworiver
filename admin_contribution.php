@@ -28,6 +28,13 @@
 				$selected_user = $_GET['select_user'];
 				//Выбираем все платежи пользователя
 				$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = ".$_GET['select_user']) or die(mysql_error());
+				
+				//Выбираем последний акт сверки по членским взносам
+				$result_last_act = mysql_query("SELECT date FROM acts WHERE type = 2 AND user = $selected_user ORDER BY date DESC LIMIT 1") or die(mysql_error());
+				$last_act_date = mysql_result($result_last_act, 0);
+				//Выбираем последний акт сверки по целевым взносам
+				$result_last_act_target = mysql_query("SELECT date FROM acts WHERE type = 3 AND user = $selected_user ORDER BY date DESC LIMIT 1") or die(mysql_error());
+				$last_act_date_target = mysql_result($result_last_act_target, 0);
 			}
 			
 			if (isset($_GET['del_сontrib']) && strlen($_GET['del_сontrib']) != 0 && $_GET['del_сontrib'] != 0) {
@@ -115,7 +122,7 @@
 			
 			if (isset($_GET['contributions_add'])) {
 				if ((isset($_GET['contributions_sum']) && ($_GET['contributions_sum'] == 0 || strlen($_GET['contributions_sum']) == 0))) {  
-					$error_msg = '<script type="text/javascript">swal("Внимание! 1", "Не введена сумма или она равна нулю", "error")</script>';
+					$error_msg = '<script type="text/javascript">swal("Внимание!", "Не введена сумма или она равна нулю", "error")</script>';
 				}
 				else {
 					$contributions_add_type = $_GET['contributions_type'];
@@ -505,13 +512,46 @@
 										  <!-- Футер модального окна -->
 										  <div class="modal-footer">
 											<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
-											<button type="button" class="btn btn-primary" onclick="document.getElementById('AddContribution').submit(); return false;" >Сохранить</button>
+											<button type="button" class="btn btn-primary" onclick="checkContributionDate(); return false;" >Сохранить</button>
 										  </div>
 										</div>
 									  </div>
 									</div>
 									
 									<script>
+										function checkContributionDate() {
+											var ContributionType = document.getElementById('contribution_type').value;
+											var ContributionDate = document.getElementById('contribution_date').value;
+											if (ContributionType == 1) {
+												var actType = 2;
+											}
+											else if (ContributionType == 2) {
+												var actType = 3;
+											}
+											$.post(
+											  "ajax/check_contribution_date.php",
+											  {
+												type: actType,
+												date: ContributionDate,
+												user: <?= $selected_user; ?>
+											  },
+											  onAjaxSuccess
+											);
+											function onAjaxSuccess(data)
+											{					  
+											  //alert(data);
+											  if (data == 'check OK') {
+												 document.getElementById('AddContribution').submit(); 
+											  }
+											  else {
+												  swal("Внимание!", "Нельзя добавлять взнос в закрытый период", "error")
+											  }
+											  
+											  //document.getElementById('AddContribution').submit()
+											  
+											}
+										}
+										
 										function changeTypeContribution(contributionType) {
 											if (contributionType == 1) {
 												document.getElementById("contribution_comment").setAttribute('disabled', 'disabled');
@@ -587,7 +627,7 @@
 																		<label for="paid_contribution_date">Дата</label>
 																		<input name="select_user" type="hidden" value="<?php echo $_GET['select_user']; ?>" />
 																		<input name="paid_contribution" type="hidden" value="<?php echo $user_membership['id']; ?>" />
-																		<input name="paid_contribution_date" type="date" class="form-control" id="paid_contribution_date" value="<?php echo $date_membership; ?>">
+																		<input name="paid_contribution_date" type="date" class="form-control" id="paid_contribution_date" value="">
 																	</div>
 																	
 																	<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
@@ -604,7 +644,13 @@
 														<?php
 														echo '</td>';
 													}
-													echo '<td><a class="del_user" href="#" onclick="ConfirmDelContrib('.$user_membership['id'].','.$_GET['select_user'].','.$user_membership['paid'].','.$user_membership['sum'].')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
+													if (strtotime($user_membership['date']) <= strtotime($last_act_date)) {
+														echo '<td style="text-align:center"><span class="fa-stack fa-lg"><i class="fa fa-trash fa-stack-1x" aria-hidden="true"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span></td>';
+													}
+													else {														
+														echo '<td style="text-align:center"><a class="del_user" href="#" onclick="ConfirmDelContrib('.$user_membership['id'].','.$_GET['select_user'].','.$user_membership['paid'].','.$user_membership['sum'].')"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a></td>';
+														
+													}
 													echo '</tr>';
 												}
 												
@@ -658,7 +704,7 @@
 																		<label for="paid_contribution_date">Дата</label>
 																		<input name="select_user" type="hidden" value="<?php echo $_GET['select_user']; ?>" />
 																		<input name="paid_contribution" type="hidden" value="<?php echo $user_target['id']; ?>" />
-																		<input name="paid_contribution_date" type="date" class="form-control" id="paid_contribution_date" value="<?php echo $date_target; ?>">
+																		<input name="paid_contribution_date" type="date" class="form-control" id="paid_contribution_date" value="">
 																	</div>
 																	
 																	<input name="select_user" type="hidden" value="<?php echo $selected_user; ?>">
@@ -675,10 +721,18 @@
 														<?php
 														echo '</td>';
 													}
-													echo '<td><a class="del_user" href="#" onclick="ConfirmDelContrib('.$user_target['id'].','.$_GET['select_user'].','.$user_target['paid'].','.$user_target['sum'].')"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
+													if (strtotime($user_target['date']) <= strtotime($last_act_date_target)) {
+														echo '<td style="text-align:center"><span class="fa-stack fa-lg"><i class="fa fa-trash fa-stack-1x" aria-hidden="true"></i><i class="fa fa-ban fa-stack-2x text-danger"></i></span></td>';
+													}
+													else {														
+														echo '<td style="text-align:center"><a class="del_user" href="#" onclick="ConfirmDelContrib('.$user_target['id'].','.$_GET['select_user'].','.$user_target['paid'].','.$user_target['sum'].')"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></a></td>';
+														
+													}
+													
 													echo '</tr>';
 												}
 												?>
+											</table>
 										</div>
 									</div>
 									
@@ -711,6 +765,7 @@
 								</div>
 								
 							</div>
+							
 						
 						<?php 
 						}
@@ -729,10 +784,10 @@
 			
 			
 		</div>
+		<div>
 		
-		
-		
-		
+		<?php include_once "include/footer.php"; ?>
+		</div>
 		
 		<script>
 		$('#membership a').click(function (e) {

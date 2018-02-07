@@ -3,6 +3,8 @@
 	include_once "../core/func.php";
 	
 	$user_id = $_GET['user'];
+	$date_from = $_GET['datefrom'];
+	$date_to = $_GET['dateto'];
 	
 	//выбираем данные по пользователю
 	$result_user_data = mysql_query("SELECT * FROM users WHERE id = $user_id") or die(mysql_error());
@@ -57,7 +59,10 @@
 					
 				<table style="width: 100%;">
 					<tr>
-						<td colspan="3" style="text-align: center;"><h4>Акт сверки оплаты за электроэнергию пользователем <?php echo $contract_num; ?></h4></td>
+						<td colspan="3" style="text-align: center;">
+							<h4>Акт сверки оплаты за электроэнергию пользователем <?php echo $contract_num; ?></h4>
+							<h4>за период с <?= date( 'd.m.Y',strtotime($date_from)); ?> по <?= date( 'd.m.Y',strtotime($date_to)); ?></h4>
+						</td>
 					</tr>
 					<tr>
 						<td style="text-align: left;"><h5>СНТ "Двуречье"</h5></td>
@@ -87,8 +92,8 @@
 		</div>
 		
 		<?php
-			//выбираем все показания счетчика за все периоды
-			$result_user_indications = mysql_query("SELECT i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id") or die(mysql_error());	
+			//выбираем все показания счетчика за указанный период $date_from - $date_to
+			$result_user_indications = mysql_query("SELECT i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to'") or die(mysql_error());	
 		?>
 				
 		<div class="row">
@@ -129,7 +134,7 @@
 		</div>
 		<?php
 			//выбираем все оплаты
-			$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = $user_id") or die(mysql_error());	
+			$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = $user_id AND date BETWEEN '$date_from' AND '$date_to'") or die(mysql_error());	
 		?>
 		<div class="row">
 			<div class="col-md-12">			
