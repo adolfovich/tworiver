@@ -81,15 +81,10 @@
 								
 								
 								echo '<b>Добавляем показания</b><br>';
-								$insert_q = "INSERT INTO Indications SET
-																											date='".date('Y-m-d', strtotime($date)-86400)."',
-																											user=".$users['id'].",
-																											tarif=(SELECT id FROM tarifs WHERE id_waviot = '".$tarif."'),
-																											Indications=".$value_ind.",
-																											prev_indications = '".$prev_ind."',
-																											additional=(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'),
-																											additional_sum= $ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'),
-																											auto = 1";
+								
+								$insert_q = "INSERT INTO Indications SET date='".date('Y-m-d', strtotime($date)-86400)."', user=".$users['id'].", tarif=(SELECT id FROM tarifs WHERE id_waviot = '".$tarif."'), Indications=".$value_ind.",	prev_indications = '".$prev_ind."',	additional=(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), additional_sum= $ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), auto = 1";
+								$insert_q = "INSERT INTO Indications SET date='".date('Y-m-d', strtotime($date)-86400)."', user=".$users['id'].", tarif=(SELECT id FROM tarifs WHERE id_waviot = '".$tarif."'), Indications=".$value_ind.",	prev_indications = '".$prev_ind."',	additional=(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), additional_sum= $ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), auto = 1";
+								
 								echo $insert_q . '<br>';
 								mysql_query($insert_q) or die(mysql_error());
 																

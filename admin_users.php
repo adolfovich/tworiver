@@ -46,6 +46,7 @@
 				$add_uchastok = $_GET['uchastok'];
 				$add_sch_model = $_GET['sch_model'];
 				$add_sch_num = $_GET['sch_num'];
+				$add_sch_modem_num = $_GET['sch_modem_num'];
 				$add_sch_pl_num = $_GET['sch_pl_num'];
 				$add_start_ind = $_GET['start_ind'];
 				$add_start_bal = $_GET['start_bal'];
@@ -59,7 +60,7 @@
 					$phone = substr($add_phone, 1);
 				}
 
-				$q_add_user = "INSERT INTO users SET name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_balans = $add_start_bal";
+				$q_add_user = "INSERT INTO users SET modem_num = '$add_sch_modem_num', name = '$add_fio', email = '$add_email', pass = '$add_password', phone='$phone', uchastok = '$add_uchastok', sch_model = '$add_sch_model', sch_num = '$add_sch_num', sch_plomb_num = '$add_sch_pl_num', balans = $add_start_bal, start_balans = $add_start_bal";
 				//echo $q_add_user;
 				mysql_query($q_add_user) or die(mysql_error());
 
@@ -261,6 +262,10 @@
 												<div class="form-group">
 													<label for="InputSchNum">Номер счетчика</label>
 													<input name="sch_num" type="text" class="form-control" id="InputSchNum" placeholder="Номер счетчика">
+												</div>
+												<div class="form-group">
+													<label for="InputSchModemNum">Номер модема</label>
+													<input name="sch_modem_num" type="text" class="form-control" id="InputSchModemNum" placeholder="Номер модема">
 												</div>
 												<div class="form-group">
 													<label for="InputSchPlumbNum">Номер пломбы</label>
