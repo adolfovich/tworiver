@@ -71,7 +71,7 @@
 
 						foreach ($tarif_data as $j => $value) {
 							$date = $value->datetime;
-							$value_ind = $value->value;
+							$value_ind = round($value->value, 2);
 							//var_dump($value_ind);
 							//echo '<hr>';
 							if ($value_ind > 0 || $value_ind != '0') {
