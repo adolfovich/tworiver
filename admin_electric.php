@@ -398,13 +398,12 @@
 									$result_indications = mysql_query("SELECT i.auto, i.id, i.additional_sum, i.date, i.prev_indications, i.Indications, i.additional as price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = ".$_GET['select_user']." AND t.id_waviot = '".$all_tarifs['id_waviot']."' AND i.tarif = t.id AND i.date BETWEEN '".$curmonth."-01' AND '".$curmonth."-31'") or die(mysql_error());
 
 									while ($indications = mysql_fetch_assoc($result_indications)) {
-										$date_indications = date( 'd.m.Y',strtotime($indications['date']));
 										echo '<tr>';
-										echo '<td>'. $date_indications.'</td>';
+										echo '<td>'. date( 'd.m.Y',strtotime($indications['date'])).'</td>';
 										echo '<td>'. $indications['tarif'].'</td>';
 										echo '<td>'. $indications['prev_indications'].'</td>';
 										echo '<td>'. $indications['Indications'].'</td>';
-										echo '<td>'.($indications['Indications'] - $indications['prev_indications']).'</td>';
+										echo '<td>'. round($indications['Indications'] - $indications['prev_indications'], 2).'</td>';
 										echo '<td>'. $indications['price'].'</td>';
 										echo '<td>'. $indications['additional_sum'].'</td>';
 										if (strtotime($indications['date']) <= strtotime($last_act_date) || $indications['auto'] == 1) {
