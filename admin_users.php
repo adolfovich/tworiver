@@ -41,6 +41,7 @@
 			if (isset($_GET['fio']) && strlen($_GET['fio'])!=0) {
 				$add_fio = $_GET['fio'];
 				$add_email = $_GET['email'];
+				$create_email = $_GET['create_email'];
 				$add_phone = $_GET['phone'];
 				$add_password = md5($_GET['password']);
 				$add_uchastok = $_GET['uchastok'];
@@ -64,12 +65,13 @@
 				//echo $q_add_user;
 				mysql_query($q_add_user) or die(mysql_error());
 
-				//Обрезаем email до имени пользователя
-				$email_user_name = substr($add_email, 0, strpos($add_email, "@"));
-
-				//Создаем попьзователю почтовый ящик на домене
-				//shell_exec("curl -H 'PddToken: WXDQN7U72I7E5YYIZBGIQIJC6KR7O4X2WUYB2J5WRHT7ZVO4RPNQ' -d 'domain=tworiver.ru&login=".$email_user_name."&password=".$_GET['password']."' 'https://pddimp.yandex.ru/api2/admin/email/add'");
-
+				if ($create_email == 1) {				
+					//Обрезаем email до имени пользователя
+					$email_user_name = substr($add_email, 0, strpos($add_email, "@"));
+					//Создаем попьзователю почтовый ящик на домене
+					shell_exec("curl -H 'PddToken: WXDQN7U72I7E5YYIZBGIQIJC6KR7O4X2WUYB2J5WRHT7ZVO4RPNQ' -d 'domain=tworiver.ru&login=".$email_user_name."&password=".$_GET['password']."' 'https://pddimp.yandex.ru/api2/admin/email/add'");
+				}
+				
 				$add_user_id = mysql_insert_id();
 				//добавляем пользователю тарифы
 
@@ -244,6 +246,10 @@
 												<div class="form-group">
 													<label for="InputEmail">Email</label>
 													<input name="email" type="email" class="form-control" id="InputEmail" placeholder="Email" readonly>
+												</div>
+												<div class="form-group">
+													<label for="create_email">Создать ящик</label>
+													<input name="create_email" type="checkbox" class="form-control" id="create_email" checked value="1">
 												</div>
 												<div class="form-group">
 													<label for="InputPhone">Телефон</label>
