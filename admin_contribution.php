@@ -30,10 +30,10 @@
 				$result_user_payments = mysql_query("SELECT * FROM payments WHERE user = ".$_GET['select_user']) or die(mysql_error());
 				
 				//Выбираем последний акт сверки по членским взносам
-				$result_last_act = mysql_query("SELECT date FROM acts WHERE type = 2 AND user = $selected_user ORDER BY date DESC LIMIT 1") or die(mysql_error());
+				$result_last_act = mysql_query("SELECT date_end FROM acts WHERE type = 2 AND user = $selected_user ORDER BY date_end DESC LIMIT 1") or die(mysql_error());
 				$last_act_date = mysql_result($result_last_act, 0);
 				//Выбираем последний акт сверки по целевым взносам
-				$result_last_act_target = mysql_query("SELECT date FROM acts WHERE type = 3 AND user = $selected_user ORDER BY date DESC LIMIT 1") or die(mysql_error());
+				$result_last_act_target = mysql_query("SELECT date_end FROM acts WHERE type = 3 AND user = $selected_user ORDER BY date_end DESC LIMIT 1") or die(mysql_error());
 				$last_act_date_target = mysql_result($result_last_act_target, 0);
 			}
 			
