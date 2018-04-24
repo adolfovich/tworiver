@@ -24,6 +24,8 @@
 			//выбираем всех пользователей 
 			$result_select_user = mysql_query("SELECT * FROM users WHERE is_del = 0 ORDER BY CONVERT(uchastok,SIGNED)") or die(mysql_error());
 			
+			
+			
 			if (isset($_GET['select_user']) && strlen($_GET['select_user']) != 0) {
 				$selected_user = $_GET['select_user'];
 				//Выбираем все платежи пользователя
@@ -36,6 +38,8 @@
 				$result_last_act_target = mysql_query("SELECT date_end FROM acts WHERE type = 3 AND user = $selected_user ORDER BY date_end DESC LIMIT 1") or die(mysql_error());
 				$last_act_date_target = mysql_result($result_last_act_target, 0);
 			}
+			
+			
 			
 			if (isset($_GET['del_сontrib']) && strlen($_GET['del_сontrib']) != 0 && $_GET['del_сontrib'] != 0) {
 				$del_contrib_id = $_GET['del_сontrib'];

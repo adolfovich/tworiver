@@ -106,7 +106,8 @@
 							//$mail->Password = "6hg3m";
 							$mail->setFrom('robot@tworiver.ru', 'Система управления СНТ');
 							$mail->addAddress('adolfovich.alexashka@gmail.com');
-							$mail->addAddress('hakalo@bk.ru');
+							//$mail->addAddress('hakalo@bk.ru');
+							$mail->addAddress('info@tworiver.ru');
 							$mail->Subject = $sub;
 							$mail->Body    = "<b>Имя:</b> $name<hr><b>Email:</b> $email<hr><b>Сообщение:</b> $text";
 							$mail->IsHTML(true); 

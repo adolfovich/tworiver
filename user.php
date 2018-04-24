@@ -652,7 +652,7 @@
 																echo '<td>'. $indications['tarif'].'</td>';
 																echo '<td>'. $indications['prev_indications'].'</td>';
 																echo '<td>'. $indications['Indications'].'</td>';
-																echo '<td>'.($indications['Indications'] - $indications['prev_indications']).'</td>';
+																echo '<td>'. round(($indications['Indications'] - $indications['prev_indications']), 2).'</td>';
 																echo '<td>'. $indications['price'].'</td>';
 																echo '<td>'. $indications['additional_sum'].'</td>';
 

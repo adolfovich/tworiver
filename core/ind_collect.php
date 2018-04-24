@@ -1,42 +1,42 @@
-
+п»ї
 <?php
 	include_once "db_connect.php";
 
-	//Сегодняшняя дата
+	//РЎРµРіРѕРґРЅСЏС€РЅСЏСЏ РґР°С‚Р°
 	$curdate = date("Y-m-d");
-	echo 'Сегодня '.$curdate.'<br>';
-	//Вчерашняя дата
+	echo 'РЎРµРіРѕРґРЅСЏ '.$curdate."<br> \r\n";
+	//Р’С‡РµСЂР°С€РЅСЏСЏ РґР°С‚Р°
 	$yesterday = date('Y-m-d', strtotime('yesterday'));
-	echo 'Вчера '.$yesterday.'<br>';
+	echo 'Р’С‡РµСЂР° '.$yesterday."<br> \r\n";
 
-	//Выбираем всех пользователей у которых есть номер модема
+	//Р’С‹Р±РёСЂР°РµРј РІСЃРµС… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№ Сѓ РєРѕС‚РѕСЂС‹С… РµСЃС‚СЊ РЅРѕРјРµСЂ РјРѕРґРµРјР°
 	$result_users = mysql_query("SELECT * FROM users WHERE modem_num IS NOT NULL") or die(mysql_error());
 
-	//Перебор пользователей
+	//РџРµСЂРµР±РѕСЂ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
 	while ($users = mysql_fetch_assoc($result_users)) {
-		echo 'Пользователь '.$users['email'].'<br>';
-		//Выбираем дату последних показаний пользователя
+		echo 'РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ '.$users['email']."<br> \r\n";
+		//Р’С‹Р±РёСЂР°РµРј РґР°С‚Сѓ РїРѕСЃР»РµРґРЅРёС… РїРѕРєР°Р·Р°РЅРёР№ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 		$last_date_q = "SELECT date FROM Indications WHERE user = ".$users['id']." ORDER BY date DESC LIMIT 1";
 		
 		$last_date_result = mysql_query($last_date_q) or die(mysql_error());
 
-		//Если есть показаний
+		//Р•СЃР»Рё РµСЃС‚СЊ РїРѕРєР°Р·Р°РЅРёР№
 		if (mysql_num_rows($last_date_result) != 0) {
 			$last_date = date("Y-m-d", strtotime(mysql_result($last_date_result, 0)));
 			
 		}
-		//Если нет показаний 2017-09-01
+		//Р•СЃР»Рё РЅРµС‚ РїРѕРєР°Р·Р°РЅРёР№ 2017-09-01
 		else {
 			$last_date = '2017-09-01';
 		}
-		echo 'Дата последних показаний '.$last_date . '<br>';
+		echo 'Р”Р°С‚Р° РїРѕСЃР»РµРґРЅРёС… РїРѕРєР°Р·Р°РЅРёР№ '.$last_date . "<br> \r\n";
 				
 		if ($last_date == $yesterday) {
-			echo 'Новых показаний нет<br>';
+			echo 'РќРѕРІС‹С… РїРѕРєР°Р·Р°РЅРёР№ РЅРµС‚'."<br> \r\n";
 		}
 		else {
 		
-			//перебираем даты, пока не не будет сегодняшняя
+			//РїРµСЂРµР±РёСЂР°РµРј РґР°С‚С‹, РїРѕРєР° РЅРµ РЅРµ Р±СѓРґРµС‚ СЃРµРіРѕРґРЅСЏС€РЅСЏСЏ
 			while (date("Y-m-d", strtotime('+1 day', strtotime($last_date))) != $curdate) {
 								
 				
@@ -44,30 +44,30 @@
 				
 				$indication_q = 'https://lk.waviot.ru/api/report/?template=a2f5261236bf3e2aede89cae168d2c2d&period=P1D&from='.$date_q.'&raw=1&modem='.$users['modem_num'].'&to='.$date_q; 
 				
-				echo $indication_q . '<br>';
+				echo $indication_q . "<br> \r\n";
 				
-				//получаем данные с вавиота
+				//РїРѕР»СѓС‡Р°РµРј РґР°РЅРЅС‹Рµ СЃ РІР°РІРёРѕС‚Р°
 				$indications = file_get_contents($indication_q) or die('Connection timed out');
-				//расшифровываем ответ
+				//СЂР°СЃС€РёС„СЂРѕРІС‹РІР°РµРј РѕС‚РІРµС‚
 				$indications = json_decode($indications);
-				//Подсчитываем косичество элементов массива
+				//РџРѕРґСЃС‡РёС‚С‹РІР°РµРј РєРѕСЃРёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ РјР°СЃСЃРёРІР°
 				$count_tarifs = count((array)$indications);
-				echo 'элементов вмассиве '.$count_tarifs. '<br>';
+				echo 'СЌР»РµРјРµРЅС‚РѕРІ РІРјР°СЃСЃРёРІРµ '.$count_tarifs. "<br> \r\n";
 				//var_dump($indications->electro_ac_p_lsum_t2);
 				
 				for ($i=1; $i<=$count_tarifs; $i++) {
 					
 					$tarif = 'electro_ac_p_lsum_t'.$i;
 					
-					//Проверяем, есть ли такой тариф
+					//РџСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё С‚Р°РєРѕР№ С‚Р°СЂРёС„
 					$check_tarif_result = mysql_query("SELECT * FROM tarifs WHERE id_waviot = '".$tarif."'") or die(mysql_error());
 
 					if (mysql_num_rows($check_tarif_result) != 0) {
-						echo "<b>$i</b><br>";
-						echo "<b>$tarif</b><br>";
+						echo "<b>$i</b>"."<br> \r\n";
+						echo "<b>$tarif</b>"."<br> \r\n";
 						$tarif_data = $indications->$tarif;
 						//var_dump($tarif_data);
-						echo '<br>';
+						echo '<br>'."<br> \r\n";
 
 						foreach ($tarif_data as $j => $value) {
 							$date = $value->datetime;
@@ -80,28 +80,27 @@
 								$ind_diff = $value_ind - $prev_ind;
 								
 								
-								echo '<b>Добавляем показания</b><br>';
+								echo '<b>Р”РѕР±Р°РІР»СЏРµРј РїРѕРєР°Р·Р°РЅРёСЏ</b>'."<br> \r\n";
 								
 								$insert_q = "INSERT INTO Indications SET date='".date('Y-m-d', strtotime($date)-86400)."', user=".$users['id'].", tarif=(SELECT id FROM tarifs WHERE id_waviot = '".$tarif."'), Indications=".$value_ind.",	prev_indications = '".$prev_ind."',	additional=(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), additional_sum= $ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), auto = 1";
-								$insert_q = "INSERT INTO Indications SET date='".date('Y-m-d', strtotime($date)-86400)."', user=".$users['id'].", tarif=(SELECT id FROM tarifs WHERE id_waviot = '".$tarif."'), Indications=".$value_ind.",	prev_indications = '".$prev_ind."',	additional=(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), additional_sum= $ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), auto = 1";
 								
-								echo $insert_q . '<br>';
+								echo $insert_q . "<br> \r\n";
 								mysql_query($insert_q) or die(mysql_error());
 																
-								echo '<b>Обновляем баланс</b><br>';
+								echo '<b>РћР±РЅРѕРІР»СЏРµРј Р±Р°Р»Р°РЅСЃ</b>'."<br> \r\n";
 								$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - ($ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'))), u.total_balance = (u.total_balance - ($ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'))) WHERE u.id = ".$users['id'];
 								echo $q_upd_balans;
-								echo '<hr>';
+								echo '<hr>'."<br> \r\n";
 								mysql_query($q_upd_balans) or die(mysql_error());
 
 							}
 						}
 					}
-					else {echo 'Нет тарифа в базе<br>';}
+					else {echo 'РќРµС‚ С‚Р°СЂРёС„Р° РІ Р±Р°Р·Рµ'."<br> \r\n";}
 				}
 				
 				$last_date = date("Y-m-d", strtotime('+1 day', strtotime($last_date)));
-				echo '<hr>';
+				echo '<hr>'."<br> \r\n";
 			}
 		}
 	}
