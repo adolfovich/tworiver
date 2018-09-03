@@ -42,14 +42,60 @@
 				
 				$date_q = date("Y-m-d", strtotime('+2 day', strtotime($last_date)));
 				
-				$indication_q = 'https://lk.waviot.ru/api/report/?template=a2f5261236bf3e2aede89cae168d2c2d&period=P1D&from='.$date_q.'&raw=1&modem='.$users['modem_num'].'&to='.$date_q; 
+				$indication_q = 'https://lk.waviot.ru/api/report/?template=a2f5261236bf3e2aede89cae168d2c2d&period=P1D&from='.$date_q.'&raw=1&modem='.$users['modem_num'].'&to='.$date_q . '&key=1e3a109e8a4ffdeb4715bf022a04a3bf'; 
 				
-				echo $indication_q . "<br> \r\n";
+				echo $indication_q . " \r\n";
 				
 				//получаем данные с вавиота
-				$indications = file_get_contents($indication_q) or die('Connection timed out');
+				//$indications = file_get_contents($indication_q) or die('Connection timed out');
+				
+				/*
+				$ch = curl_init($indication_q);
+				//$fp = fopen("example_homepage.txt", "w");
+
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
+				curl_setopt($ch, CURLOPT_HEADER, 0);
+
+				$out = curl_exec($ch);
+				echo "OUT  \r\n";
+					echo $out . " \r\n";
+					echo "\r\n";
+				curl_close($ch);*/
+				//fclose($fp);
+				
+				
+				if( $curl = curl_init() ) {
+					curl_setopt($curl, CURLOPT_URL, $indication_q);
+					curl_setopt($curl, CURLOPT_HEADER, 0);
+					curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+					curl_setopt($curl, CURLOPT_COOKIESESSION,true);
+					
+					$out = curl_exec($curl);
+					echo "OUT  \r\n";
+					var_dump($out);
+					echo "\r\n";
+					
+					/*
+					curl_close($curl);
+					//---------
+					curl_setopt($curl, CURLOPT_URL, $indication_q);
+					curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+					curl_setopt($curl, CURLOPT_POST, false);
+					$indications = curl_exec($curl);
+					var_dump('<pre>'.$indications.'</pre>');
+					curl_close($curl);*/
+					//------------
+				}
+				
 				//расшифровываем ответ
-				$indications = json_decode($indications);
+				$indications = json_decode($out);
+				var_dump($indications);
+				
+				if (isset($indications->result) && $indications->result == 'error') {
+					die('ERROR: '.$indications->message." \r\n");
+				}
+				
+				
 				//Подсчитываем косичество элементов массива
 				$count_tarifs = count((array)$indications);
 				echo 'элементов вмассиве '.$count_tarifs. "<br> \r\n";
