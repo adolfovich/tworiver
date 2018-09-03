@@ -29,7 +29,8 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="ru" onMouseOver="window.close();">
+<!--html lang="ru" onMouseOver="window.close();"-->
+<html>
 
 	<head>
 		<meta charset="utf-8">
@@ -93,7 +94,8 @@
 		
 		<?php
 			//выбираем все показания счетчика за указанный период $date_from - $date_to
-			$result_user_indications = mysql_query("SELECT i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to'") or die(mysql_error());	
+			$result_user_indications = mysql_query("SELECT i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to'") or die(mysql_error());
+			//echo "SELECT i.date, i.Indications, i.additional, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to'";
 		?>
 				
 		<div class="row">
@@ -201,9 +203,9 @@
 			</div>
 		</div>
 	</div>
-	<script>
+	<!--script>
 		window.print();
 
-	</script>
+	</script-->
 	</body>
 </html>

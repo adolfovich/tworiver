@@ -33,7 +33,7 @@
 			else if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 				
 				//var_dump($uploadfile);
-				$q_file_path = "INSERT INTO acts SET user = ".$_POST['user'].", date = '".$_POST['date']."', comment = '".$_POST['comment']."', path = '$uploadfile', type = 1";
+				$q_file_path = "INSERT INTO acts SET user = ".$_POST['user'].", date_end = '".$_POST['date']."', comment = '".$_POST['comment']."', path = '$uploadfile', type = 1";
 				//echo $q_file_path;
 				mysql_query($q_file_path) or die(mysql_error());
 				mysql_query("UPDATE users SET sch_step = 2 WHERE id =".$_POST['user']) or die(mysql_error());
@@ -197,7 +197,19 @@
 									<?php if ($change_step == 0) { ?>
 							
 										<h3>Шаг 1</h3>
-										<a href="forms/act_reconciliation.php?user=<?php echo $change_user; ?>" class="btn btn-default" target="_blank" onclick="changeStep(1,<?php echo $change_user; ?>)">Распечатать акт сверки</a>
+										<form method="GET" action="forms/act_reconciliation.php" target="_blank">
+											<input name="user" type="hidden" value="<?=$change_user?>">
+											<div class="form-group">
+												<label for="date">Дата начала периода</label>
+												<input name="datefrom" type="date" class="form-control" id="date" style="width: 200px;">
+											</div>
+											<div class="form-group">
+												<label for="date">Дата окончания периода</label>
+												<input name="dateto" type="date" class="form-control" id="date" style="width: 200px;">
+											</div>
+											<input class="btn btn-default" type="submit" value="Распечатать акт сверки"/>
+											<input class="btn btn-default" type="button" value="Далее" onclick="changeStep(1,<?php echo $change_user; ?>);"/>
+										</form>										
 								
 									<?php } else if ($change_step == 1) { ?>
 							

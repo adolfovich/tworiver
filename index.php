@@ -2,7 +2,7 @@
 	
 	include_once "core/db_connect.php";
 	include_once "include/auth.php";
-	
+
 	$month_name = array(
 		1 => 'января', 
 		2 => 'февраля', 
