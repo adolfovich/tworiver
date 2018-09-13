@@ -1,21 +1,21 @@
 <?php
-	
+
 	include_once "core/db_connect.php";
 	include_once "include/auth.php";
 
 	$month_name = array(
-		1 => 'января', 
-		2 => 'февраля', 
+		1 => 'января',
+		2 => 'февраля',
 		3 => 'марта',
-		4 => 'апреля', 
-		5 => 'мая', 
-		6 => 'июня', 
-		7 => 'июля', 
-		8 => 'августа', 
-		9 => 'сентября', 
-		10 => 'октября', 
-		11 => 'ноября', 
-		12 => 'декабря' 
+		4 => 'апреля',
+		5 => 'мая',
+		6 => 'июня',
+		7 => 'июля',
+		8 => 'августа',
+		9 => 'сентября',
+		10 => 'октября',
+		11 => 'ноября',
+		12 => 'декабря'
 	);
 	$curdate = date("Y-m-d");
 	$result_news = mysql_query("SELECT * FROM news WHERE is_del = 0 AND date_end IS NULL OR is_del = 0 AND date_end >= '$curdate' ORDER BY important DESC, date_crate DESC") or die(mysql_error());
@@ -29,9 +29,9 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Система управления СНТ</title>
 		<script src="http://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
-		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-		<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+		<script src="js/bootstrap.min.js"></script>
 		<link rel="stylesheet" href="css/font-awesome.min.css">
 		<link rel="stylesheet" href="css/sweetalert.css">
 		<script src="js/sweetalert.min.js"></script>
@@ -57,14 +57,14 @@
 			  margin-bottom: 5px;
 			}
 		</style>
-		
+
 	</head>
 	<body>
-		
+
 		<?php echo $error_msg; ?>
-		
+
 		<?php include_once "include/head.php"; ?>
-		
+
 		<div class="jumbotron" id="header">
 			<div class="container" ></div>
 		</div>
@@ -97,11 +97,11 @@
 					</div>
 					<div class="panel-collapse collapse out">
 						<div class="panel-body">
-							<?php 								
+							<?php
 								while ($debtos = mysql_fetch_assoc($result_debtos)) {
 									echo '<p><strong>Участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['balans'].'</span></strong></p>';
 								}
-							?>													
+							?>
 						</div>
 					</div>
 				  </div>
@@ -118,11 +118,11 @@
 					</div>
 					<div class="panel-collapse collapse out">
 						<div class="panel-body">
-							<?php 								
+							<?php
 								while ($debtos = mysql_fetch_assoc($result_debtos)) {
 									echo '<p><strong>Участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['membership_balans'].'</span></strong></p>';
 								}
-							?>	
+							?>
 						</div>
 					</div>
 				  </div>
@@ -139,7 +139,7 @@
 					</div>
 					<div class="panel-collapse collapse out">
 						<div class="panel-body">
-							<?php 								
+							<?php
 								while ($debtos = mysql_fetch_assoc($result_debtos)) {
 									echo '<p><strong>Участок №'.$debtos['uchastok'].' <span style="color: red;">'.$debtos['target_balans'].'</span></strong></p>';
 								}
@@ -152,9 +152,9 @@
 				  <?php
 					while ($news = mysql_fetch_assoc($result_news)) {
 						$time = strtotime($news['date_crate']);
-						$month = $month_name[ date( 'n',$time ) ]; 
-						$day   = date( 'j',$time ); 
-						$year  = date( 'Y',$time ); 
+						$month = $month_name[ date( 'n',$time ) ];
+						$day   = date( 'j',$time );
+						$year  = date( 'Y',$time );
 						$news_date = "[$day $month $year]";
 						if ($news['important'] == 1) {
 							echo '<div class="bg-danger" style="padding: 10px; border-radius: 10px;">';
@@ -179,9 +179,9 @@
 			</div>
 			<hr>
 		</div>
-		
+
 		<?php include_once "include/footer.php"; ?>
-		
+
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/script.js"></script>
