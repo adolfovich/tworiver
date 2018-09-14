@@ -697,7 +697,20 @@
 												  </div>
 												  <div class="tab-pane fade" id="acts">
 														<p></p>
-														<a href="forms/act_reconciliation.php?user=<?php echo $user_id; ?>" class="btn btn-default" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Распечатать акт сверки</a>
+													<form method="GET" action="forms/act_reconciliation.php" target="_blank" class="form-horizontal" role="form">
+														<div class="form-group">
+											        <label for="actDateFrom">Дата начала периода</label>
+											        <input type="date" class="form-control" name="datefrom">
+											      </div>
+														<div class="form-group">
+											        <label for="actDateFrom">Дата начала периода</label>
+											        <input type="date" class="form-control" name="dateto">
+											      </div>
+														<div class="form-group">
+											        <button type="submit" class="form-control" ><i class="fa fa-print" aria-hidden="true"></i> Распечатать акт сверки</button>
+											      </div>
+													</form>
+														<!--a href="forms/act_reconciliation.php?user=<?php echo $user_id; ?>" class="btn btn-default" target="_blank"><i class="fa fa-print" aria-hidden="true"></i> Распечатать акт сверки</a-->
 														<p></p>
 														<?php
 														if(mysql_num_rows($result_acts) > 0) {
