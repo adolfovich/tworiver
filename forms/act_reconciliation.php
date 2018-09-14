@@ -115,7 +115,7 @@
 						<th align="center">Расход</th>
 					</tr>
 						<?php
-							$sum_ind = 0;
+							$sum_ind1 = 0;
 							//$sum_ind =  $sum_ind;
 							while ($user_indications = mysql_fetch_assoc($result_user_indications)) {
 								echo '<tr>';
@@ -128,14 +128,14 @@
 								echo '<td style="padding: 1px;" align="center">' . $user_indications['additional_sum'] . '</td>';
 								echo '</tr>';
 
-								$sum_ind = $sum_ind + $user_indications['additional_sum'];
+								$sum_ind1 = $sum_ind1 + $user_indications['additional_sum'];
 								//$sum_ind = (float) $sum_ind;
 
 							}
 						?>
 					<tr>
 						<td colspan="4" style="font-weight: 700;">ИТОГО:</td>
-						<td style="font-weight: 700;"><?php echo sprintf("%01.2f", $sum_ind); ?></td>
+						<td style="font-weight: 700;"><?php echo sprintf("%01.2f", $sum_ind1); ?></td>
 					</tr>
 				</table>
 			</div>
