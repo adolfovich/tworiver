@@ -698,7 +698,7 @@
 												  <div class="tab-pane fade" id="acts">
 														<p></p>
 													<form method="GET" action="forms/act_reconciliation.php" target="_blank" class="form-horizontal" role="form">
-														<input type="hidden" value="<?= $user_id; ?>" />
+														<input name="user" type="hidden" value="<?= $user_id; ?>" />
 														<div class="form-group">
 											        <label for="actDateFrom">Дата начала периода</label>
 											        <input type="date" class="form-control" name="datefrom">
