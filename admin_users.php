@@ -444,10 +444,11 @@
 
 								  <?php
 									//выбираем всех пользователей
-									$result_all_users = mysql_query("SELECT u.id, u.uchastok, u.name, u.phone, u.sch_model, u.sch_num, u.sch_plomb_num, u.balans, uc.num, uc.date_start FROM users u, users_contracts uc WHERE u.is_del = 0 AND u.id = uc.user AND uc.date_end IS NULL ORDER BY CONVERT(u.uchastok,SIGNED)") or die(mysql_error());
+									$result_all_users = mysql_query("SELECT u.id, u.uchastok, u.name, u.phone, u.sch_model, u.sch_num, u.sch_plomb_num, u.balans, u.send_monthly_sms, uc.num, uc.date_start FROM users u, users_contracts uc WHERE u.is_del = 0 AND u.id = uc.user AND uc.date_end IS NULL ORDER BY CONVERT(u.uchastok,SIGNED)") or die(mysql_error());
 
 
-									echo '<table class="table table-condensed" style="margin-bottom: 0px;">';
+									echo '<table class="table table-condensed table-users" style="margin-bottom: 0px;">';
+									echo '<thead>';
 									echo '<tr>';
 									echo '<th>Участок</th>';
 									echo '<th>ФИО</th>';
@@ -458,12 +459,13 @@
 									echo '<th>Номер<br>пломбы</th>';
 									echo '<th>Акты<br>сверок</th>';
 									echo '<th>Баланс</th>';
+									echo '<th>SMS</th>';
 									echo '<th></th>';
 									echo '<th></th>';
 									echo '<th></th>';
 									echo '</tr>';
-									echo '</table>';
-									echo '<table class="table table-condensed table-users">';
+									echo '</thead>';
+									echo '<tbody class="table-users">';
 									while ($users = mysql_fetch_assoc($result_all_users)) {
 										if ($users['balans'] >= 0) {
 											echo '<tr class="table-tr">';
@@ -522,9 +524,6 @@
 												echo '</table>';
 												?>
 
-
-
-
 												<script>
 												</script>
 												<?php
@@ -532,17 +531,46 @@
 										echo '</td>';
 
 										echo '<td>'. $users['balans'].'</td>';
+										if ($users['send_monthly_sms'] == 1) {
+											$checked = 'checked';
+										} else {
+											$checked = '';
+										}
+										echo '<td><input id="sms-'.$users['id'].'" type="checkbox" onChange="setSMS(this, \''.$users['id'].'\')" '.$checked.'></td>';
+
 										echo '<td class="center"><button href="#" class="btn btn-danger btn-xs" onclick="ConfirmCounterReplace('.$users['id'].')" >Замена счетчика</button></td>';
 										echo '<td class="center"><a href="admin_user_edit.php?edit_user='.$users['id'].'"><i class="fa fa-pencil" aria-hidden="true" title="Редактировать пользователя"></i></a></td>';
 										//echo '<td><a class="del_user" href="admin_users.php?del_user='.$users['id'].'"><i class="fa fa-trash" aria-hidden="true"></i></a></td>';
 										echo '<td class="center"><a class="del_user" href="#" onclick="ConfirmDelUser('.$users['id'].')"><i class="fa fa-trash" aria-hidden="true" title="Удалить пользователя"></i></a></td>';
 										echo '</tr>';
 									}
+									echo '</tbody>';
 									echo '</table>';
 
 								  ?>
 
 									<script>
+										function setSMS(input, userId) {
+											var setValue = 0;
+											var inpuChecked = input.checked;
+											if (inpuChecked) {
+												setValue = 1;
+											}
+
+											$.post(
+	                        "ajax/setSms.php",
+	                        {
+	                            user_id: userId,
+															set: setValue,
+	                        },
+	                        onAjaxSuccess
+	                    );
+
+	                    function onAjaxSuccess(data) {
+												console.log(data);
+											}
+										}
+
 										function showActs(userId) {
 											showDiv = document.getElementById('acts-'+userId);
 											$( ".acts" ).css({"display":"none"});
