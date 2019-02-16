@@ -9,7 +9,7 @@
 	echo 'Вчера '.$yesterday."<br> \r\n";
 
 	//Выбираем всех пользователей у которых есть номер модема
-	$result_users = mysql_query("SELECT * FROM users WHERE modem_num IS NOT NULL") or die(mysql_error());
+	$result_users = mysql_query("SELECT * FROM users WHERE modem_num IS NOT NULL AND modem_num NOT LIKE ''") or die(mysql_error());
 
 	//Перебор пользователей
 	while ($users = mysql_fetch_assoc($result_users)) {
@@ -27,6 +27,7 @@
 		//Если нет показаний 2017-09-01
 		else {
 			$last_date = '2017-09-01';
+			$last_date = '2018-12-31';
 		}
 		echo 'Дата последних показаний '.$last_date . "<br> \r\n";
 
@@ -44,24 +45,6 @@
 				$indication_q = 'https://lk.waviot.ru/api/report/?template=a2f5261236bf3e2aede89cae168d2c2d&period=P1D&from='.$date_q.'&raw=1&modem='.$users['modem_num'].'&to='.$date_q . '&key=1e3a109e8a4ffdeb4715bf022a04a3bf';
 
 				echo $indication_q . " \r\n";
-
-				//получаем данные с вавиота
-				//$indications = file_get_contents($indication_q) or die('Connection timed out');
-
-				/*
-				$ch = curl_init($indication_q);
-				//$fp = fopen("example_homepage.txt", "w");
-
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER,true);
-				curl_setopt($ch, CURLOPT_HEADER, 0);
-
-				$out = curl_exec($ch);
-				echo "OUT  \r\n";
-					echo $out . " \r\n";
-					echo "\r\n";
-				curl_close($ch);*/
-				//fclose($fp);
-
 
 				if( $curl = curl_init() ) {
 					curl_setopt($curl, CURLOPT_URL, $indication_q);
