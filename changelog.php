@@ -1,6 +1,6 @@
 <?php
 
-$version = '1.3.4b';
+$version = '1.3.6b';
 
 $changelog = '
 
