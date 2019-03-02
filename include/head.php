@@ -16,10 +16,16 @@
 			<ul class="nav navbar-nav">
 				<?php
 					if (basename($_SERVER['SCRIPT_NAME']) == 'index.php') {
-						echo '<li class="active"><a href="/">Новости</a></li>';
+						echo '<li class="active"><a href="/">Главная</a></li>';
 					}
 					else {
-						echo '<li><a href="/">Новости</a></li>';
+						echo '<li><a href="/">Главная</a></li>';
+					}
+					if (basename($_SERVER['SCRIPT_NAME']) == 'news.php') {
+						echo '<li class="active"><a href="/news.php">Новости</a></li>';
+					}
+					else {
+						echo '<li><a href="/news.php">Новости</a></li>';
 					}
 					if (basename($_SERVER['SCRIPT_NAME']) == 'contacts.php') {
 						echo '<li class="active"><a href="contacts.php">Контакты</a></li>';

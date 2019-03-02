@@ -1,26 +1,26 @@
 <?php
-	
+
 	include_once "core/db_connect.php";
 	include_once "include/auth.php";
-	
-	
-	
+
+
+
 	$curdate = date("Y-m-d");
-	
-	if ($is_auth == 1) { 
-	
-		
-		
+
+	if ($is_auth == 1) {
+
+
+
 		$result_user_is_admin = mysql_query("SELECT is_admin FROM users WHERE email = '".$_COOKIE["user"]."'") or die(mysql_error());
-		
+
 		while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 			$is_admin = $user_is_admin['is_admin'];
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		if ($is_admin == 1) {
 			if (isset($_POST['text']) && strlen($_POST['text']) != 0) {
 					if ($_POST['dateEnd'] == '') {
@@ -41,8 +41,13 @@
 					else {
 						$discussed = '';
 					}
-					
-					$q_ins_news = "INSERT INTO news SET header = '".$_POST['theme']."', text = '".$_POST['text']."', preview = '".$_POST['preview']."' $dateEnd $important $discussed";
+					var_dump($_FILES);
+					$data = addslashes(fread(fopen($_FILES['addImg']['tmp_name'], "r"), filesize($_FILES['addImg']['tmp_name'])));
+					if ($data) {
+						$img = ', img = "'.$data.'"';
+					}
+
+					$q_ins_news = "INSERT INTO news SET header = '".$_POST['theme']."', text = '".$_POST['text']."', preview = '".$_POST['preview']."' $dateEnd $important $discussed $img";
 					mysql_query($q_ins_news) or die(mysql_error());
 					$error_msg = '<script type="text/javascript">swal("", "Новость добавлена ", "success")</script>';
 			}
@@ -75,7 +80,7 @@
 			}
 		}
 	}
-	
+
 ?>
 
 <!DOCTYPE html>
@@ -85,7 +90,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>Система управления СНТ</title>
-		
+
 		<script src="js/jquery-3.3.1.min.js"></script>
 
 		<!-- Latest compiled and minified CSS -->
@@ -98,12 +103,12 @@
 		<link rel="stylesheet" href="css/font-awesome.min.css">
 
 		<link rel="stylesheet" href="css/sweetalert.css">
-		
+
 		<script src="js/sweetalert.min.js"></script>
 		<link rel="stylesheet" href="css/my.css">
-		
+
 		<script type="text/javascript" src="js/tinymce/tinymce.min.js"></script>
- 
+
 		<script type="text/javascript">
 			tinymce.init({
 				selector: 'textarea',
@@ -123,7 +128,7 @@
 				]
 			});
 		</script>
-		
+
 
 		<style>
 			#header {
@@ -142,21 +147,21 @@
 				color:red;
 			}
 		</style>
-		
+
 	</head>
 	<body>
 		<?php echo $error_msg; ?>
 		<?php include_once "include/head.php"; ?>
-		
-		
-		
+
+
+
 		<div class="container">
-			
-				
-				
-				  
-					<?php 
-					if ($is_auth == 1) { 
+
+
+
+
+					<?php
+					if ($is_auth == 1) {
 						if ($is_admin == 1) {
 						?>
 							<div class="row">
@@ -173,7 +178,7 @@
 								  <h3>Управление новостями</h3>
 									<hr>
 								</div>
-								
+
 							</div>
 							<div class="row">
 								<a href="#addNews" class="btn btn-primary" data-toggle="modal"><i class="fa fa-plus" aria-hidden="true"></i> Добавить Новость</a>
@@ -229,7 +234,7 @@
 													  </div>
 													</div>
 												  </div>
-																								
+
 												<div class="form-group">
 													<label for="preview">Текст для предварительного просмотра</label>
 													<textarea name="preview" class="form-control" rows="2" id="addPreview"><?php echo $_POST['preview']; ?></textarea>
@@ -237,8 +242,13 @@
 												<div class="form-group">
 													<label for="text">Текст</label>
 													<textarea name="text" class="form-control" rows="3" id="addText"><?php echo $_POST['text']; ?></textarea>
-												</div>																				
-												
+												</div>
+												<div class="form-group">
+													<label for="theme">Изображение</label>
+													<input type="file" name="addImg" class="form-control" id="addImg">
+													<input type="hidden" name="MAX_FILE_SIZE" value="1000000">
+												</div>
+
 											</form>
 										  </div>
 										  <!-- Футер модального окна -->
@@ -248,14 +258,14 @@
 											<script>
 												function checkAddForm() {
 													var theme = document.getElementById('addTheme').value.length;
-													
+
 													if (theme == 0) {
 														swal("Внимание!", "Тема не может быть пустой", "error");
 													}
-													
+
 													else {
 														document.getElementById('addNewsForm').submit(); return false;
-													}													
+													}
 												}
 											</script>
 										  </div>
@@ -270,7 +280,7 @@
 										<tr>
 											<th style="text-align: center;">Дата публикации</th>
 											<th style="text-align: center;">Тема</th>
-											
+
 											<th style="text-align: center;">Дата окончания публикации</th>
 											<th style="text-align: center;">Важная</th>
 											<th style="text-align: center;">Обсуждение</th>
@@ -282,7 +292,7 @@
 											echo '<tr>';
 											echo '<td style="text-align: center;">'.date( 'd.m.Y',strtotime($news['date_crate'])).'</td>';
 											echo '<td>'.$news['header'].'</td>';
-											
+
 											if (is_null($news['date_end'])) {
 												echo '<td style="text-align: center;">Не установлена</td>';
 												$date_end = '';
@@ -307,7 +317,7 @@
 											else {
 												echo '<td style="text-align: center;"><input type="checkbox" disabled></td>';
 											}
-																						
+
 											echo '<td><a href="#editNews'.$news['id'].'" data-toggle="modal"><i class="fa fa-pencil" aria-hidden="true" title="Редактировать новость"></i></a>
 											<!-- HTML-код модального окна -->
 												<div id="editNews'.$news['id'].'" class="modal fade">
@@ -340,7 +350,7 @@
 																		else {
 																			echo '<input name="editedImportant" type="checkbox"> Важная';
 																		}
-																	  
+
 											echo '						</label>
 																	</div>
 																</div>
@@ -355,7 +365,7 @@
 																		else {
 																			echo '<input name="editedDiscussed" type="checkbox"> Обсуждение';
 																		}
-																	  
+
 											echo '						</label>
 																	</div>
 																</div>
@@ -363,11 +373,11 @@
 															<div class="form-group">
 																<label for="text">Текст</label>
 																<textarea name="editedPreview" class="form-control" rows="3">'.$news['preview'].'</textarea>
-															</div>	
+															</div>
 															<div class="form-group">
 																<label for="text">Текст</label>
 																<textarea name="editedText" class="form-control" rows="3">'.$news['text'].'</textarea>
-															</div>	
+															</div>
 														</form>
 													  </div>
 													  <!-- Футер модального окна -->
@@ -409,30 +419,30 @@
 									</table>
 								</div>
 							</div>
-						
-						<?php 
+
+						<?php
 						}
-					} 
-					else 
+					}
+					else
 					{
 					?>
 					  <div class="col-md-12">
 						  <h2>Вы не авторизованы</h2>
-						  
+
 					  </div>
 					<?php
 					}
 					?>
-			   
-			
-			
+
+
+
 		</div>
-		
+
 		<?php include_once "include/footer.php"; ?>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 
-		
+
 	</body>
 </html>
