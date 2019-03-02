@@ -1,8 +1,8 @@
 <?php
 
-	include_once "../core/db_connect.php";
+  include_once "../core/db_connect.php";
 
-  $date = '2019-01-05 00:00:00';
+  $date = '2019-01-06 00:00:00';
 
   $sql = "SELECT * FROM `Indications` WHERE date >= '$date'";
 
