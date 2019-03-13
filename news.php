@@ -141,7 +141,7 @@ while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 							echo '<span class="news_date">'.$news_date.'</span>';
 							echo '<p>';
 							if ($news['img']) {
-								echo '<img style="width: 500px; float:left; margin: 7px 7px 7px 0;" src="data:image/png;base64,'.base64_encode($news['img']).'">';
+								echo '<a href="data:image/png;base64,'.base64_encode($news['img']).'" class="lightzoom"><img style="width: 500px; float:left; margin: 7px 7px 7px 0;" src="data:image/png;base64,'.base64_encode($news['img']).'"></a>';
 							}
 							echo $text .'</p>';
 							if ($is_auth == 1 && !$single_news) {
@@ -250,5 +250,8 @@ while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
 		<script src="js/script.js"></script>
+		<link rel="stylesheet" href="js/lightzoom/style.css" type="text/css">
+		<script type="text/javascript" src="js/lightzoom/lightzoom.js"></script>
+		<script type="text/javascript">jQuery('.lightzoom').lightzoom({speed: 400, viewTitle: true, isOverlayClickClosing: true, isWindowClickClosing: true});</script>
 	</body>
 </html>
