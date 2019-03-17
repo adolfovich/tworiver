@@ -24,7 +24,13 @@ while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 			$input_text = strip_tags($_POST['addComment']);
 			$input_text = htmlspecialchars($input_text);
 			$input_text = mysql_escape_string($input_text);
-			mysql_query("INSERT INTO news_comments SET news = ".$_POST['addCommentNewsId'].", user = (SELECT id FROM users WHERE email = '".$_COOKIE["user"]."'), comment = '".$input_text."'") or die(mysql_error());
+			$data = addslashes(fread(fopen($_FILES['addImg']['tmp_name'], "r"), filesize($_FILES['addImg']['tmp_name'])));
+			if ($data) {
+				$img = ', img = "'.$data.'"';
+			} else {
+				$img = '';
+			}
+			mysql_query("INSERT INTO news_comments SET news = ".$_POST['addCommentNewsId'].", user = (SELECT id FROM users WHERE email = '".$_COOKIE["user"]."'), comment = '".$input_text."'".$img) or die(mysql_error());
 		}
 
 		if (isset($_GET['del_comment']) && strlen($_GET['del_comment']) != 0 && $_GET['del_comment'] != 0) {
@@ -164,12 +170,19 @@ while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 											</div>
 											<div class="panel-collapse collapse out">
 												<div class="panel-body">
-													<form method="POST">
+													<form method="POST" enctype="multipart/form-data">
 														<input name="addCommentNewsId" type="hidden" value="<?php echo $newsID; ?>">
 														<div class="form-group">
 															<label for="addComment">Текст комментария</label>
 															<textarea name="addComment" class="form-control" rows="3" id="addComment"></textarea>
 														</div>
+														<?php if ($is_admin == 1) { ?>
+														<div class="form-group">
+															<label for="addImg">Изображение</label>
+															<input type="file" name="addImg" class="form-control" rows="3" id="addImg">
+															<input type="hidden" name="MAX_FILE_SIZE" value="1000000">
+														</div>
+														<?php } ?>
 														<button type="submit" class="btn btn-default">Сохранить</button>
 													</form>
 												</div>
@@ -177,7 +190,7 @@ while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 										</div>
 										<p></p>
 										<?php
-										$result_comments = mysql_query("SELECT nc.id, nc.comment, nc.datetime, u.name, u.email FROM news_comments nc, users u WHERE nc.user = u.id AND nc.news = $newsID AND nc.is_del = 0 ORDER BY datetime") or die(mysql_error());
+										$result_comments = mysql_query("SELECT nc.id, nc.comment, nc.datetime, nc.img, u.name, u.email FROM news_comments nc, users u WHERE nc.user = u.id AND nc.news = $newsID AND nc.is_del = 0 ORDER BY datetime") or die(mysql_error());
 
 										while ($comments = mysql_fetch_assoc($result_comments)) {
 												if ($comments['email'] == $_COOKIE["user"]) {
@@ -202,6 +215,10 @@ while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 														echo '</table>';
 													echo '</div>';
 													echo '<div class="comment-body">';
+
+														if ($comments['img']) {
+															echo '<a href="data:image/png;base64,'.base64_encode($comments['img']).'" class="lightzoom"><img style="width: 200px; float:left; margin: 7px 7px 7px 0;" src="data:image/png;base64,'.base64_encode($comments['img']).'"></a>';
+														}
 														echo '<p>'.$comments['comment'].'</p>';
 													echo '</div>';
 												echo '</div>';

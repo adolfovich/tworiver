@@ -41,7 +41,7 @@
 					else {
 						$discussed = '';
 					}
-					var_dump($_FILES);
+					//var_dump($_FILES);
 					$data = addslashes(fread(fopen($_FILES['addImg']['tmp_name'], "r"), filesize($_FILES['addImg']['tmp_name'])));
 					if ($data) {
 						$img = ', img = "'.$data.'"';
