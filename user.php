@@ -649,7 +649,7 @@
 															$result_indications = mysql_query("SELECT i.auto, i.id, i.additional_sum, i.date, i.prev_indications, i.Indications, i.additional as price, t.name AS tarif FROM Indications i, tarifs t WHERE i.user = (SELECT id FROM users WHERE email = '".$_COOKIE['user']."') AND t.id_waviot = '".$all_tarifs['id_waviot']."' AND i.tarif = t.id AND i.date BETWEEN '".$curmonth."-01' AND '".$curmonth."-31'") or die(mysql_error());
 															$i = 0;
 															$m_sum = 0;
-															echo '<tr id="m_up" style="background: #ccc;"></tr>';
+															echo '<tr id="m_up'.$all_tarifs['id_waviot'].'" style="background: #ccc;"></tr>';
 															while ($indications = mysql_fetch_assoc($result_indications)) {
 																if ($i == 0) {
 																	$m_start_ind = $indications['prev_indications'];
@@ -671,26 +671,29 @@
 																$i++;
 															}
 															////////////////
-															echo '<tr id="m_down" style="background: #ccc;">';
+															echo '<tr id="m_down'.$all_tarifs['id_waviot'].'" style="background: #ccc;">';
 															echo '<td colspan="2">ИТОГО: </td>';
 															echo '<td>'.$m_start_ind.'</td>';
 															echo '<td>'.$m_end_ind.'</td>';
 															echo '<td>'.($m_end_ind - $m_start_ind).'</td>';
 															echo '<td>'.$m_price.'</td>';
-															echo '<td>'.$m_sum.'</td>';
+															echo '<td>'.number_format($m_sum, 2, '.', '').'</td>';
 															echo '</tr>';
 
 														echo '</table>';
 														echo '</div>';
 														$active = 0;
+														?>
+														<script>
+															var itog = document.getElementById('m_down<?=$all_tarifs['id_waviot']?>').innerHTML;
+															document.getElementById('m_up<?=$all_tarifs['id_waviot']?>').innerHTML = itog;
+														</script>
+														<?php
 														}
 														?>
 
 														</div>
-														<script>
-															var itog = document.getElementById('m_down').innerHTML;
-															document.getElementById('m_up').innerHTML = itog;
-														</script>
+
 														<!---------------------------------------->
 
 
