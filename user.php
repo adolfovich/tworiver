@@ -730,7 +730,7 @@
 											        <input type="date" class="form-control" name="datefrom">
 											      </div>
 														<div class="form-group">
-											        <label for="actDateFrom">Дата начала периода</label>
+											        <label for="actDateFrom">Дата окончания периода</label>
 											        <input type="date" class="form-control" name="dateto">
 											      </div>
 														<div class="form-group">
