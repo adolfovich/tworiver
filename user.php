@@ -673,10 +673,10 @@
 															////////////////
 															echo '<tr id="m_down'.$all_tarifs['id_waviot'].'" style="background: #ccc;">';
 															echo '<td colspan="2">ИТОГО: </td>';
-															echo '<td>'.$m_start_ind.'</td>';
-															echo '<td>'.$m_end_ind.'</td>';
-															echo '<td>'.($m_end_ind - $m_start_ind).'</td>';
-															echo '<td>'.$m_price.'</td>';
+															echo '<td>'.number_format($m_start_ind, 2, '.', '').'</td>';
+															echo '<td>'.number_format($m_end_ind, 2, '.', '').'</td>';
+															echo '<td>'.number_format(($m_end_ind - $m_start_ind), 2, '.', '').'</td>';
+															echo '<td>'.number_format($m_price, 2, '.', '').'</td>';
 															echo '<td>'.number_format($m_sum, 2, '.', '').'</td>';
 															echo '</tr>';
 
