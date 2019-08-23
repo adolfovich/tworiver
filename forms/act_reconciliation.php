@@ -134,12 +134,14 @@
 							$sum_ind = 0;
 							//$sum_ind =  $sum_ind;
 							$curr_month = date("m");
+							$curr_year = date("Y");
 							$prev_month = 0;
 							//echo '<script>console.log("cur_month '.$curr_month.'")</script>';
 							while ($user_indications = mysql_fetch_assoc($result_user_indications)) {
 								$user_indications_m = date( "m",strtotime($user_indications['date']));
+								$user_indications_Y = date( "Y",strtotime($user_indications['date']));
 								//echo '<script>console.log("$user_indications_m '.$user_indications_m.'")</script>';
-								if ($user_indications_m != $curr_month) {
+								if ($user_indications_m != $curr_month || $user_indications_Y != $curr_year) {
 									//echo '<script>console.log("'.date('n',strtotime($user_indications['date'])).'")</script>';
 									if ($user_indications_m == $prev_month) {
 										//echo '<script>console.log("!=")</script>';
@@ -169,7 +171,7 @@
 												$prev_month_start2 = $user_indications['prev_indications'];
 											}
 											echo '<tr>';
-											echo '<td style="padding: 1px;" align="center">' . $prev_month_name . '</td>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_name . ' '.date( "Y",strtotime($user_indications['date'])).'</td>';
 											echo '<td style="padding: 1px;" align="center">Электроэнергия Т1</td>';
 											echo '<td style="padding: 1px;" align="center">'.$prev_month_start1.'</td>';
 											echo '<td style="padding: 1px;" align="center">'.$prev_month_end1.'</td>';
@@ -179,7 +181,7 @@
 											echo '</tr>';
 
 											echo '<tr>';
-											echo '<td style="padding: 1px;" align="center">' . $prev_month_name . '</td>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_name . ' '.date( "Y",strtotime($user_indications['date'])).'</td>';
 											echo '<td style="padding: 1px;" align="center">Электроэнергия Т2</td>';
 											echo '<td style="padding: 1px;" align="center">'.$prev_month_start2.'</td>';
 											echo '<td style="padding: 1px;" align="center">'.$prev_month_end2.'</td>';
@@ -219,7 +221,7 @@
 								} else {
 									if ($prev_month != 0) {
 										echo '<tr>';
-										echo '<td style="padding: 1px;" align="center">' . $prev_month_name . '</td>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_name . ' '.date( "Y",strtotime($user_indications['date'])).'</td>';
 										echo '<td style="padding: 1px;" align="center">Электроэнергия Т1</td>';
 										echo '<td style="padding: 1px;" align="center">'.$prev_month_start1.'</td>';
 										echo '<td style="padding: 1px;" align="center">'.$prev_month_end1.'</td>';
@@ -229,7 +231,7 @@
 										echo '</tr>';
 
 										echo '<tr>';
-										echo '<td style="padding: 1px;" align="center">' . $prev_month_name . '</td>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_name . ' '.date( "Y",strtotime($user_indications['date'])).'</td>';
 										echo '<td style="padding: 1px;" align="center">Электроэнергия Т2</td>';
 										echo '<td style="padding: 1px;" align="center">'.$prev_month_start2.'</td>';
 										echo '<td style="padding: 1px;" align="center">'.$prev_month_end2.'</td>';
