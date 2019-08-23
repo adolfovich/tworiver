@@ -330,7 +330,7 @@
 
 		<div class="row">
 			<div class="col-md-12">
-				<p><u><b>Сальдо: <?php echo $saldo_name . ' ' . $saldo . ' ('.$saldo_cuirsive.')'; ?></b></u></p>
+				<p><u><b>Сальдо: <?php echo $saldo_name . ' ' . sprintf("%01.2f", $saldo) . ' ('.$saldo_cuirsive.')'; ?></b></u></p>
 			</div>
 		</div>
 
