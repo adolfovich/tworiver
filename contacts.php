@@ -104,7 +104,7 @@
 							$mail->Username = "robot2@tworiver.ru";
 							$mail->Password = "TfSHEsv9XaAD";
 							//$mail->Password = "6hg3m";
-							$mail->setFrom('robot@tworiver.ru', 'Система управления СНТ');
+							$mail->setFrom('robot2@tworiver.ru', 'Система управления СНТ');
 							$mail->addAddress('adolfovich.alexashka@gmail.com');
 							//$mail->addAddress('hakalo@bk.ru');
 							$mail->addAddress('info@tworiver.ru');
