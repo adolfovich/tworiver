@@ -101,8 +101,8 @@
 							$mail->Port = 465;
 							$mail->SMTPSecure = 'ssl';
 							$mail->SMTPAuth = true;
-							$mail->Username = "robot@tworiver.ru";
-							$mail->Password = "j766wC6im5No";
+							$mail->Username = "robot2@tworiver.ru";
+							$mail->Password = "TfSHEsv9XaAD";
 							//$mail->Password = "6hg3m";
 							$mail->setFrom('robot@tworiver.ru', 'Система управления СНТ');
 							$mail->addAddress('adolfovich.alexashka@gmail.com');
