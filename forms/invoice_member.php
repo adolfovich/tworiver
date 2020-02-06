@@ -51,7 +51,7 @@
 		border: none !important;
 		border-right: #000 1px solid !important;
 	}
-	
+
 	hr {
 		margin-top: 5px;
 		margin-bottom: 5px;
@@ -100,7 +100,7 @@
 				<tr>
 					<td style="border:none; text-align: left; width: 150px; font-weight: 100;">Счет получателя:</td>
 					<?php
-					foreach (str_split($snt_bank_rs) as $value) {
+					foreach (str_split($snt_bank_rs2) as $value) {
 						echo "<td>$value</td>";
 					}
 					?>
@@ -181,8 +181,8 @@
 						<table class="numeral_table" style="">
 							<tr>
 							<?php
-							
-							
+
+
 							foreach (str_split($members_sum[0]) as $value) {
 								echo "<td>$value</td>";
 							}
