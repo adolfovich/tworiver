@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+
 	include_once "../core/db_connect.php";
 ?>
 
@@ -41,7 +44,7 @@
 			$snt_bank_rs = $requisites['bank_rs'];
 			$snt_bank_ks = $requisites['bank_ks'];
 		}
-		
+
 		//var_dump($_GET['target_id']);
 		$pay_members = $_GET['member_id'];
 		$pay_targets = $_GET['target_id'];

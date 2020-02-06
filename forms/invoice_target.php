@@ -51,7 +51,7 @@
 		border: none !important;
 		border-right: #000 1px solid !important;
 	}
-	
+
 	hr {
 		margin-top: 5px;
 		margin-bottom: 5px;
@@ -181,8 +181,8 @@
 						<table class="numeral_table" style="">
 							<tr>
 							<?php
-							
-							
+
+
 							foreach (str_split($targets_sum[0]) as $value) {
 								echo "<td>$value</td>";
 							}
@@ -196,6 +196,7 @@
 						<table class="numeral_table">
 							<tr>
 							<?php
+							
 							$tmp = str_split($targets_sum[1]);
 							if ($tmp[0] == "") {
 								echo "<td>0</td>";
