@@ -3,8 +3,9 @@
   include_once "../core/db_connect.php";
 
   $date = '2019-01-06 00:00:00';
+  $user_id = 177;
 
-  $sql = "SELECT * FROM `Indications` WHERE date >= '$date'";
+  $sql = "SELECT * FROM `Indications` WHERE date >= '$date' AND user = $user_id";
 
   echo $sql;
   echo '<hr>';
