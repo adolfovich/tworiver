@@ -93,7 +93,7 @@
 				<tr>
 					<td style="border:none; text-align: left; width: 150px; font-weight: 100;">Счет получателя:</td>
 					<?php
-					foreach (str_split($snt_bank_rs) as $value) {
+					foreach (str_split($snt_bank_rs) as $value) { 
 						echo "<td>$value</td>";
 					}
 					?>

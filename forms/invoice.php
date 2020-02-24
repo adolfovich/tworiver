@@ -41,13 +41,16 @@ ini_set('display_startup_errors', 0);
 			$snt_inn = $requisites['inn'];
 			$snt_bank_name = $requisites['bank_name'];
 			$snt_bank_bik = $requisites['bank_bik'];
-			$snt_bank_rs = $requisites['bank_rs'];
+			/*$snt_bank_rs = $requisites['bank_rs'];
 			$snt_bank_rs_temp = explode('<br>', $snt_bank_rs);
 			$snt_bank_rs = $snt_bank_rs_temp[0];
 
 			$snt_bank_rs2 = $snt_bank_rs_temp[1];
 			$snt_bank_rs2 = explode('</b>', $snt_bank_rs2);
-			$snt_bank_rs2 = trim($snt_bank_rs2[1]);
+			$snt_bank_rs2 = trim($snt_bank_rs2[1]);*/
+
+			$snt_bank_rs = '40703810800230000041';
+			$snt_bank_rs2 = '40703810000230000113';
 
 			$snt_bank_ks = $requisites['bank_ks'];
 		}
