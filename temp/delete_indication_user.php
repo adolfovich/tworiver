@@ -1,11 +1,12 @@
 <?php
 
+
   include_once "../core/db_connect.php";
 
-  $date = '2020-02-13 00:00:00';
-  $user_id = 177;
+  $date = '2019-08-24 00:00:00';
+  $user = '136';
 
-  $sql = "SELECT * FROM `Indications` WHERE date >= '$date' AND user = $user_id";
+  $sql = "SELECT * FROM `Indications` WHERE date >= '$date' AND `user` = $user";
 
   echo $sql;
   echo '<hr>';
@@ -24,3 +25,4 @@
     mysql_query($recalc_sql);
     echo '<hr>';
   }
+
