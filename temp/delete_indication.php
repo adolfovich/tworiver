@@ -9,7 +9,7 @@
   }
 
   if (isset($_GET['deleteuser'])) {
-    $user_id = int($_GET['deleteuser']);
+    $user_id = $_GET['deleteuser'];
   } else {
     $user_id = 0;
   }
