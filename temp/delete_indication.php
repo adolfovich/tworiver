@@ -15,7 +15,7 @@
   }
 
   if ($date && $user_id) {
-    $sql = "SELECT * FROM `Indications` WHERE date >= '$date' AND user = $user_id";
+    $sql = "SELECT * FROM `Indications` WHERE date < '$date' AND user = $user_id";
 
     echo $sql;
     echo '<hr>';
