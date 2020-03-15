@@ -362,15 +362,131 @@
 									<h2 class="pull-right">Общий баланс <span style="<?php echo $total_balans_color; ?>"><?php echo $total_balance; ?> руб.</span></h2>
 								</div>
 								<div class="row">
+									<a href="#PaymentOnline" class="btn btn-primary pull-right" data-toggle="modal" style="margin-left: 10px; display:none;">Оплатить онлайн</a>
 									<?php
 									if ($total_balance < 0) {
-										echo '<a href="#PaymentVariant" class="btn btn-primary pull-right" data-toggle="modal">Оплатить</a>';
+
+										echo '<a href="#PaymentVariant" class="btn btn-primary pull-right" data-toggle="modal">Распечатать квитанцию</a>';
 									}
 									else {
 										echo '<a href="#PaymentVariant" class="btn btn-primary pull-right" data-toggle="modal" disabled="disabled" >Оплатить</a>';
 									}
 								?>
 								</div>
+
+
+
+
+								<!-- HTML-код модального окна -->
+								<div id="PaymentOnline" class="modal fade">
+								  <div class="modal-dialog">
+									<div class="modal-content">
+									  <!-- Заголовок модального окна -->
+									  <div class="modal-header">
+										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+										<h4 class="modal-title">Варианты оплаты</h4>
+									  </div>
+									  <!-- Основное содержимое модального окна -->
+										<form>
+										  <div class="modal-body">
+
+												<div class="form-group row">
+													<label for="variant" class="col-sm-2 col-form-label">Вид&nbsp;оплаты</label>
+													<div class="col-sm-10">
+														<select id="pay_variant" name="pay_variant" class="form-control" id="variant" onChange="loadPayDetail(this.value, '<?=$_COOKIE["user"]?>')">
+															<option selected disabled>Выберите вид оплаты</option>
+															<option value="1">Оплата электроэнергии</option>
+															<option value="2">Оплата членских взносов</option>
+															<option value="3">Оплата целевых взносов</option>
+														</select>
+													</div>
+												</div>
+
+												<div id="pay_detail">
+
+												</div>
+
+												<script>
+													function loadPayDetail(value, user)
+													{
+														$.post(
+										          "ajax/load_online_payment.php", {
+							                  pay_variant: value,
+																user: user
+							                },
+										          onAjaxSuccess
+										        );
+
+										        function onAjaxSuccess(data)
+										        {
+										          document.getElementById('pay_detail').innerHTML = data;
+										        }
+													}
+
+													function checkAmount(value)
+													{
+														value = value.replace(/^\.|[^\d\.]|\.(?=.*\.)|^0+(?=\d)/g, '');
+
+														if (value > 15000) value = 15000;
+
+														document.getElementById('inputAmount').value = value;
+
+														if (value != '' && value > 0 ) {
+															document.getElementById('paymentButton').disabled = false;
+														}
+
+													}
+
+													function redirectToPayment()
+													{
+														amount = document.getElementById('inputAmount').value;
+														user = document.getElementById('paymentUser').value;
+														pay_variant = document.getElementById('pay_variant').value;
+
+														$.post(
+										          "ajax/get_online_payment_url.php", {
+							                  pay_variant: pay_variant,
+																user: user,
+																amount: amount
+							                },
+										          onAjaxSuccess
+										        );
+
+										        function onAjaxSuccess(data)
+										        {
+															console.log(data);
+															//document.getElementById('pay_detail').innerHTML = data;
+															document.location.href = data;
+										        }
+													}
+												</script>
+
+
+										  </div>
+										  <!-- Футер модального окна -->
+										  <div class="modal-footer">
+												<button id="paymentButton" type="button" class="btn btn-primary" onClick="redirectToPayment()" disabled>Оплатить</button>
+												<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+											</div>
+										</form>
+									</div>
+								  </div>
+								</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 								<!-- HTML-код модального окна -->
 								<div id="PaymentVariant" class="modal fade">
 								  <div class="modal-dialog">
@@ -484,8 +600,7 @@
 									  </div>
 									  <!-- Футер модального окна -->
 									  <div class="modal-footer">
-											<button type="button" class="btn btn-primary" disabled>Онлайн оплата</button>
-											<button type="button" class="btn btn-primary" onclick="toPrintInvoice(); return false;">Распечатать квитанцию</button>
+											<button type="button" class="btn btn-primary" onclick="toPrintInvoice(); return false;">Распечатать</button>
 											<button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
 										</div>
 									</div>
@@ -955,6 +1070,16 @@
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="js/bootstrap.min.js"></script>
+
+		<?php
+			if (isset($_GET['payment'])) {
+				if ($_GET['payment'] == 'success') {
+					echo '<script>swal("", "Платеж успешно совершен", "success")</script>';
+				} else if ($_GET['payment'] == 'faled') {
+					echo '<script>swal("", "Ошибка платежа. Попробуйте еще раз или свяжитесь с администрацией", "error")</script>';
+				}
+			}
+		?>
 
 
 	</body>
