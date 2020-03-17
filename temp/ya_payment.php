@@ -1,7 +1,28 @@
 <?php
 
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 
-if (isset($_REQUEST)) {
+include_once "../core/db_connect.php";
+
+if (isset($_GET)) {
+  $request = 'type => GET, ';
+} else if (isset($_POST)) {
+  $request = 'type => POST, ';
+}
+
+if (isset($request)) {
+  foreach ($_REQUEST as $key => $value) {
+    $request .= $key.' => '.$value.", ";
+  }
+
+  mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '$request'") or die(mysql_error());
+}
+
+
+
+/*if (isset($_REQUEST)) {
   $fd = fopen("log.txt", 'w') or die("не удалось создать файл");
   //var_dump($fd);
   foreach ($_REQUEST as $key => $value) {
@@ -9,3 +30,4 @@ if (isset($_REQUEST)) {
   }
   fclose($fd);
 }
+*/
