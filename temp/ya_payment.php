@@ -27,10 +27,16 @@ $ip = getIp();
 
 $request = 'ip => '.$ip.', ';
 
-if (isset($_GET)) {
+if (isset($_GET) && $_GET) {
   $request .= 'type => GET, ';
-} else if (isset($_POST)) {
+  var_dump('$_GET ');
+  var_dump($_GET);
+}
+
+if (isset($_POST)) {
   $request .= 'type => POST, ';
+  var_dump('$_POST ');
+  var_dump($_POST);
 }
 
 if (isset($request)) {
