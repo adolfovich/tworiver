@@ -1,5 +1,6 @@
 <?php
 include_once "../core/db_connect.php";
+include_once "../core/ya_kassa_settings.php";
 
 //$amount = 110.00;
 $amount = $_POST['amount'];
@@ -11,10 +12,6 @@ $user_id = mysql_result($result, 0);
 
 mysql_query("INSERT INTO pre_payments SET user_id = '".$user_id."', variant = '$pay_variant', amount = '$amount'");
 $order_id = mysql_insert_id();
-
-
-$shop_id = '672180';
-$secret_key = 'test_To0Nlw9VD8h3EYtME_WrJpqTgCPxBqsIskx60RDkVIc';
 
 $description = 'Оплата электроэнергии #'.$order_id;
 

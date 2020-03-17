@@ -362,7 +362,7 @@
 									<h2 class="pull-right">Общий баланс <span style="<?php echo $total_balans_color; ?>"><?php echo $total_balance; ?> руб.</span></h2>
 								</div>
 								<div class="row">
-									<a href="#PaymentOnline" class="btn btn-primary pull-right" data-toggle="modal" style="margin-left: 10px; display:none;">Оплатить онлайн</a>
+									<a href="#PaymentOnline" class="btn btn-primary pull-right" data-toggle="modal" style="margin-left: 10px;">Оплатить онлайн</a>
 									<?php
 									if ($total_balance < 0) {
 
@@ -396,8 +396,8 @@
 														<select id="pay_variant" name="pay_variant" class="form-control" id="variant" onChange="loadPayDetail(this.value, '<?=$_COOKIE["user"]?>')">
 															<option selected disabled>Выберите вид оплаты</option>
 															<option value="1">Оплата электроэнергии</option>
-															<option value="2">Оплата членских взносов</option>
-															<option value="3">Оплата целевых взносов</option>
+															<!--option value="2">Оплата членских взносов</option-->
+															<!--option value="3">Оплата целевых взносов</option-->
 														</select>
 													</div>
 												</div>

@@ -1,5 +1,6 @@
 <?php
-	include_once "../core/db_connect.php";
+include_once "../core/db_connect.php";
+
 
 	$html = '';
 
