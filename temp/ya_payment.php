@@ -6,10 +6,31 @@ ini_set('display_startup_errors', 1);
 
 include_once "../core/db_connect.php";
 
+
+function getIp() {
+  $keys = [
+    'HTTP_CLIENT_IP',
+    'HTTP_X_FORWARDED_FOR',
+    'REMOTE_ADDR'
+  ];
+  foreach ($keys as $key) {
+    if (!empty($_SERVER[$key])) {
+      $ip = trim(end(explode(',', $_SERVER[$key])));
+      if (filter_var($ip, FILTER_VALIDATE_IP)) {
+        return $ip;
+      }
+    }
+  }
+}
+
+$ip = getIp();
+
+$request .= 'ip => '.$ip.', ';
+
 if (isset($_GET)) {
-  $request = 'type => GET, ';
+  $request .= 'type => GET, ';
 } else if (isset($_POST)) {
-  $request = 'type => POST, ';
+  $request. = 'type => POST, ';
 }
 
 if (isset($request)) {
