@@ -28,38 +28,58 @@ $ip = getIp();
 $request = 'ip => '.$ip.', ';
 
 $source = file_get_contents('php://input');
-mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '$source'") or die(mysql_error());
+//var_dump($source);
+//echo '<hr>';
+//mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '$source'") or die(mysql_error());
 $requestBody = json_decode($source, true);
 
+//var_dump($requestBody);
+//echo '<hr>';
 
-if (isset($_GET) && $_GET) {
-  $request .= 'type => GET, ';
-  var_dump('$_GET ');
-  var_dump($_GET);
-}
 
-if (isset($_POST) && $_POST) {
-  $request .= 'type => POST, ';
-  var_dump('$_POST ');
-  var_dump($_POST);
-}
+include '../ajax/ya_lib/autoload.php';
+    use YandexCheckout\Model\Notification\NotificationSucceeded;
+    use YandexCheckout\Model\Notification\NotificationWaitingForCapture;
+    use YandexCheckout\Model\NotificationEventType;
 
-if (isset($request)) {
-  foreach ($_REQUEST as $key => $value) {
-    $request .= $key.' => '.$value.", ";
+    try {
+          $notification = ($requestBody['event'] === NotificationEventType::PAYMENT_SUCCEEDED)
+            ? new NotificationSucceeded($requestBody)
+            : new NotificationWaitingForCapture($requestBody);
+        } catch (Exception $e) {
+            // Обработка ошибок при неверных данных
+        }
+
+$payment = $notification->getObject();
+
+//var_dump($payment->description);
+
+if ($payment->_status == 'succeeded') {
+  //echo 'OK';
+  $pay_id = $payment->_id;
+  $pay_description = $payment->_description;
+  $pay_amount = $payment->_amount->_value;
+  $pay_order = explode('#', $pay_description);
+  $pay_order = $pay_order[1];
+  $sql = "SELECT * FROM pre_payments WHERE id = '$pay_order'";
+  //var_dump($sql);
+  $order_data_result = mysql_query($sql);
+  //var_dump($order_data_result);
+  $order_data = mysql_fetch_assoc($order_data_result);
+  var_dump($order_data);
+
+  if ($order_data) {
+    if ($order_data['status'] == 0) {
+      mysql_query("UPDATE pre_payments SET status = 1, destanation_order_id = '".$pay_id."' WHERE id = '$pay_order'");
+
+      mysql_query("INSERT INTO payments SET user = '".$order_data['user_id']."', sum = '".$order_data['amount']."', base = 'Онлайн оплата #".$order_data['id']."'");
+    } else {
+      mysql_query("INSERT INTO payment_logs SET type = 'error', text = 'order has already been paid'");
+    }
+  } else {
+    mysql_query("INSERT INTO payment_logs SET type = 'error', text = 'order not found'");
   }
+  //var_dump($order_data);
 
-  mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '$request'") or die(mysql_error());
+
 }
-
-
-
-/*if (isset($_REQUEST)) {
-  $fd = fopen("log.txt", 'w') or die("не удалось создать файл");
-  //var_dump($fd);
-  foreach ($_REQUEST as $key => $value) {
-    fwrite($fd, $key.' => '.$value."\r\n");
-  }
-  fclose($fd);
-}
-*/
