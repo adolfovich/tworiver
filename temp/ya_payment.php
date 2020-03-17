@@ -27,6 +27,11 @@ $ip = getIp();
 
 $request = 'ip => '.$ip.', ';
 
+$source = file_get_contents('php://input');
+mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '$source'") or die(mysql_error());
+$requestBody = json_decode($source, true);
+
+
 if (isset($_GET) && $_GET) {
   $request .= 'type => GET, ';
   var_dump('$_GET ');
