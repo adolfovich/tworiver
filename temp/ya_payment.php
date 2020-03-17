@@ -33,7 +33,7 @@ if (isset($_GET) && $_GET) {
   var_dump($_GET);
 }
 
-if (isset($_POST)) {
+if (isset($_POST) && $_POST) {
   $request .= 'type => POST, ';
   var_dump('$_POST ');
   var_dump($_POST);
