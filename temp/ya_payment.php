@@ -25,12 +25,12 @@ function getIp() {
 
 $ip = getIp();
 
-$request .= 'ip => '.$ip.', ';
+$request = 'ip => '.$ip.', ';
 
 if (isset($_GET)) {
   $request .= 'type => GET, ';
 } else if (isset($_POST)) {
-  $request. = 'type => POST, ';
+  $request .= 'type => POST, ';
 }
 
 if (isset($request)) {
