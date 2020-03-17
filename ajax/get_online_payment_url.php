@@ -32,7 +32,7 @@ use YandexCheckout\Client;
             ),
             'confirmation' => array(
                 'type' => 'redirect',
-                'return_url' => 'http://snt.local/user.php?payment=success',
+                'return_url' => 'https://xn----dtbffa7byadkn0c6c.xn--p1ai/user.php?payment=success',
             ),
             'capture' => true,
             'description' => $description,
