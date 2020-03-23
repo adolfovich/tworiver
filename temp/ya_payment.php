@@ -37,18 +37,20 @@ $requestBody = json_decode($source, true);
 //echo '<hr>';
 
 
-include '../ajax/ya_lib/autoload.php';
-    use YandexCheckout\Model\Notification\NotificationSucceeded;
-    use YandexCheckout\Model\Notification\NotificationWaitingForCapture;
-    use YandexCheckout\Model\NotificationEventType;
+  include '../ajax/ya_lib/autoload.php';
+      use YandexCheckout\Model\Notification\NotificationSucceeded;
+      use YandexCheckout\Model\Notification\NotificationWaitingForCapture;
+      use YandexCheckout\Model\NotificationEventType;
 
-    try {
-          $notification = ($requestBody['event'] === NotificationEventType::PAYMENT_SUCCEEDED)
-            ? new NotificationSucceeded($requestBody)
-            : new NotificationWaitingForCapture($requestBody);
-        } catch (Exception $e) {
-            // Обработка ошибок при неверных данных
-        }
+      try {
+            $notification = ($requestBody['event'] === NotificationEventType::PAYMENT_SUCCEEDED)
+              ? new NotificationSucceeded($requestBody)
+              : new NotificationWaitingForCapture($requestBody);
+          } catch (Exception $e) {
+              // Обработка ошибок при неверных данных
+          }
+
+
 
 $payment = $notification->getObject();
 
@@ -73,6 +75,8 @@ if ($payment->_status == 'succeeded') {
       mysql_query("UPDATE pre_payments SET status = 1, destanation_order_id = '".$pay_id."' WHERE id = '$pay_order'");
 
       mysql_query("INSERT INTO payments SET user = '".$order_data['user_id']."', sum = '".$order_data['amount']."', base = 'Онлайн оплата #".$order_data['id']."'");
+
+      mysql_query("UPDATE user SET balans = balans + '".$order_data['amount']."', total_balance = total_balance + '".$order_data['amount']."' WHERE id = ".$order_data['user_id']);
     } else {
       mysql_query("INSERT INTO payment_logs SET type = 'error', text = 'order has already been paid'");
     }
