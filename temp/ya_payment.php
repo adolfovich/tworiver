@@ -72,11 +72,15 @@ if ($payment->_status == 'succeeded') {
 
   if ($order_data) {
     if ($order_data['status'] == 0) {
+
+$update_user_sql = "UPDATE user SET balans = balans + '".$order_data['amount']."', total_balance = total_balance + '".$order_data['amount']."' WHERE id = ".$order_data['user_id'];
+mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '".$update_user_sql."'");
+mysql_query($update_user_sql);
+
+
       mysql_query("UPDATE pre_payments SET status = 1, destanation_order_id = '".$pay_id."' WHERE id = '$pay_order'");
 
       mysql_query("INSERT INTO payments SET user = '".$order_data['user_id']."', sum = '".$order_data['amount']."', base = 'Онлайн оплата #".$order_data['id']."'");
-
-      mysql_query("UPDATE user SET balans = balans + '".$order_data['amount']."', total_balance = total_balance + '".$order_data['amount']."' WHERE id = ".$order_data['user_id']);
     } else {
       mysql_query("INSERT INTO payment_logs SET type = 'error', text = 'order has already been paid'");
     }
