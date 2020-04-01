@@ -6,7 +6,6 @@ ini_set('display_startup_errors', 1);
 
 include_once "../core/db_connect.php";
 
-
 function getIp() {
   $keys = [
     'HTTP_CLIENT_IP',
@@ -24,59 +23,43 @@ function getIp() {
 }
 
 $ip = getIp();
-
 $request = 'ip => '.$ip.', ';
-
 $source = file_get_contents('php://input');
-//var_dump($source);
-//echo '<hr>';
-//mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '$source'") or die(mysql_error());
 $requestBody = json_decode($source, true);
 
-//var_dump($requestBody);
-//echo '<hr>';
+include '../ajax/ya_lib/autoload.php';
+use YandexCheckout\Model\Notification\NotificationSucceeded;
+use YandexCheckout\Model\Notification\NotificationWaitingForCapture;
+use YandexCheckout\Model\NotificationEventType;
 
-
-  include '../ajax/ya_lib/autoload.php';
-      use YandexCheckout\Model\Notification\NotificationSucceeded;
-      use YandexCheckout\Model\Notification\NotificationWaitingForCapture;
-      use YandexCheckout\Model\NotificationEventType;
-
-      try {
-            $notification = ($requestBody['event'] === NotificationEventType::PAYMENT_SUCCEEDED)
-              ? new NotificationSucceeded($requestBody)
-              : new NotificationWaitingForCapture($requestBody);
-          } catch (Exception $e) {
-              // Обработка ошибок при неверных данных
-          }
-
-
+try {
+  $notification = ($requestBody['event'] === NotificationEventType::PAYMENT_SUCCEEDED)
+    ? new NotificationSucceeded($requestBody)
+    : new NotificationWaitingForCapture($requestBody);
+} catch (Exception $e) {
+  // Обработка ошибок при неверных данных
+}
 
 $payment = $notification->getObject();
 
-//var_dump($payment->description);
-
 if ($payment->_status == 'succeeded') {
-  //echo 'OK';
   $pay_id = $payment->_id;
   $pay_description = $payment->_description;
   $pay_amount = $payment->_amount->_value;
   $pay_order = explode('#', $pay_description);
   $pay_order = $pay_order[1];
   $sql = "SELECT * FROM pre_payments WHERE id = '$pay_order'";
-  //var_dump($sql);
+
   $order_data_result = mysql_query($sql);
-  //var_dump($order_data_result);
-  $order_data = mysql_fetch_assoc($order_data_result);
-  var_dump($order_data);
+
+  $order_data = mysql_fetch_assoc($order_data_result);  
 
   if ($order_data) {
     if ($order_data['status'] == 0) {
 
-$update_user_sql = "UPDATE user SET balans = balans + '".$order_data['amount']."', total_balance = total_balance + '".$order_data['amount']."' WHERE id = ".$order_data['user_id'];
-mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '".$update_user_sql."'");
-mysql_query($update_user_sql);
-
+      $update_user_sql = "UPDATE users SET balans = balans + '".$order_data['amount']."', total_balance = total_balance + '".$order_data['amount']."' WHERE id = ".$order_data['user_id'];
+      mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '".mysql_real_escape_string($update_user_sql)."'");
+      mysql_query($update_user_sql);
 
       mysql_query("UPDATE pre_payments SET status = 1, destanation_order_id = '".$pay_id."' WHERE id = '$pay_order'");
 
@@ -87,7 +70,4 @@ mysql_query($update_user_sql);
   } else {
     mysql_query("INSERT INTO payment_logs SET type = 'error', text = 'order not found'");
   }
-  //var_dump($order_data);
-
-
 }
