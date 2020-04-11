@@ -7,39 +7,65 @@
 	$curdate = date("Y-m-d");
 	$curmonth = date("m");
 	$curyear = date("Y");
-	
+
 	$result_user_is_admin = mysql_query("SELECT is_admin FROM users WHERE email = '".$_COOKIE["user"]."'") or die(mysql_error());
-	
+
 	while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
 			$is_admin = $user_is_admin['is_admin'];
 		}
-	
+
 	if ($is_auth == 1) {
-		
-		if ($is_admin == 1) {			
-			
+		if ($is_admin == 1) {
+
 			if (isset($_GET['electric'])) {
 				$result_electric = mysql_query("SELECT u.*, (SELECT uc.num FROM users_contracts uc WHERE uc.user = u.id LIMIT 1) as cnum FROM users u WHERE u.is_del = 0") or die(mysql_error());
-				
+
 				$current = '';
 				while ($electric = mysql_fetch_assoc($result_electric)) {
 					$current = $current . $electric['uchastok'].','.$electric['name'].',+'.$electric['phone'].','.$electric['cnum'].','.$electric['sch_plomb_num'].','.number_format($electric['balans'], 2, '.', ' ').'р.'.PHP_EOL;
 				}
 				$file = 'temp/electric.csv';
-												
+
 				$fp = fopen($file, "w"); // ("r" - считывать "w" - создавать "a" - добовлять к тексту),мы создаем файл
 				fwrite($fp, $current);
 				fclose($fp);
-							
+
 				echo "<script>window.open('temp/electric.csv');</script>";
-				
+			} else if (isset($_GET['payments'])) {
+				//var_dump($_POST);
+				$first_day = date("Y-".$_POST['month']."-01 00:00:00");
+				$last_day = date("Y-".$_POST['month']."-t 00:00:00");
+				$sql = "SELECT p.*, (SELECT uchastok FROM users WHERE id = p.user) as uchastok FROM payments p WHERE p.date BETWEEN '$first_day' AND '$last_day'";
+				//echo $sql;
+				$result_payments = mysql_query($sql) or die(mysql_error());
+
+				if (mysql_num_rows($result_payments)) {
+
+					$current = '';
+					while ($payments = mysql_fetch_assoc($result_payments)) {
+						$current .= date("d.m.Y", strtotime($payments['date'])).','.
+						$current .= date("H:i:s", strtotime($payments['date'])).','.
+						$payments['uchastok'].','.
+						number_format($payments['sum'], 2, '.', ' ').'р.,'.
+						$payments['base'].','.PHP_EOL;
+					}
+					$file = 'temp/payments.csv';
+
+					$fp = fopen($file, "w");
+					fwrite($fp, $current);
+					fclose($fp);
+
+					echo "<script>window.open('temp/payments.csv');</script>";
+				} else {
+					echo "<script>alert('За данный период нет данных!')</script>";
+				}
+
 			}
-			
 		}
 	}
-	
 
-	
+
+
 ?>
 
 <!DOCTYPE html>
@@ -91,7 +117,7 @@
 	<body>
 		<?php echo $error_msg; ?>
 		<?php include_once "include/head.php"; ?>
-		
+
 		<div class="container">
 
 
@@ -100,8 +126,8 @@
 					<?php
 					if ($is_auth == 1) {
 						if ($is_admin == 1) {
-							
-							
+
+
 					?>
 							<div class="row">
 								<div class="col-md-12">
@@ -118,18 +144,41 @@
 							<div class="row">
 								<div class="col-md-12">
 										<h4>Сводная балансово-расчетная ведомость потребителей электроэнергии <a class="btn btn-default" href="?electric"/>Сформировать</a></h4>
-										
-										
 								</div>
-							</div>							
+							</div>
+
+							<div class="row">
+								<div class="col-md-12">
+									<form method="POST" action="?payments">
+										<h4>
+											Сводная ведомость по платежам за месяц &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+											<select name="month">
+												<option value="01" <?php if (date("m") == 1) echo 'selected';?>>Январь</option>
+												<option value="02" <?php if (date("m") == 2) echo 'selected';?>>Февраль</option>
+												<option value="03" <?php if (date("m") == 3) echo 'selected';?>>Март</option>
+												<option value="04" <?php if (date("m") == 4) echo 'selected';?>>Апрель</option>
+												<option value="05" <?php if (date("m") == 5) echo 'selected';?>>Май</option>
+												<option value="06" <?php if (date("m") == 6) echo 'selected';?>>Июнь</option>
+												<option value="07" <?php if (date("m") == 7) echo 'selected';?>>Июль</option>
+												<option value="08" <?php if (date("m") == 8) echo 'selected';?>>Август</option>
+												<option value="09" <?php if (date("m") == 9) echo 'selected';?>>Сентябрь</option>
+												<option value="10" <?php if (date("m") == 10) echo 'selected';?>>Октябрь</option>
+												<option value="11" <?php if (date("m") == 11) echo 'selected';?>>Ноябрь</option>
+												<option value="12" <?php if (date("m") == 12) echo 'selected';?>>Декабрь</option>
+											</select>
+											<button type="submit" class="btn btn-default"/>Сформировать</button>
+										</h4>
+									</form>
+								</div>
+							</div>
 							<hr>
 					<?php
 						}
 					}
-					?>					
-							
-							
+					?>
+
+
 		</div>
-	
+
 	</body>
 </html>
