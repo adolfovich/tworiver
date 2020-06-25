@@ -67,7 +67,7 @@
             <i class="ti-settings text-primary"></i>
             Настройки
           </a>
-          <a class="dropdown-item" href="cab/logout">
+          <a class="dropdown-item" href="/cab/logout">
             <i class="ti-power-off text-primary"></i>
             Выход
           </a>
