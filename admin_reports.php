@@ -8,6 +8,11 @@
 	$curmonth = date("m");
 	$curyear = date("Y");
 
+//$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
+$permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+$file_suffix = substr(str_shuffle($permitted_chars), 0, 16);
+
 	$result_user_is_admin = mysql_query("SELECT is_admin FROM users WHERE email = '".$_COOKIE["user"]."'") or die(mysql_error());
 
 	while ($user_is_admin = mysql_fetch_assoc($result_user_is_admin)) {
@@ -49,13 +54,23 @@
 						number_format($payments['sum'], 2, '.', ' ').'р.,'.
 						$payments['base'].','.PHP_EOL;
 					}
-					$file = 'temp/payments.csv';
-
+					$file = 'temp/payments-'.$file_suffix.'.csv';
+//echo '<br>';
+//echo $current;
+//echo '<br>';
 					$fp = fopen($file, "w");
-					fwrite($fp, $current);
+//var_dump($fp);
+//echo '<br>';
+					$fwrite = fwrite($fp, $current);
+
+//var_dump($fwrite);
+//echo '<br>';
 					fclose($fp);
 
-					echo "<script>window.open('temp/payments.csv');</script>";
+//$homepage = file_get_contents($file);
+//var_dump($homepage);
+
+					echo "<script>window.open('".$file."');</script>";
 				} else {
 					echo "<script>alert('За данный период нет данных!')</script>";
 				}
