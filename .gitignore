@@ -1,5 +1,5 @@
 .ftpconfig
-core/db_connect.php
+_conf.php
 
 uploads/*.*
 img/*.*

@@ -1,1 +1,0 @@
-ALTER TABLE news ADD is_del INT NOT NULL DEFAULT  '0';

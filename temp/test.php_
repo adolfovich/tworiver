@@ -1,0 +1,64 @@
+<?php
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
+/*
+$curr_ip = '46.173.6.235';
+
+$api_ip = '46.173.6.235';
+$api_ips = explode(",", $api_ip);
+
+var_dump($api_ips);
+
+if(!in_array($curr_ip, $api_ips)){
+	echo '{"error":" '.$curr_ip.'", "code":"5"}';
+	//echo '<response><error>'.$lang['text443'].' '.$ip.'</error><code>5</code></response>';
+    exit;
+}
+
+echo 'OK';
+*/
+
+$shop_id = '670015';
+$secret_key = 'live_50oCKxnCTJ39UZJJCEG0uyr_pMASKfsgt35QXuVZIUc';
+
+include ('../_conf.php');
+include ('../classes/safemysql.class.php');
+$db = new SafeMySQL(array('host' => $db_host,'user' => $db_user, 'pass' => $db_pass, 'db' => $db_name, 'charset' => 'utf8'));
+
+include '../classes/ya_lib/autoload.php';
+use YandexCheckout\Client;
+$client = new Client();
+
+$user_email = 'adolfovich.alexashka@gmail.com';
+$pay_variant = 1;
+$amount = 100;
+
+$user = $db->getRow("SELECT * FROM users WHERE email = ?s", $user_email);
+
+$setAuth = $client->setAuth($shop_id, $secret_key);
+
+$db->query("INSERT INTO pre_payments SET user_id = ?i, variant = ?s, amount = ?s", $user['id'], $pay_variant, $amount);
+$order_id = $db->insertId();
+$description = 'Оплата электроэнергии #'.$order_id;
+
+$payment = $client->createPayment(
+		array(
+				'amount' => array(
+						'value' => $amount,
+						'currency' => 'RUB',
+				),
+				'confirmation' => array(
+						'type' => 'redirect',
+						'return_url' => 'https://xn----dtbffa7byadkn0c6c.xn--p1ai/user.php?payment=success',
+				),
+				'capture' => true,
+				'description' => $description,
+		),
+		uniqid('', true)
+);
+
+$url = $payment->_confirmation->_confirmationUrl;
+
+var_dump($url);
