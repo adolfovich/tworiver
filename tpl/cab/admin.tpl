@@ -55,21 +55,21 @@
                     <h4 class="text-center mb-3">Электроэнергия</h4>
                     <?php foreach ($electric_debtors as $electric_debtor) { ?>
                       <?php $name = explode(" ", $electric_debtor['name']); ?>
-                      <p><a href="/cab/admin_user?id=<?=$electric_debtor['id']?>" style="color: #000"><?=$name[0]?> <?=substr($name[1], 0, 1)?>.<?=substr($name[2], 0, 1)?>. №<?=$electric_debtor['uchastok']?>: <b><?=number_format($electric_debtor['balance'], 2, '.', ' ')?>р.</b></a></p>
+                      <p><a href="/cab/admin_user?id=<?=$electric_debtor['id']?>" style="color: #000"><?=$name[0]?> <?=mb_substr($name[1], 0, 1)?>.<?=mb_substr($name[2], 0, 1)?>. №<?=$electric_debtor['uchastok']?>: <b><?=number_format($electric_debtor['balance'], 2, '.', ' ')?>р.</b></a></p>
                     <?php } ?>
                   </div>
                   <div class="col-md-4 ">
                     <h4 class="text-center mb-3">Членские взносы</h4>
                     <?php foreach ($membership_debtors as $membership_debtor) { ?>
                       <?php $name = explode(" ", $membership_debtor['name']); ?>
-                      <p><a href="/cab/admin_user?id=<?=$membership_debtor['id']?>" style="color: #000"><?=$name[0]?> <?=substr($name[1], 0, 1)?>.<?=substr($name[2], 0, 1)?>. №<?=$membership_debtor['uchastok']?>: <b><?=number_format($membership_debtor['balance'], 2, '.', ' ')?>р.</b></a></p>
+                      <p><a href="/cab/admin_user?id=<?=$membership_debtor['id']?>" style="color: #000"><?=$name[0]?> <?=mb_substr($name[1], 0, 1)?>.<?=mb_substr($name[2], 0, 1)?>. №<?=$membership_debtor['uchastok']?>: <b><?=number_format($membership_debtor['balance'], 2, '.', ' ')?>р.</b></a></p>
                     <?php } ?>
                   </div>
                   <div class="col-md-4 ">
                     <h4 class="text-center mb-3">Целевые взносы</h4>
                     <?php foreach ($target_debtors as $target_debtor) { ?>
                       <?php $name = explode(" ", $target_debtor['name']); ?>
-                      <p><a href="/cab/admin_user?id=<?=$target_debtor['id']?>" style="color: #000"><?=$name[0]?> <?=substr($name[1], 0, 1)?>.<?=substr($name[2], 0, 1)?>. №<?=$target_debtor['uchastok']?>: <b><?=number_format($target_debtor['balance'], 2, '.', ' ')?>р.</b></a></p>
+                      <p><a href="/cab/admin_user?id=<?=$target_debtor['id']?>" style="color: #000"><?=$name[0]?> <?=mb_substr($name[1], 0, 1)?>.<?=mb_substr($name[2], 0, 1)?>. №<?=$target_debtor['uchastok']?>: <b><?=number_format($target_debtor['balance'], 2, '.', ' ')?>р.</b></a></p>
                     <?php } ?>
                   </div>
                 </div>
