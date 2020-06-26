@@ -30,7 +30,7 @@
 		//Выбираем дату последних показаний пользователя
 		$last_date_q = "SELECT date FROM Indications WHERE user = ".$users['id']." ORDER BY date DESC LIMIT 1";
 
-		$last_date_result = $db-getOne($last_date_q);
+		$last_date_result = $db->getOne($last_date_q);
 
 		//Если есть показаний
 		if ($last_date_result) {
