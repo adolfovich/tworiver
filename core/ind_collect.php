@@ -91,7 +91,7 @@
 					$tarif = 'electro_ac_p_lsum_t'.$i;
 
 					//Проверяем, есть ли такой тариф
-					$check_tarif_result = $db-getRow("SELECT * FROM tarifs WHERE id_waviot = '".$tarif."'");
+					$check_tarif_result = $db->getRow("SELECT * FROM tarifs WHERE id_waviot = '".$tarif."'");
 
 					if ($check_tarif_result) {
 						echo "<b>$i</b>"."<br> \r\n";
