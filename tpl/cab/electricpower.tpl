@@ -48,17 +48,7 @@
             </li>
           </ul>
 
-          <!-- Tab panes -->
-          <div class="tab-content">
-            <div id="t1" class="container tab-pane active"><br>
-              <h3>T1</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-            </div>
-            <div id="t2" class="container tab-pane fade"><br>
-              <h3>T2</h3>
-              <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            </div>
-          </div>
+
         </div>
       </div>
       <div class="modal-footer">
@@ -108,7 +98,7 @@
               </div>
               <div class="col-md-3 ">
                 <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-success btn-sm btn-block" onClick="loadModal('modal_pay_electric')">Оплатить</a></div>
-                <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-success btn-sm btn-block" onClick="loadModal('modal_receipt_electric')">Распечатать квитанцию</a></div>
+                <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-primary btn-sm btn-block" onClick="loadModal('modal_receipt_electric')">Распечатать квитанцию</a></div>
               </div>
             </div>
           </div>
@@ -178,7 +168,13 @@
                           </div>
                         </div>
                         <div class="row" style="margin-top: 10px;">
-                          <a href="#" class="btn btn-success btn-sm btn-block" onclick="openIndicationsModal(<?=$counter['id']?>); return false;">Показания</a>
+                          <div class="col-md-6">
+                            <a href="#" style="margin-top: 10px;" class="btn btn-primary btn-sm btn-block" onclick="openIndicationsModal(<?=$counter['id']?>); return false;">Показания</a>
+                          </div>
+                          <div class="col-md-6">
+                            <a href="#" style="margin-top: 10px;" class="btn btn-success btn-sm btn-block" onclick="loadModal('modal_act_electric', 'counter=<?=$counter['id']?>'); return false;">Акт сверки</a>
+                          </div>
+
                         </div>
                       </div>
                     </div>

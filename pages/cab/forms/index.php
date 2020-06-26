@@ -98,7 +98,7 @@ if (isset($_SESSION['id'])) {
 			include "invoice_member.php";
 			echo '</div>';
 		} else if (isset($_GET['pay_target']) && $_GET['pay_target'] > 0) {
-			
+
 			$targets_sum = explode(".", $_GET['pay_target']);
 			echo '<div class="page">';
 			include "invoice_target.php";
@@ -107,7 +107,42 @@ if (isset($_SESSION['id'])) {
 		}
 
 
-	}
+	} else if (isset($_GET['act'])) {
+
+    $user_id = $_SESSION['id'];
+    $date_from = $_GET['datefrom'];
+    $date_to = $_GET['dateto'];
+
+
+    if ($_GET['act'] = 'electric') {
+      $counter = $_GET['counter'];
+
+    	//выбираем данные по пользователю
+    	$user_data = $db->getRow("SELECT * FROM users WHERE id = ?i", $user_id);
+      $counter_data = $db->getRow("SELECT * FROM `counters` WHERE id = ?i AND user_id = ?i", $counter, $user_id);
+
+      if ($counter_data) {
+        $user_uchastok = $user_data['uchastok'];
+      	$user_name = $user_data['name'];
+      	$user_sch_model = $counter_data['model'];
+      	$user_sch_num = $counter_data['num'];
+      	$user_sch_plomb_num = $counter_data['plomb'];
+
+        $user_contract = $db->getRow("SELECT * FROM `users_contracts` WHERE id = ?i", $counter_data['contract_id']);
+
+      	//выбираем данные договора на энергопотребление
+
+      	$contract_num = $user_contract['num'];
+      	$contract_date = $user_contract['date_start'];
+
+
+        echo '<div class="page">';
+  			include "act_reconciliation.php";
+  			echo '</div>';
+      }
+
+    }
+  }
 
 
 ?>

@@ -152,6 +152,22 @@
 
   <script>
 
+  function printAct(type)
+  {
+    dateFrom = document.getElementById('actDateFrom').value;
+    dateTo = document.getElementById('actDateTo').value;
+
+    url = '/pages/cab/forms/?act=electric&datefrom='+dateFrom+'&dateto='+dateTo;
+
+    if (type == 'electric') {
+      counter = document.getElementById('actCounter').value;
+      url = url + '&counter='+counter;
+    }
+
+    window.open(url, '_blank');
+    $('#templateModal').modal('hide');
+  }
+
   function IsJsonString(str) {
     try {
         JSON.parse(str);
