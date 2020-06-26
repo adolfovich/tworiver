@@ -22,13 +22,13 @@
 
 	//Выбираем всех пользователей у которых есть номер модема
 	//$result_users = mysql_query("SELECT * FROM users WHERE modem_num IS NOT NULL AND modem_num NOT LIKE ''") or die(mysql_error());
-	$result_users = $db->getAll("SELECT * FROM users WHERE modem_num IS NOT NULL AND modem_num NOT LIKE ''");
+	$result_counters = $db->getAll("SELECT * FROM counters WHERE modem_num IS NOT NULL AND modem_num NOT LIKE ''");
 
 	//Перебор пользователей
-	foreach ($result_users as $users) {
-		echo 'Пользователь '.$users['email']."<br> \r\n";
+	foreach ($result_counters as $counter) {
+		echo 'Счетчик '.$counter['id']."<br> \r\n";
 		//Выбираем дату последних показаний пользователя
-		$last_date_q = "SELECT date FROM Indications WHERE user = ".$users['id']." ORDER BY date DESC LIMIT 1";
+		$last_date_q = "SELECT date FROM Indications WHERE counter_id = ".$counter['id']." ORDER BY date DESC LIMIT 1";
 
 		$last_date_result = $db->getOne($last_date_q);
 
@@ -46,8 +46,7 @@
 
 		if ($last_date == $yesterday) {
 			echo 'Новых показаний нет'."<br> \r\n";
-		}
-		else {
+		}	else {
 
 			//перебираем даты, пока не не будет сегодняшняя
 			while (date("Y-m-d", strtotime('+1 day', strtotime($last_date))) != $curdate) {
@@ -55,7 +54,7 @@
 
 				$date_q = date("Y-m-d", strtotime('+2 day', strtotime($last_date)));
 
-				$indication_q = 'https://lk.waviot.ru/api/report/?template=a2f5261236bf3e2aede89cae168d2c2d&period=P1D&from='.$date_q.'&raw=1&modem='.$users['modem_num'].'&to='.$date_q . '&key=1e3a109e8a4ffdeb4715bf022a04a3bf';
+				$indication_q = 'https://lk.waviot.ru/api/report/?template=a2f5261236bf3e2aede89cae168d2c2d&period=P1D&from='.$date_q.'&raw=1&modem='.$counter['modem_num'].'&to='.$date_q . '&key=1e3a109e8a4ffdeb4715bf022a04a3bf';
 
 				echo $indication_q . " \r\n";
 
@@ -106,14 +105,24 @@
 							//var_dump($value_ind);
 							//echo '<hr>';
 							if ($value_ind > 0 || $value_ind != '0') {
-								$prev_ind = $db->getOne("SELECT Indications FROM Indications WHERE user = ".$users['id']." AND tarif = (SELECT id FROM tarifs WHERE id_waviot = '".$tarif."') ORDER BY date DESC LIMIT 1");
+								$prev_ind = $db->getOne("SELECT Indications FROM Indications WHERE counter_id = ".$counter['id']." AND tarif = (SELECT id FROM tarifs WHERE id_waviot = '".$tarif."') ORDER BY date DESC LIMIT 1");
 								//$prev_ind = mysql_result($prev_ind_result, 0);
 								$ind_diff = $value_ind - $prev_ind;
 
 
 								echo '<b>Добавляем показания</b>'."<br> \r\n";
 
-								$insert_q = "INSERT INTO Indications SET date='".date('Y-m-d', strtotime($date)-86400)."', user=".$users['id'].", tarif=(SELECT id FROM tarifs WHERE id_waviot = '".$tarif."'), Indications=".$value_ind.",	prev_indications = '".$prev_ind."',	additional=(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), additional_sum= $ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'), auto = 1";
+								$insert_q = "
+									INSERT INTO Indications SET
+										date='".date('Y-m-d', strtotime($date)-86400)."',
+										user=".$counter['user_id'].",
+										counter_id = ".$counter['id'].",
+										tarif=(SELECT id FROM tarifs WHERE id_waviot = '".$tarif."'),
+										Indications=".$value_ind.",
+										prev_indications = '".$prev_ind."',
+										additional=(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'),
+										additional_sum= $ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'),
+										auto = 1";
 
 								echo $insert_q . "<br> \r\n";
 								$db->query($insert_q);
@@ -123,7 +132,7 @@
 								$amount = $ind_diff * $price;
 
 								echo '<b>Обновляем баланс</b>'."<br> \r\n";
-								$core->changeBalance($users['id'], 1, 5, $amount);
+								$core->changeBalance($counter['user_id'], 1, 5, $amount);
 
 
 								/*$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - ($ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'))), u.total_balance = (u.total_balance - ($ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'))) WHERE u.id = ".$users['id'];
