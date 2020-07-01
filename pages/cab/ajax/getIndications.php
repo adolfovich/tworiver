@@ -69,6 +69,7 @@ if (isset($_SESSION['id'])) {
 
             $html .= '<tbody class="table-striped">';
             if ($indications) {
+              $total = 0;
               foreach ($indications as $indication) {
                 //echo 'indication - '.$indication['date'].' | '.$indication['Indications'].'<br>'."\r\n";
                 $html .= '<tr>';
@@ -80,7 +81,13 @@ if (isset($_SESSION['id'])) {
                   $html .= '<td class="text-center">'.$indication['additional'].'</td>';
                   $html .= '<td class="text-center">'.$indication['additional_sum'].'</td>';
                 $html .= '</tr>';
+                $total += $indication['additional_sum'];
               }
+              $html .= '<tr>';
+              $html .= '<td colspan="5" class="text-right"><b>ИТОГО:</b></td>';
+              $html .= '<td class="text-center"><b>'.$total.'</b></td>';
+              $html .= '';
+              $html .= '</tr>';
             } else {
               $html .= '<tr>';
                 $html .= '<td colspan="6"><p class="text-center">За выбраный период показаний не найдено</p></td>';
