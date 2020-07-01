@@ -3,7 +3,6 @@
 include('connect.php');
 
 $html = '';
-
 $html .= '';
 
 if (isset($_SESSION['id'])) {
@@ -19,7 +18,6 @@ if (isset($_SESSION['id'])) {
     $tarifs = $db->getAll("SELECT * FROM tarifs");
 
     $html .= '<div class="container mt-3">';
-
     $html .= '<ul class="nav nav-tabs">';
 
     $i = 1;
@@ -33,7 +31,6 @@ if (isset($_SESSION['id'])) {
       $html .= '<li class="nav-item">';
         $html .= '<a class="nav-link '.$active.'" data-toggle="tab" href="#'.$tarif['id_waviot'].'">'.$tarif['name'].'</a>';
       $html .= '</li>';
-
       $i++;
     }
 
@@ -49,10 +46,8 @@ if (isset($_SESSION['id'])) {
       }
       $indications = $db->getAll("SELECT * FROM Indications WHERE user = ?i AND counter_id = ?i AND tarif = ?i AND date BETWEEN ?s AND ?s", $_SESSION['id'], $form['counterId'], $tarif['id'], $start_date, $end_date);
 
-
         $html .= '<div id="'.$tarif['id_waviot'].'" class="container tab-pane '.$active.'">';
           $html .= '<table class="table table-bordered table-sm table-hover">';
-
             $html .= '<thead class="thead-dark">';
               $html .= '<tr>';
                 $html .= '<th rowspan="2" style="vertical-align: middle; text-align: center;">Дата</th>';
@@ -66,18 +61,15 @@ if (isset($_SESSION['id'])) {
                 $html .= '<th style="vertical-align: middle; text-align: center;">Расход</th>';
               $html .= '</tr>';
             $html .= '</thead>';
-
             $html .= '<tbody class="table-striped">';
             if ($indications) {
               $total = 0;
               foreach ($indications as $indication) {
-                //echo 'indication - '.$indication['date'].' | '.$indication['Indications'].'<br>'."\r\n";
                 $html .= '<tr>';
                   $html .= '<td class="text-center">'.date("d.m.Y", strtotime($indication['date'])).'</td>';
                   $html .= '<td class="text-center">'.$indication['prev_indications'].'</td>';
                   $html .= '<td class="text-center">'.$indication['Indications'].'</td>';
                   $html .= '<td class="text-center">'.number_format(($indication['Indications']-$indication['prev_indications']), 2, '.', '').'</td>';
-                  //$html .= '<td></td>';
                   $html .= '<td class="text-center">'.$indication['additional'].'</td>';
                   $html .= '<td class="text-center">'.$indication['additional_sum'].'</td>';
                 $html .= '</tr>';
@@ -93,20 +85,13 @@ if (isset($_SESSION['id'])) {
                 $html .= '<td colspan="6"><p class="text-center">За выбраный период показаний не найдено</p></td>';
               $html .= '</tr>';
             }
-
             $html .= '</tbody>';
           $html .= '</table>';
         $html .= '</div>';
-
-
       $i++;
     }
-
     $html .= '</div>';
-
     $html .= '</div>';
-
-
 
   } else {
     $arr['error'] = 'Ошибка';

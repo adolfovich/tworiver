@@ -71,31 +71,34 @@
             <p class="card-title">Договора и счетчики</p>
             <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center mb-4">
               <ul class="list-group col-sm-12">
-                <?php foreach ($curr_user_contracts as $contract) {?>
-                  <?php if (!$contract['num']) $contract['num'] = 'Б/Н'; ?>
-                  <?php if (!$contract['date_start'] != '0000-00-00') {$contract['date_start'] = date("d.m.Y", strtotime($contract['date_start']));} else {$contract['date_start'] = '--.--.----';} ?>
-                  <li class="list-group-item bg-secondary text-light">
-                    <div class="row">
-                      <div class="col-sm-8">
-                        Договор №<?=$contract['num']?> от <?=$contract['date_start']?>
+                <?php if ($curr_user_contracts) { ?>
+                  <?php foreach ($curr_user_contracts as $contract) {?>
+                    <?php if (!$contract['num']) $contract['num'] = 'Б/Н'; ?>
+                    <?php if (!$contract['date_start'] != '0000-00-00') {$contract['date_start'] = date("d.m.Y", strtotime($contract['date_start']));} else {$contract['date_start'] = '--.--.----';} ?>
+                    <li class="list-group-item bg-secondary text-light">
+                      <div class="row">
+                        <div class="col-sm-8">
+                          Договор №<?=$contract['num']?> от <?=$contract['date_start']?>
+                        </div>
+                        <div class="col-sm-4 text-right">
+                          <a href="admin_edit_contract?id=<?=$contract['id']?>" class="btn btn-light btn-sm">Изменить</a>
+                        </div>
                       </div>
-                      <div class="col-sm-4 text-right">
-                        <a href="admin_edit_contract?id=<?=$contract['id']?>" class="btn btn-light btn-sm">Изменить</a>
-                      </div>
-                    </div>
-                  </li>
-                  <?php $contract_counters = $db->getAll("SELECT * FROM counters WHERE contract_id = ?i AND dismantling_date IS NOT NULL",$contract['id'] ); ?>
-                  <?php if (!$contract_counters) { ?>
-                    <li class="list-group-item text-center">Нет счетчиков</li>
-                  <?php } else { ?>
-                    <?php foreach ($contract_counters as $contract_counter) { ?>
-                      <li class="list-group-item">
-                        <?=$contract_counter['model']?> №<?=$contract_counter['num']?> (<?=$contract_counter['plomb']?>) <br>
-                        <button type="button" class="btn btn-danger" onClick="loadModal('modal_delete_indications', 'counter=<?=$contract_counter['id']?>')"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Удалить показания</button></li>
+                    </li>
+                    <?php $contract_counters = $db->getAll("SELECT * FROM counters WHERE contract_id = ?i AND dismantling_date IS NOT NULL",$contract['id'] ); ?>
+                    <?php if (!$contract_counters) { ?>
+                      <li class="list-group-item text-center">Нет счетчиков</li>
+                    <?php } else { ?>
+                      <?php foreach ($contract_counters as $contract_counter) { ?>
+                        <li class="list-group-item">
+                          <?=$contract_counter['model']?> №<?=$contract_counter['num']?> (<?=$contract_counter['plomb']?>) <br>
+                          <button type="button" class="btn btn-danger" onClick="loadModal('modal_delete_indications', 'counter=<?=$contract_counter['id']?>')"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Удалить показания</button></li>
+                      <?php } ?>
                     <?php } ?>
                   <?php } ?>
+                <?php } else { ?>
+                  <a href="admin_new_contract?user_id=<?=$curr_user_data['id']?>" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Добавить договор</a>
                 <?php } ?>
-
 
               </ul>
             </div>

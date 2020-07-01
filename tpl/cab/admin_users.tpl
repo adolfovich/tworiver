@@ -20,7 +20,17 @@
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card border-bottom-0">
           <div class="card-body pb-0">
-            <p class="card-title">Список пользователей</p>
+
+            <p class="card-title">
+              <div class="row">
+                <div class="col-md-6">
+                  Список пользователей
+                </div>
+                <div class="col-md-6 text-right">
+                  <a href="admin_new_user" class="btn btn-primary">Добавить пользователя</a>
+                </div>
+              </div>
+            </p>
             <form class="form-inline">
               <div class="form-group mx-sm-3 mb-2 col-sm-12">
                 <label for="searchUser" class="sr-only">Password</label>
@@ -37,9 +47,7 @@
                     <th scope="col">Телефон</th>
                     <th scope="col">Договора</th>
                     <th scope="col">Счетчики</th>
-                    <!--th scope="col">Акты<br>сверок</th-->
                     <th scope="col">Баланс</th>
-                    <!--th scope="col">SMS</th-->
                     <th scope="col"></th>
                   </tr>
                 </thead>
@@ -72,7 +80,7 @@
       document.getElementById('usersResult').innerHTML = data;
     }
   }
-  
+
   window.onload = function() {
     searchUsers('');
   }
