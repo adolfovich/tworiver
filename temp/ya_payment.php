@@ -39,7 +39,7 @@ $request = 'ip => '.$ip.', ';
 $source = file_get_contents('php://input');
 $requestBody = json_decode($source, true);
 
-include '../ajax/ya_lib/autoload.php';
+include '../classes/ya_lib/autoload.php';
 use YandexCheckout\Model\Notification\NotificationSucceeded;
 use YandexCheckout\Model\Notification\NotificationWaitingForCapture;
 use YandexCheckout\Model\NotificationEventType;
