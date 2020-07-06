@@ -53,6 +53,13 @@
           </a>
         </li>
 
+        <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_opjournal') {echo 'active';}?>">
+          <a class="nav-link" href="/cab/admin_opjournal">
+            <i class="fa fa-book menu-icon"></i>
+            <span class="menu-title">Журнал операций</span>
+          </a>
+        </li>
+
 
         <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_settings') {echo 'active';}?>">
           <a class="nav-link" href="/cab/admin_settings">
