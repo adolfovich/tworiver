@@ -74,7 +74,7 @@ if ($payment->_status == 'succeeded') {
       //mysql_query("INSERT INTO payment_logs SET type = 'debug', text = '".mysql_real_escape_string($update_user_sql)."'");
       //mysql_query($update_user_sql);
 
-      $core->changeBalance($order_data['user_id'], $order_data['variant'], 4, $order_data['amount']);
+      $core->changeBalance($order_data['user_id'], $order_data['variant'], 4, $order_data['amount'], 'Онлайн оплата #'.$pay_id);
 
       $db->query("UPDATE pre_payments SET status = 1, destanation_order_id = '".$pay_id."' WHERE id = '$pay_order'");
 
