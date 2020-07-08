@@ -29,6 +29,12 @@ if ($user_data['is_admin']) {
 
   $curr_user_acts = $db->getAll("SELECT * FROM `acts` WHERE user = ?i", $curr_user_data['id']);
 
+  $curr_electric_balance = $db->getOne("SELECT balance FROM purses WHERE user_id = ?i AND type = 1", $curr_user_data['id']);
+  $curr_membership_balance = $db->getOne("SELECT balance FROM purses WHERE user_id = ?i AND type = 1", $curr_user_data['id']);
+  $curr_target_balance = $db->getOne("SELECT balance FROM purses WHERE user_id = ?i AND type = 1", $curr_user_data['id']);
+
+  $curr_target_balance = $curr_electric_balance + $curr_membership_balance + $curr_target_balance;
+
   include('tpl/cab/admin_user.tpl');
 } else {
   include('tpl/cab/403.tpl');

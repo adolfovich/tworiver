@@ -10,6 +10,62 @@
       </div>
     </div>
 
+
+    <div class="row">
+      <div class="col-md-3 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="card-title text-md-center text-xl-left">Общий баланс</p>
+            <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+              <?php if ($curr_target_balance < 0) {$c1text = 'red';} else {$c1text = 'black';}?>
+              <h3 class="mb-0 mb-md-2 mb-xl-0 order-md-1 order-xl-0" style="color:<?=$c1text?>"><?=$curr_target_balance?>р.</h3>
+              <i class="fas fa-ruble-sign"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 grid-margin stretch-card">
+        <a class="card" href="cab/electricpower">
+          <div class="card-body">
+            <p class="card-title text-md-center text-xl-left">Энергопотребление</p>
+            <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+              <?php if ($curr_electric_balance < 0) {$c2text = 'red';} else {$c2text = 'black';}?>
+              <h3 class="mb-0 mb-md-2 mb-xl-0 order-md-1 order-xl-0" style="color:<?=$c2text?>"><?=$curr_electric_balance?>р.</h3>
+              <i class="fas fa-ruble-sign"></i>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-3 grid-margin stretch-card">
+        <a class="card" href="cab/membership">
+          <div class="card-body">
+            <p class="card-title text-md-center text-xl-left">Членские взносы</p>
+            <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+              <?php if ($curr_membership_balance < 0) {$c3text = 'red';} else {$c3text = 'black';}?>
+              <h3 class="mb-0 mb-md-2 mb-xl-0 order-md-1 order-xl-0" style="color:<?=$c3text?>"><?=$curr_membership_balance?>р.</h3>
+              <i class="fas fa-ruble-sign"></i>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="col-md-3 grid-margin stretch-card">
+        <a class="card" href="cab/target">
+          <div class="card-body">
+            <p class="card-title text-md-center text-xl-left">Целевые взносы</p>
+            <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+              <?php if ($curr_target_balance < 0) {$c4text = 'red';} else {$c4text = 'black';}?>
+              <h3 class="mb-0 mb-md-2 mb-xl-0 order-md-1 order-xl-0" style="color:<?=$c4text?>"><?=$curr_target_balance?>р.</h3>
+              <i class="fas fa-ruble-sign"></i>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+
+
+
+
     <div class="row">
       <div class="col-md-6 grid-margin stretch-card">
         <div class="card border-bottom-0">
