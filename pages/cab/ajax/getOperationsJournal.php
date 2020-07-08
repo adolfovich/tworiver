@@ -31,8 +31,6 @@ if (isset($_SESSION['id'])) {
         $optype_q = '';
       }
 
-
-
       if ($form['start_date'] || $form['end_date']) {
         if ($form['start_date'] && $form['end_date']) {
           $date_q = $db->parse(" date BETWEEN ?s AND ?s", $form['start_date'], $form['end_date']);
@@ -45,6 +43,8 @@ if (isset($_SESSION['id'])) {
         } else {
           $date_q = '';
         }
+      } else {
+        $date_q = '';
       }
 
       if ($user_q || $optype_q || $date_q) {
@@ -52,8 +52,6 @@ if (isset($_SESSION['id'])) {
       } else {
         $where = "";
       }
-
-      //var_dump($date_q);
 
       if ($user_q && $optype_q) {
         $and = ' AND ';
@@ -67,18 +65,26 @@ if (isset($_SESSION['id'])) {
         $andDate = '';
       }
 
+      if (!isset($date_q) || $date_q == '') {
+        $andDate = '';
+      }
 
-        $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andDate . "?p", $date_q);
-
-
+      $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andDate . "?p", $date_q);
 
       $json['status'] = 'success';
+
+      $balances_names = [
+        1 => "Электричество",
+        2 => "Членские взносы",
+        3 => "Целевые взносы"
+      ];
 
       foreach ($q as $row) {
         $html .= '<tr>';
         $html .= '<td>'.$row['id'].'</td>';
         $html .= '<td>'.date("d.m.Y H:i", strtotime($row['date'])).'</td>';
         $html .= '<td>'.$db->getOne("SELECT uchastok FROM users WHERE id = ?i", $row['user_id']).'</td>';
+        $html .= '<td>'.$balances_names[$row['balance_type']].'</td>';
         $html .= '<td>'.$db->getOne("SELECT name FROM operations_jornal_types WHERE id = ?i", $row['op_type']).'</td>';
         $html .= '<td>'.$row['amount'].'</td>';
         $html .= '<td>'.$row['comment'].'</td>';
@@ -87,9 +93,6 @@ if (isset($_SESSION['id'])) {
       }
       $json['html'] = $html;
     }
-
-
-
 
   } else {
     $json['status'] = 'error';

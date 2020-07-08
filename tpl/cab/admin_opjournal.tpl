@@ -55,6 +55,8 @@
               </div>
 
               <button type="submit" class="btn btn-primary mb-2" onClick="loadAdminJournal(); return false;"><i class="fa fa-search" aria-hidden="true"></i></button>
+              &nbsp;
+              <button type="submit" class="btn btn-success mb-2" onClick="loadModal('modal_add_operation', 'operation_type='+document.getElementById('optype').value+'&area_number='+document.getElementById('number').value); return false;">Добавить операцию</button>
             </form>
 
             <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
@@ -64,6 +66,7 @@
                     <th scope="col">ID операции</th>
                     <th scope="col">Дата</th>
                     <th scope="col">Участок</th>
+                    <th scope="col">Тип баланса</th>
                     <th scope="col">Тип операции</th>
                     <th scope="col">Сумма</th>
                     <th scope="col">Коментарий</th>
