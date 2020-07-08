@@ -69,7 +69,7 @@ if (isset($_SESSION['id'])) {
         $andDate = '';
       }
 
-      $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andDate . "?p", $date_q);
+      $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andDate . "?p ORDER BY date DESC", $date_q);
 
       $json['status'] = 'success';
 

@@ -43,7 +43,7 @@ if (isset($_SESSION['id'])) {
       $json['error_input'] = 'operation_amount';
     } else {
       //var_dump($form);
-      $core->changeBalance($user['id'], $form['balance_type'], $form['operation_type'], $form['operation_amount'], $form['operation_comment']);
+      $core->changeBalance($user['id'], $form['balance_type'], $form['operation_type'], $form['operation_amount'], $form['operation_comment'], $form['operation_date']); 
       $json['status'] = 'success';
       $json['text'] = 'Операция добавлена';
     }

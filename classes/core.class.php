@@ -369,7 +369,7 @@ class Core
      header("Location: /");
    }
 
-   public function changeBalance($user_id, $balance_type, $operation_type, $amount, $comment = '')
+   public function changeBalance($user_id, $balance_type, $operation_type, $amount, $comment = '', $date = '')
    {
      global $db;
 
@@ -392,6 +392,11 @@ class Core
        'amount' => $symbol.$amount,
        'comment' => $comment
      ];
+
+     if ($date) {
+       $insert['date'] = $date;
+     }
+
      $db->query("INSERT INTO operations_jornal SET ?u", $insert);
 
    }
