@@ -21,6 +21,9 @@ $currentmomth = date("m");
 
 $currentyear = date("Y");
 
+
+$operations = $db->getAll("SELECT oj.*, (SELECT name FROM operations_jornal_types WHERE id = oj.op_type) as operation_name FROM operations_jornal oj WHERE oj.user_id = ?i AND oj.balance_type = 1 ORDER BY date DESC", $user_data['id']);
+
 //var_dump($contract);
 
 include('tpl/cab/electricpower.tpl');

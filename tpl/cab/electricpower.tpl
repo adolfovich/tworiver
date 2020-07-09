@@ -131,6 +131,53 @@
       <?php } ?>
     <?php } ?>
 
+    <?php if (!$operations) { ?>
+      <div class="row" >
+        <div class="col-md-12 grid-margin stretch-card">
+          <div class="card border-bottom-0">
+            <div class="card-body">
+              <p class="card-title">Журнал операций</p>
+              <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+                <h4>Операций не найдено</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <?php } else { ?>
+
+      <div class="row" >
+        <div class="col-md-12 grid-margin stretch-card">
+          <div class="card border-bottom-0">
+            <div class="card-body">
+              <p class="card-title">Журнал операций</p>
+              <div class="row">
+                <table class="table table-bordered table-sm table-hover">
+                  <tr>
+                    <th style="vertical-align: middle; text-align: center;">Дата</th>
+                    <th style="vertical-align: middle; text-align: center;">Операция</th>
+                    <th style="vertical-align: middle; text-align: center;">Сумма</th>
+                    <th style="vertical-align: middle; text-align: center;">Коментарий</th>
+                  </tr>
+                  <?php foreach ($operations as $operation) { ?>
+                    <tr>
+                      <td class="text-center"><?=date("d.m.Y H:i", strtotime($operation['date']))?></td>
+                      <td class="text-center"><?=$operation['operation_name']?></td>
+                      <td class="text-center"><?=$operation['amount']?></td>
+                      <td class="text-center"><?=$operation['comment']?></td>
+                    </tr>
+                  <?php } ?>
+              </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <?php } ?>
+
+
+
   <!-- content-wrapper ends -->
   <!-- partial:partials/_footer.html -->
   <?php include ('tpl/cab/tpl_footer.tpl'); ?>
