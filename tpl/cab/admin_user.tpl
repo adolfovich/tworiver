@@ -143,7 +143,9 @@
                       <?php foreach ($contract_counters as $contract_counter) { ?>
                         <li class="list-group-item">
                           <?=$contract_counter['model']?> №<?=$contract_counter['num']?> (<?=$contract_counter['plomb']?>) <br>
-                          <button type="button" class="btn btn-danger" onClick="loadModal('modal_delete_indications', 'counter=<?=$contract_counter['id']?>')"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Удалить показания</button></li>
+                          <button type="button" class="btn btn-danger" onClick="loadModal('modal_delete_indications', 'counter=<?=$contract_counter['id']?>')"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Удалить показания</button>
+                          <button type="button" class="btn btn-primary" onClick="openIndicationsModal(<?=$contract_counter['id']?>, 1, 1); return false;">Просмотр показаний</button>
+                        </li>
                       <?php } ?>
                     <?php } ?>
                   <?php } ?>

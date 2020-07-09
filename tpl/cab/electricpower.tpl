@@ -1,62 +1,4 @@
-<style>
-.indicationsInput {
-  color: #000 !important;
-    height: 30px;
-    margin-top: -2px;
-}
-</style>
 
-<!-- Modal indications-->
-<div class="modal fade bd-example-modal-lg" id="indicationsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span id="indicationsModalCounterNum" style="display:none;"></span>
-        <h5 class="modal-title" id="indicationsModalTitle">Показания по счетчику № за &nbsp;</h5>
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <select id="indicationsMonth" class="form-control indicationsInput" onChange="indicationsLoad(document.getElementById('indicationsModalCounterNum').innerHTML, document.getElementById('indicationsMonth').value, document.getElementById('indicationsYear').value);">
-                <?php for ($i = 1; $i <= 12; $i++) { ?>
-                  <?php if ($i == $currentmomth) {$selected = 'selected';} else {$selected = '';} ?>
-                  <option value="<?=$i?>" <?=$selected?>><?=$core->getMonthName($i)?></option>
-                <?php } ?>
-              </select>
-            </div>
-            <div class="form-group col-md-6">
-              <select id="indicationsYear" class="form-control indicationsInput"  onChange="indicationsLoad(document.getElementById('indicationsModalCounterNum').innerHTML, document.getElementById('indicationsMonth').value, document.getElementById('indicationsYear').value);">
-                <?php for ($i = $currentyear - 10; $i < $currentyear; $i++) { ?>
-                  <option value="<?=$i?>"><?=$i?></option>
-                <?php } ?>
-                <option selected><?=$currentyear?></option>
-              </select>
-            </div>
-          </div>
-
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body" id="indicationsModalBody">
-        <div class="container mt-3">
-          <!-- Nav tabs -->
-          <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <a class="nav-link active" data-toggle="tab" href="#t1">T1</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="tab" href="#t2">T2</a>
-            </li>
-          </ul>
-
-
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="main-panel">
   <div class="content-wrapper">
@@ -196,35 +138,6 @@
 </div>
 
 <script>
-  function openIndicationsModal(counterId)
-  {
-    var modalTitle = document.getElementById('indicationsModalTitle');
-    var modalBody = document.getElementById('indicationsModalBody');
-    var month = document.getElementById('indicationsMonth').value;
-    var year = document.getElementById('indicationsYear').value;
-    var titleCounterNum = document.getElementById('indicationsModalCounterNum');
-    titleCounterNum.innerHTML = counterId;
-    indicationsLoad(counterId, month, year);
-    $("#indicationsModal").modal('show');
-  }
 
-  function indicationsLoad(counterId, month, year)
-  {
-    var modalBody = document.getElementById('indicationsModalBody');
-    $.post(
-      "/pages/cab/ajax/getIndications.php",
-      {
-        counterId: counterId,
-        month: month,
-        year: year
-      },
-      onAjaxSuccess
-    );
-
-    function onAjaxSuccess(data)
-    {
-      modalBody.innerHTML = data;
-    }
-  }
 
 </script>

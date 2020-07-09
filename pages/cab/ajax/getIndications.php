@@ -44,7 +44,12 @@ if (isset($_SESSION['id'])) {
       } else {
         $active = '';
       }
-      $indications = $db->getAll("SELECT * FROM Indications WHERE user = ?i AND counter_id = ?i AND tarif = ?i AND date BETWEEN ?s AND ?s", $_SESSION['id'], $form['counterId'], $tarif['id'], $start_date, $end_date);
+
+      $sql = $db->parse("SELECT * FROM Indications WHERE user = ?i AND counter_id = ?i AND tarif = ?i AND date BETWEEN ?s AND ?s", $_SESSION['id'], $form['counterId'], $tarif['id'], $start_date, $end_date);
+
+      //var_dump($sql);
+
+      $indications = $db->getAll($sql);
 
         $html .= '<div id="'.$tarif['id_waviot'].'" class="container tab-pane '.$active.'">';
           $html .= '<table class="table table-bordered table-sm table-hover">';
@@ -64,7 +69,11 @@ if (isset($_SESSION['id'])) {
             $html .= '<tbody class="table-striped">';
             if ($indications) {
               $total = 0;
+              $i = 0;
               foreach ($indications as $indication) {
+                if ($i == 0) {
+                  $start_indications = $indication['prev_indications'];
+                }
                 $html .= '<tr>';
                   $html .= '<td class="text-center">'.date("d.m.Y", strtotime($indication['date'])).'</td>';
                   $html .= '<td class="text-center">'.$indication['prev_indications'].'</td>';
@@ -74,9 +83,15 @@ if (isset($_SESSION['id'])) {
                   $html .= '<td class="text-center">'.$indication['additional_sum'].'</td>';
                 $html .= '</tr>';
                 $total += $indication['additional_sum'];
+                $i++;
               }
               $html .= '<tr>';
-              $html .= '<td colspan="5" class="text-right"><b>ИТОГО:</b></td>';
+              $html .= '<td class="text-right"><b>ИТОГО:</b></td>';
+              $html .= '<td class="text-center"><b>'.$start_indications.'</b></td>';
+              $html .= '<td class="text-center"><b>'.$indication['Indications'].'</b></td>';
+              $rashod = $indication['Indications'] - $start_indications;
+              $html .= '<td class="text-center"><b>'.$rashod.'</b></td>';
+              $html .= '<td class="text-center"></td>';
               $html .= '<td class="text-center"><b>'.$total.'</b></td>';
               $html .= '';
               $html .= '</tr>';
