@@ -32,9 +32,18 @@
               </div>
             </p>
             <form class="form-inline">
-              <div class="form-group mx-sm-3 mb-2 col-sm-12">
-                <label for="searchUser" class="sr-only">Password</label>
-                <input type="text" class="form-control col-sm-12" id="searchUser" placeholder="участок/ФИО/телефон" onKeyup="searchUsers(this.value)">
+              <div class="form-group mb-2 col-sm-10">
+                <label for="searchUser" class="sr-only"></label>
+                <input type="text" class="form-control col-sm-12" id="searchUser" placeholder="участок/ФИО/телефон" onKeyup="searchUsers()">
+              </div>
+              <div class="form-group mb-2 col-sm-2">
+                <label for="searchUser" class="sr-only">Сортировка</label>
+                <select class="form-control col-sm-12" id="sortUser" onChange="searchUsers()">
+                  <option value="0" disabled selected>Сортировка по</option>
+                  <option value="area">Номер участка</option>
+                  <option value="name">ФИО</option>
+                  <option value="balance">Баланс</option>
+                </select>
               </div>
             </form>
 
@@ -66,12 +75,14 @@
 </div>
 
 <script>
-  function searchUsers(val) {
-    //console.log(val);
+  function searchUsers() {
+    val = document.getElementById('searchUser').value;
+    sort = document.getElementById('sortUser').value;
     $.post(
         "../pages/ajax/searchUsers.php",
         {
-            string: val,
+          string: val,
+          sorting: sort,
         },
         onAjaxSuccess
     );

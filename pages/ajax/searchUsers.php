@@ -10,7 +10,19 @@ $core  = new Core();
 
 $form = $core->form;
 
-$users = $db->getAll("SELECT * FROM users WHERE is_del = 0 AND (name LIKE ?s OR email LIKE ?s OR phone LIKE ?s OR uchastok LIKE ?s)", '%'.$form['string'].'%', '%'.$form['string'].'%', '%'.$form['string'].'%', '%'.$form['string'].'%');
+if ($form['sorting'] == 'area') {
+  $ordering = ' ORDER BY uchastok';
+} else if ($form['sorting'] == 'name') {
+  $ordering = ' ORDER BY name';
+} else if ($form['sorting'] == 'balance') {
+  $ordering = ' ORDER BY balance';
+} else {
+  $ordering = '';
+}
+
+$sql = $db->parse("SELECT u.*, (SELECT SUM(balance) FROM purses WHERE user_id = u.id) as balance FROM users u WHERE u.is_del = 0 AND (u.name LIKE ?s OR u.email LIKE ?s OR u.phone LIKE ?s OR u.uchastok LIKE ?s)".$ordering, '%'.$form['string'].'%', '%'.$form['string'].'%', '%'.$form['string'].'%', '%'.$form['string'].'%');
+
+$users = $db->getAll($sql);
 
 $html = '';
 
@@ -47,8 +59,8 @@ foreach ($users as $user) {
     $html .= '<p>'.$user_counter['model'].' №'.$user_counter['num'].'<br>('.$user_counter['plomb'].')</p>';
   }
   $html .= '</td>';
-  $u_balance = $db->getOne("SELECT SUM(balance) FROM purses WHERE user_id = ?i", $user['id']);
-  $html .= '<td class="budget">'.$u_balance.'р.</td>';
+  //$u_balance = $db->getOne("SELECT SUM(balance) FROM purses WHERE user_id = ?i", $user['id']);
+  $html .= '<td class="budget">'.$user['balance'].'р.</td>';
   $html .= '<td class="budget">';
   $html .= '<a class="text-danger" href="?action=delete&id='.$user['id'].'"><i class="fa fa-ban" aria-hidden="true"></i></a>';
   $html .= '</td>';
