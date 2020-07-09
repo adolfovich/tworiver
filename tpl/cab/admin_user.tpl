@@ -136,7 +136,7 @@
                         </div>
                       </div>
                     </li>
-                    <?php $contract_counters = $db->getAll("SELECT * FROM counters WHERE contract_id = ?i AND dismantling_date IS NOT NULL",$contract['id'] ); ?>
+                    <?php $contract_counters = $db->getAll("SELECT * FROM counters WHERE contract_id = ?i AND dismantling_date IS NULL",$contract['id'] ); ?>
                     <?php if (!$contract_counters) { ?>
                       <li class="list-group-item text-center">Нет счетчиков</li>
                     <?php } else { ?>
