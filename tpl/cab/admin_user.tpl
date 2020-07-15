@@ -16,8 +16,8 @@
           <div class="card-body">
             <p class="card-title text-md-center text-xl-left">Общий баланс</p>
             <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
-              <?php if ($curr_target_balance < 0) {$c1text = 'red';} else {$c1text = 'black';}?>
-              <h3 class="mb-0 mb-md-2 mb-xl-0 order-md-1 order-xl-0" style="color:<?=$c1text?>"><?=$curr_target_balance?>р.</h3>
+              <?php if ($curr_count_balance < 0) {$c1text = 'red';} else {$c1text = 'black';}?>
+              <h3 class="mb-0 mb-md-2 mb-xl-0 order-md-1 order-xl-0" style="color:<?=$c1text?>"><?=$curr_count_balance?>р.</h3>
               <i class="fas fa-ruble-sign"></i>
             </div>
           </div>
