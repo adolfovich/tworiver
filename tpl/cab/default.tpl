@@ -17,7 +17,7 @@
       <div class="col-md-12 grid-margin">
         <div class="d-flex justify-content-between align-items-center">
           <div>
-            <h4 class="font-weight-bold mb-0">Личный кабинет: участок №<?=$user_data['uchastok']?></h4>
+            <h4 class="font-weight-bold mb-0">Личный кабинет: участок №<?=$user_data['uchastok']?> <?=$user_data['name']?></h4>
           </div>
 
         </div>
