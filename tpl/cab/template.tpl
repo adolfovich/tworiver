@@ -350,6 +350,54 @@ $currentyear = date("Y");
       }
     }
 
+    function uploadAct() {
+      $(".forcheck").removeClass( "is-invalid" );
+      //formData = $("#upload_act").serialize();
+
+      //console.log(formData);
+
+      files = document.getElementById('uploadActFile').files;
+
+      var data1 = new FormData();
+      $.each( files, function( key, value ){
+          data1.append( key, value );
+      });
+
+      data1.append( 'uploadActDateFrom', document.getElementById('uploadActDateFrom').value );
+      data1.append( 'uploadActDateTo', document.getElementById('uploadActDateTo').value );
+      data1.append( 'uploadActType', document.getElementById('uploadActType').value );
+      data1.append( 'uploadActUser', document.getElementById('uploadActUser').value );
+      data1.append( 'uploadActComment', document.getElementById('uploadActComment').value );      
+
+      //console.log(data);
+      $.ajax({
+        type: "POST",
+        url: "/pages/cab/ajax/upload_act.php",
+        data: data1,
+        success: onAjaxSuccess,
+        processData: false, // Не обрабатываем файлы (Don't process the files)
+        contentType: false, // Так jQuery скажет серверу что это строковой запрос
+      });
+      function onAjaxSuccess(data)
+      {
+        console.log(data);
+        response = JSON.parse(data);
+        Swal.fire({
+          icon: response.status,
+          text: response.text
+        }).then((result) => {
+            if (typeof(response.redirect) != "undefined" && response.redirect !== null) {
+              location.href = response.redirect;
+            }
+        })
+        if (response.status == 'error') {
+          $("#"+response.error_input).addClass( "is-invalid" );
+        } else {
+          $('#templateModal').modal('hide');
+        }
+      }
+    }
+
     function deleteIndications(counter) {
       date_from = document.getElementById('date_from').value;
 

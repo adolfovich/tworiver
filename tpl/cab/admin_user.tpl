@@ -188,7 +188,7 @@
                     <a class="dropdown-item" href="#">Целевые взносы</a>
                   </div>
                 </div>
-                <button type="button" class="btn btn-primary">Загрузить акт</button>
+                <button type="button" class="btn btn-primary" onClick="loadModal('modal_upload_act', 'user_id=<?=$curr_user_data['id']?>')">Загрузить акт</button>
               </div>
             </div>
           </div>
