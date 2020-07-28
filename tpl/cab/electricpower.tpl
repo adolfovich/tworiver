@@ -131,6 +131,50 @@
       <?php } ?>
     <?php } ?>
 
+    <?php if (!$acts) { ?>
+      <div class="row" >
+        <div class="col-md-12 grid-margin stretch-card">
+          <div class="card border-bottom-0">
+            <div class="card-body">
+              <p class="card-title">Акты</p>
+              <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+                <h4>Актов не найдено</h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <?php } else { ?>
+      <div class="row" >
+        <div class="col-md-4 grid-margin stretch-card">
+          <div class="card border-bottom-0">
+            <div class="card-body">
+              <p class="card-title">Акты</p>
+              <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+                <ul class="list-group col-sm-12">
+                <?php foreach ($acts as $act) {?>
+                  <li class="list-group-item">
+                    <div class="row">
+                      <div class="col-sm-11">
+                        <?=$act['comment']?>
+                      </div>
+                      <div class="col-sm-1">
+                        <a href="/<?=$act['path']?>" target="_blank"><i class="fa fa-download" aria-hidden="true"></i></a>
+                      </div>
+                    </div>
+                  </li>
+                <?php } ?>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <?php } ?>
+
+
+
+
     <?php if (!$operations) { ?>
       <div class="row" >
         <div class="col-md-12 grid-margin stretch-card">
