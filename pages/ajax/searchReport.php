@@ -20,7 +20,7 @@ if ($form['type'] == 'fhd') {
     foreach ($reports as $report) {
       $html .= '<tr>';
       $html .= '<td>'.date("d.m.Y", strtotime($report['date'])).'</td>';
-      $html .= '<td>'.$report['name'].'</td>';
+      $html .= '<td><a href="/'.$report['path'].'" target="_blank">'.$report['name'].'</a></td>';
       $html .= '<td class="text-center"><a href="/'.$report['path'].'" target="_blank"><i class="fa fa-download" aria-hidden="true"></i></a></td>';
       $html .= '</tr>';
     }
