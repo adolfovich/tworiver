@@ -367,7 +367,7 @@ $currentyear = date("Y");
       data1.append( 'uploadActDateTo', document.getElementById('uploadActDateTo').value );
       data1.append( 'uploadActType', document.getElementById('uploadActType').value );
       data1.append( 'uploadActUser', document.getElementById('uploadActUser').value );
-      data1.append( 'uploadActComment', document.getElementById('uploadActComment').value );      
+      data1.append( 'uploadActComment', document.getElementById('uploadActComment').value );
 
       //console.log(data);
       $.ajax({
@@ -455,6 +455,7 @@ $currentyear = date("Y");
       });
       function onAjaxSuccess(data)
       {
+        console.log(data);
         response = JSON.parse(data);
 
         Swal.fire({
@@ -469,7 +470,7 @@ $currentyear = date("Y");
           $("#"+response.error_input).addClass( "is-invalid" );
         } else {
           $('#templateModal').modal('hide');
-          loadAdminJournal();
+          //loadAdminJournal();
         }
       }
     }
