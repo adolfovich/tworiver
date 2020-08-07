@@ -15,7 +15,7 @@ if (isset($_SESSION['id'])) {
       $json['text'] = 'Не выбрано ни одного параметра';
     } else {
       if ($form['number'] != '') {
-        $user = $db->getRow("SELECT * FROM users WHERE uchastok LIKE ?s", $form['number']);
+        $user = $db->getRow("SELECT * FROM users WHERE uchastok LIKE ?s AND is_del = 0", $form['number']);
         if ($user) {
           $user_q = " user_id = ".$user['id']."";
         } else {
