@@ -25,7 +25,7 @@ if (isset($_SESSION['id'])) {
       $json['status'] = 'error';
       $json['text'] = 'Номер участка не может быть пустым';
       $json['error_input'] = 'area_number';
-    } else if (!$user = $db->getRow("SELECT * FROM users WHERE uchastok LIKE ?s", $form['area_number'])) {
+    } else if (!$user = $db->getRow("SELECT * FROM users WHERE uchastok LIKE ?s AND is_del = 0", $form['area_number'])) {
       $json['status'] = 'error';
       $json['text'] = 'Номер участка не найден';
       $json['error_input'] = 'area_number';
@@ -43,7 +43,7 @@ if (isset($_SESSION['id'])) {
       $json['error_input'] = 'operation_amount';
     } else {
       //var_dump($form);
-      $core->changeBalance($user['id'], $form['balance_type'], $form['operation_type'], $form['operation_amount'], $form['operation_comment'], $form['operation_date']); 
+      $core->changeBalance($user['id'], $form['balance_type'], $form['operation_type'], $form['operation_amount'], $form['operation_comment'], $form['operation_date']);
       $json['status'] = 'success';
       $json['text'] = 'Операция добавлена';
     }
