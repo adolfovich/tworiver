@@ -36,11 +36,13 @@
 		if ($last_date_result) {
 			$last_date = date("Y-m-d", strtotime($last_date_result));
 
-		}
-		//Если нет показаний 2017-09-01
-		else {
-			$last_date = '2017-09-01';
-			$last_date = '2018-12-31';
+		}	else {
+			if ($counter['install_date']) {
+				$last_date = date("Y-m-d", strtotime($counter['install_date']));
+			} else {
+				//$last_date = '2017-09-01';
+				$last_date = '2018-12-31';
+			}
 		}
 		echo 'Дата последних показаний '.$last_date . "<br> \r\n";
 
