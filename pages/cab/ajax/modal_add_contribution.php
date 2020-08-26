@@ -29,8 +29,13 @@ if (isset($_SESSION['id'])) {
     $json['html'] .= '<select name="contribution_user" class="form-control forcheck" id="contribution_user" aria-describedby="contribution_userHelp">';
     $json['html'] .= '<option value="0" selected disabled>Выберите пользователя</option>';
     $users = $db->getAll("SELECT * FROM users WHERE is_del = 0 ORDER BY uchastok");
-    foreach ($users as $user) {
-      $json['html'] .= '<option value="'.$user['id'].'">уч. - '.$user['uchastok'].' '.$user['name'].'</option>';
+    foreach ($users as $key => $value) {
+      $users_arr[$value['id']] = $value['uchastok'];
+    }
+    natsort($users_arr);
+    foreach ($users_arr as  $user_id => $user_area) {
+        $user = $db->getRow("SELECT * FROM users WHERE id = ?i", $user_id);
+        $json['html'] .= '<option value="'.$user['id'].'">уч. - '.$user['uchastok'].' '.$user['name'].'</option>';
     }
     $json['html'] .= '</select>';
     $json['html'] .= '</div>';
