@@ -88,6 +88,7 @@
     );
 
     function onAjaxSuccess(data) {
+      //console.log(data);
       document.getElementById('usersResult').innerHTML = data;
     }
   }

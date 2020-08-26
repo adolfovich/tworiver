@@ -14,6 +14,42 @@
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card border-bottom-0">
           <div class="card-body">
+            <p class="card-title">Акты</p>
+            <form class="form-inline">
+              <div class="form-group mx-sm-3 mb-2 col-sm-12">
+                <label for="searchUser" >Год &nbsp&nbsp&nbsp</label>
+                <!--input type="text" class="form-control col-sm-12" id="searchUser" placeholder="" onKeyup="searchUsers(this.value)"-->
+                <select class="form-control col-sm-11" id="searchUser" onchange="searchAct(this.value)">
+                  <option selected disabled>Выберите период</option>
+                  <?php for ($i = 0; $i <= 10; $i++) { ?>
+                    <option value="<?=(date('Y') - $i)?>"><?=(date('Y') - $i)?></option>
+                  <?php } ?>
+                </select>
+              </div>
+            </form>
+
+            <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Категория</th>
+                    <th scope="col">Тип акта</th>
+                    <th scope="col" class="text-center">Скачать</th>
+                  </tr>
+                </thead>
+                <tbody class="list" id="reportActsResult"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card border-bottom-0">
+          <div class="card-body">
             <p class="card-title">Финансовая и хозяйственная деятельность</p>
             <form class="form-inline">
               <div class="form-group mx-sm-3 mb-2 col-sm-12">
@@ -51,6 +87,23 @@
 </div>
 
 <script>
+  function searchAct(val) {
+    //console.log(val);
+    $.post(
+        "../pages/ajax/searchReport.php",
+        {
+          type: 'act',
+          year: val,
+        },
+        onAjaxSuccess
+    );
+
+    function onAjaxSuccess(data) {
+      //console.log(data);
+      document.getElementById('reportActsResult').innerHTML = data;
+    }
+  }
+
   function searchFhd(val) {
     //console.log(val);
     $.post(
@@ -63,7 +116,7 @@
     );
 
     function onAjaxSuccess(data) {
-      console.log(data);
+      //console.log(data);
       document.getElementById('reportsResult').innerHTML = data;
     }
   }

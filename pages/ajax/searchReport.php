@@ -29,6 +29,22 @@ if ($form['type'] == 'fhd') {
     $html .= '<td colspan="3">Нет данных за выбраный период</td>';
     $html .= '</tr>';
   }
+} else if ($form['type'] == 'act') {
+  $acts = $db->getAll("SELECT * FROM acts WHERE visible = 1 AND date_start BETWEEN ?s AND ?s", $form['year'].'-01-01', $form['year'].'-12-31');
+  if ($acts) {
+    foreach ($acts as $act) {
+      $html .= '<tr>';
+      $html .= '<td>'.date("d.m.Y", strtotime($act['date_start'])).'</td>';
+      $html .= '<td>'.$db->getOne("SELECT name FROM acts_type WHERE id = ?i", $act['type']).'</td>';
+      $html .= '<td><a href="/'.$act['path'].'" target="_blank">'.$act['comment'].'</a></td>';
+      $html .= '<td class="text-center"><a href="/'.$act['path'].'" target="_blank"><i class="fa fa-download" aria-hidden="true"></i></a></td>';
+      $html .= '</tr>';
+    }
+  } else {
+    $html .= '<tr>';
+    $html .= '<td colspan="4">Нет данных за выбраный период</td>';
+    $html .= '</tr>';
+  }
 }
 
 echo $html;

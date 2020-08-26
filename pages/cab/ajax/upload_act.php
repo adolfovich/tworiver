@@ -48,13 +48,15 @@ if (isset($_SESSION['id'])) {
       if (move_uploaded_file($_FILES[0]['tmp_name'], $uploadfile)) {
           //echo "Файл корректен и был успешно загружен.\n";
           if ($form['uploadActDateFrom'] == '') $form['uploadActDateFrom'] = '1970-01-01';
+          if (!isset($form['uploadActVisible'])) $form['uploadActVisible'] = 0;
           $insert = [
             'user' => $form['uploadActUser'],
             'date_start' => $form['uploadActDateFrom'],
             'date_end' => $form['uploadActDateTo'],
             'comment' => $form['uploadActComment'],
             'path' => 'uploads/'.$rand_name.'.'.$file_name[1],
-            'type' => 1
+            'type' => $form['uploadActType'],
+            'visible' => $form['uploadActVisible']
           ];
           $db->query("INSERT INTO acts SET ?u", $insert);
 

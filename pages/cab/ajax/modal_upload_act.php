@@ -27,9 +27,10 @@ if (isset($_SESSION['id'])) {
     $json['html'] .= '<label for="uploadActType">Тип акта:</label>';
     $json['html'] .= '<select name="uploadActType" class="form-control forcheck" id="uploadActType">';
     $json['html'] .= '<option value="0" disabled selected>Выберите тип акта</option>';
-    $json['html'] .= '<option value="1">Электроэнергия</option>';
-    $json['html'] .= '<option value="2">Членские взносы</option>';
-    $json['html'] .= '<option value="3">Целевые взносы</option>';
+    $acts_types = $db->getAll("SELECT * FROM acts_type");
+    foreach ($acts_types as $acts_type) {
+      $json['html'] .= '<option value="'.$acts_type['id'].'">'.$acts_type['name'].'</option>';
+    }
     $json['html'] .= '</select>';
     $json['html'] .= '</div>';
 
@@ -44,6 +45,12 @@ if (isset($_SESSION['id'])) {
     $json['html'] .= '<div class="form-group">';
     $json['html'] .= '<label for="uploadActComment">Комментарий:</label>';
     $json['html'] .= '<input type="text" name="uploadActComment" class="form-control forcheck" id="uploadActComment" >';
+    $json['html'] .= '</div>';
+
+    $json['html'] .= '<div class="form-group form-check" style="padding-left: 30px;">';
+
+    $json['html'] .= '<input type="checkbox" style="margin-top: 4px;" name="uploadActVisible" class="form-check-input forcheck" id="uploadActVisible" value="1">';
+    $json['html'] .= '<label class="form-check-label" for="uploadActVisible">Видимый всем</label>';
     $json['html'] .= '</div>';
 
     $json['html'] .= '<div class="text-right">';

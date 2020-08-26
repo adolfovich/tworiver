@@ -368,6 +368,7 @@ $currentyear = date("Y");
       data1.append( 'uploadActType', document.getElementById('uploadActType').value );
       data1.append( 'uploadActUser', document.getElementById('uploadActUser').value );
       data1.append( 'uploadActComment', document.getElementById('uploadActComment').value );
+      data1.append( 'uploadActVisible', document.getElementById('uploadActVisible').value );
 
       //console.log(data);
       $.ajax({
