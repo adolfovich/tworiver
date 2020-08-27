@@ -20,7 +20,7 @@
                 <label for="searchUser" >Год &nbsp&nbsp&nbsp</label>
                 <!--input type="text" class="form-control col-sm-12" id="searchUser" placeholder="" onKeyup="searchUsers(this.value)"-->
                 <select class="form-control col-sm-11" id="searchUser" onchange="searchAct(this.value)">
-                  <option selected disabled>Выберите период</option>
+
                   <?php for ($i = 0; $i <= 10; $i++) { ?>
                     <option value="<?=(date('Y') - $i)?>"><?=(date('Y') - $i)?></option>
                   <?php } ?>
@@ -32,9 +32,10 @@
               <table class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col">Дата</th>
+                    <th scope="col" style="width: 100px;">Дата</th>
+                    <th scope="col" style="width: 100px;">№ участка</th>
                     <th scope="col">Категория</th>
-                    <th scope="col">Тип акта</th>
+                    <th scope="col">Наименование</th>
                     <th scope="col" class="text-center">Скачать</th>
                   </tr>
                 </thead>
@@ -123,5 +124,6 @@
 
   window.onload = function() {
     searchFhd('<?=date("Y")?>');
+    searchAct('<?=date("Y")?>');
   }
 </script>

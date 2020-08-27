@@ -35,6 +35,10 @@ if ($form['type'] == 'fhd') {
     foreach ($acts as $act) {
       $html .= '<tr>';
       $html .= '<td>'.date("d.m.Y", strtotime($act['date_start'])).'</td>';
+      if ($act['user']) {
+        $act_user_data = $db->getRow("SELECT * FROM users WHERE id = ?i", $act['user']);
+        $html .= '<td>'.$act_user_data['uchastok'].'</td>';
+      }
       $html .= '<td>'.$db->getOne("SELECT name FROM acts_type WHERE id = ?i", $act['type']).'</td>';
       $html .= '<td><a href="/'.$act['path'].'" target="_blank">'.$act['comment'].'</a></td>';
       $html .= '<td class="text-center"><a href="/'.$act['path'].'" target="_blank"><i class="fa fa-download" aria-hidden="true"></i></a></td>';
