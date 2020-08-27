@@ -10,14 +10,22 @@ $core  = new Core();
 
 $form = $core->form;
 
+$users_ids = false;
+
 if ($form['string'] != '') {
   $users_ids = $db->getAll("SELECT id FROM users WHERE is_del = 0 AND (name LIKE ?s OR email LIKE ?s OR phone LIKE ?s OR uchastok LIKE ?s)", '%'.$form['string'].'%', '%'.$form['string'].'%', '%'.$form['string'].'%', '%'.$form['string'].'%');
 }
 
-//var_dump($users_ids);
+$users_ids_arr = [];
 
 if (isset($users_ids)) {
-  $sql = $db->parse("SELECT oj.*, (SELECT name FROM users WHERE id = oj.user_id) as name, (SELECT uchastok FROM users WHERE id = oj.user_id) as uchastok, (SELECT name FROM operations_jornal_types WHERE id = oj.op_type) as op_name FROM operations_jornal oj WHERE op_type IN (2, 3) AND user_id IN (?a)", $users_ids);
+  foreach ($users_ids as $users_id) {
+    $users_ids_arr[] = $users_id['id'];
+  }
+}
+
+if (isset($users_ids)) {
+  $sql = $db->parse("SELECT oj.*, (SELECT name FROM users WHERE id = oj.user_id) as name, (SELECT uchastok FROM users WHERE id = oj.user_id) as uchastok, (SELECT name FROM operations_jornal_types WHERE id = oj.op_type) as op_name FROM operations_jornal oj WHERE op_type IN (2, 3) AND user_id IN (?a)", $users_ids_arr);
 } else {
   $sql = $db->parse("SELECT oj.*, (SELECT name FROM users WHERE id = oj.user_id) as name, (SELECT uchastok FROM users WHERE id = oj.user_id) as uchastok, (SELECT name FROM operations_jornal_types WHERE id = oj.op_type) as op_name FROM operations_jornal oj WHERE op_type IN (2, 3)");
 }
@@ -44,7 +52,4 @@ if ($contributions) {
   $html .= '</tr>';
 }
 
-
-
-//var_dump($users);
 echo $html;
