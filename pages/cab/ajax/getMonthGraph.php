@@ -19,25 +19,24 @@ if (isset($_SESSION['id'])) {
     $arr['labels'][] = $i.'.'.date('m', strtotime($year.'-'.$month.'-01'));
   }
 
-  $t2_ind = $db->getAll(
-    "SELECT * FROM `Indications` WHERE `date` BETWEEN ?s AND ?s AND `user` = ?i AND `tarif` = 3",
-    date("Y-m-01", strtotime($year.'-'.$month.'-01')),
-    date("Y-m-t", strtotime($year.'-'.$month.'-01')),
-    $_SESSION['id']
-  );
-
-  foreach ($t2_ind as $ind) {
-    $arr['data1'][] = ($ind['Indications'] - $ind['prev_indications']);
+  $currentDate = '01.'.$month.'.'.$year;
+//T1
+  for ($i = 1; $i <= date('t', strtotime($currentDate)); $i++) {
+    $ind = $db->getRow("SELECT * FROM `Indications` WHERE `date`BETWEEN ?s AND ?s AND `user` = ?i AND `tarif` = 2", $year.'-'.$month.'-'.$i.' 00:00:00', $year.'-'.$month.'-'.$i.' 23:59:59', $_SESSION['id']);
+    if ($ind) {
+      $arr['data2'][] = ($ind['Indications'] - $ind['prev_indications']);
+    } else {
+      $arr['data2'][] = 0;
+    }
   }
-
-  $t1_ind = $db->getAll(
-    "SELECT * FROM `Indications` WHERE `date` BETWEEN ?s AND ?s AND `user` = ?i AND `tarif` = 2",
-    date("Y-m-01", strtotime($year.'-'.$month.'-01')),
-    date("Y-m-t", strtotime($year.'-'.$month.'-01')),
-    $_SESSION['id']
-  );
-  foreach ($t1_ind as $ind) {
-    $arr['data2'][] = ($ind['Indications'] - $ind['prev_indications']);
+  //T2
+  for ($i = 1; $i <= date('t', strtotime($currentDate)); $i++) {
+    $ind = $db->getRow("SELECT * FROM `Indications` WHERE `date`BETWEEN ?s AND ?s AND `user` = ?i AND `tarif` = 3", $year.'-'.$month.'-'.$i.' 00:00:00', $year.'-'.$month.'-'.$i.' 23:59:59', $_SESSION['id']);
+    if ($ind) {
+      $arr['data1'][] = ($ind['Indications'] - $ind['prev_indications']);
+    } else {
+      $arr['data1'][] = 0;
+    }
   }
 
   echo json_encode($arr);
