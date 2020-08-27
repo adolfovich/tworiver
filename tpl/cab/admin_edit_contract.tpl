@@ -28,16 +28,18 @@
                 <div class="form-group row">
                   <label for="contractDateStart" class="col-sm-3 col-form-label">Дата начала договора</label>
                   <div class="col-sm-9">
-                    <input type="date" class="form-control" id="contractDateStart" name="num" value="<?=date('Y-m-d', strtotime($contract['date_start']))?>">
+                    <input type="date" class="form-control" id="contractDateStart" name="date_start" value="<?php if ($contract['date_start']) echo date('Y-m-d', strtotime($contract['date_start']));?>">
                   </div>
                 </div>
 
                 <div class="form-group row">
                   <label for="contractDateEnd" class="col-sm-3 col-form-label">Дата окончания договора</label>
                   <div class="col-sm-9">
-                    <input type="date" class="form-control" id="contractDateEnd" name="num" value="<?php if ($contract['date_end']) echo date('Y-m-d', strtotime($contract['date_end']));?>">
+                    <input type="date" class="form-control" id="contractDateEnd" name="date_end" value="<?php if ($contract['date_end']) echo date('Y-m-d', strtotime($contract['date_end']));?>">
                   </div>
                 </div>
+
+                <input name="id" type="hidden" value="<?=$contract['id']?>">
 
                 <button type="submit" class="btn btn-primary">Сохранить</button>
               </form>

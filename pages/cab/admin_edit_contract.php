@@ -6,49 +6,19 @@ if ($user_data['is_admin']) {
     //var_dump($form);
     //var_dump($form['counter_contract']);
 
-    if ($form['end_date'] != '' && strtotime($form['end_date']) < time() && $_FILES['act']['name'] != '') {
+    if (!$form['date_start']) $form['date_start'] = NULL;
+    if (!$form['date_end']) $form['date_end'] = NULL;
 
-      $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyz';
-      $uploaddir = 'uploads/';
-      //$uploadfile = $uploaddir . basename($_FILES['act']['name']);
-      $file_name = explode('.', $_FILES['act']['name']);
-      $uploadfile = $uploaddir . substr(str_shuffle($permitted_chars), 0, 10).'.'.$file_name[1];
+    $update = [
+      'num' => $form['num'],
+      'date_start' => $form['date_start'],
+      'date_end' => $form['date_end']
+    ];
 
-      if (move_uploaded_file($_FILES['act']['tmp_name'], $uploadfile)) {
-
-        //$user_id = $db->getOne("SELECT user_id FROM counters WHERE id = ?i", $form['counter_contract'])
-        $counter_data = $db->getRow("SELECT * FROM counters WHERE id = ?i", $form['counter_contract']);
-
-        //добавляем в таблицу актов
-        $insert = [
-          'user' => $counter_data['user_id'],
-          'date_start' => '1970-01-01',
-          'date_end' => $form['end_date'],
-          'comment' => 'Вывод из експлуатации счетчика '.$counter_data['model'].' №'.$counter_data['num'],
-          'path' => $uploadfile,
-          'type' => 1
-        ];
-
-        $db->query("INSERT INTO acts SET ?u", $insert);
-
-        //обновляем счетчик
-        $db->query("UPDATE counters SET dismantling_date = ?s WHERE id = ?i", $form['end_date'], $counter_data['id']);
-
-        $swal_message["type"] = 'success';
-        $swal_message["text"] = 'Счетчик успешно выведен из эксплуатации';
-        //$swal_message["redirect"] = 'admin_edit_contract?id='.$form['counter_contract'];
-
-      } else {
-        $swal_message["type"] = 'error';
-        $swal_message["text"] = 'Ошибка загрузки файла';
-      }
-
-    } else {
-      $swal_message["type"] = 'error';
-      $swal_message["text"] = 'Файл не загружен или дата не установлена или дата больше текущей';
+    if ($db->query("UPDATE users_contracts SET ?u WHERE id = ?i", $update, $form['id'])) {
+      $swal_message["type"] = 'success';
+      $swal_message["text"] = 'Договор сохранен';
     }
-
-
 
   }
 
