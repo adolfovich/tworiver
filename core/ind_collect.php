@@ -38,7 +38,7 @@
 
 		}	else {
 			if ($counter['install_date']) {
-				$last_date = date("Y-m-d", strtotime($counter['install_date']));
+				$last_date = date("Y-m-d", strtotime($counter['install_date']) - 86400);
 			} else {
 				//$last_date = '2017-09-01';
 				$last_date = '2018-12-31';
