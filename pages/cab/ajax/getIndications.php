@@ -90,7 +90,7 @@ if (isset($_SESSION['id'])) {
               $html .= '<td class="text-center"><b>'.$start_indications.'</b></td>';
               $html .= '<td class="text-center"><b>'.$indication['Indications'].'</b></td>';
               $rashod = $indication['Indications'] - $start_indications;
-              $html .= '<td class="text-center"><b>'.$rashod.'</b></td>';
+              $html .= '<td class="text-center"><b>'.number_format($rashod, 2, '.', '').'</b></td>';
               $html .= '<td class="text-center"></td>';
               $html .= '<td class="text-center"><b>'.number_format($total, 2, '.', '').'</b></td>';
               $html .= '';
