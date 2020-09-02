@@ -14,11 +14,15 @@ $users_ids = false;
 
 if ($form['string'] != '') {
   $users_ids = $db->getAll("SELECT id FROM users WHERE is_del = 0 AND (name LIKE ?s OR email LIKE ?s OR phone LIKE ?s OR uchastok LIKE ?s)", '%'.$form['string'].'%', '%'.$form['string'].'%', '%'.$form['string'].'%', '%'.$form['string'].'%');
+} else {
+  $users_ids = $db->getAll("SELECT id FROM users WHERE is_del = 0");
 }
 
 $users_ids_arr = [];
 
-if (isset($users_ids)) {
+//var_dump($users_ids);
+
+if (isset($users_ids) && count($users_ids) && $users_ids !== FALSE) {
   foreach ($users_ids as $users_id) {
     $users_ids_arr[] = $users_id['id'];
   }
