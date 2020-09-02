@@ -1,3 +1,9 @@
+<style>
+  .table td {
+    padding: 4px !important;
+  }
+</style>
+
 <div class="main-panel">
   <div class="content-wrapper">
     <div class="row">
