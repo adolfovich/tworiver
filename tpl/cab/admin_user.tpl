@@ -125,11 +125,24 @@
                 <?php if ($curr_user_contracts) { ?>
                   <?php foreach ($curr_user_contracts as $contract) {?>
                     <?php if (!$contract['num']) $contract['num'] = 'Б/Н'; ?>
-                    <?php if (!$contract['date_start'] != '0000-00-00') {$contract['date_start'] = date("d.m.Y", strtotime($contract['date_start']));} else {$contract['date_start'] = '--.--.----';} ?>
+                    <?php
+                      if ($contract['date_start'] != '0000-00-00') {
+                        $contract['date_start'] = date("d.m.Y", strtotime($contract['date_start']));
+                      } else {
+                        $contract['date_start'] = '--.--.----';
+                      }
+                    ?>
+
                     <li class="list-group-item bg-secondary text-light">
                       <div class="row">
                         <div class="col-sm-8">
                           Договор №<?=$contract['num']?> от <?=$contract['date_start']?>
+                          <?php if ($contract['date_end']) { ?>
+                           - <?=date("d.m.Y", strtotime($contract['date_end']))?>
+                           <?php if (strtotime($contract['date_end']) < time()) { ?>
+                           <b>(ЗАКРЫТ)</b>
+                           <?php } ?>
+                          <?php } ?>
                         </div>
                         <div class="col-sm-4 text-right">
                           <a href="admin_edit_contract?id=<?=$contract['id']?>" class="btn btn-light btn-sm">Изменить</a>
