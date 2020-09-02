@@ -92,7 +92,7 @@ if (isset($_SESSION['id'])) {
               $rashod = $indication['Indications'] - $start_indications;
               $html .= '<td class="text-center"><b>'.$rashod.'</b></td>';
               $html .= '<td class="text-center"></td>';
-              $html .= '<td class="text-center"><b>'.$total.'</b></td>';
+              $html .= '<td class="text-center"><b>'.number_format($total, 2, '.', '').'</b></td>';
               $html .= '';
               $html .= '</tr>';
             } else {
