@@ -11,7 +11,7 @@ if (isset($_SESSION['id'])) {
   if ($is_admin) {
     $json['html'] = '';
 
-    $json['header'] = 'Добавдение счетчика';
+    $json['header'] = 'Добавление счетчика';
     $json['html'] .= '<form id="add_counter">';
 
     //$json['html'] .= ;

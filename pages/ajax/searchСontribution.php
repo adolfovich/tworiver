@@ -29,9 +29,9 @@ if (isset($users_ids) && count($users_ids) && $users_ids !== FALSE) {
 }
 
 if (isset($users_ids)) {
-  $sql = $db->parse("SELECT oj.*, (SELECT name FROM users WHERE id = oj.user_id) as name, (SELECT uchastok FROM users WHERE id = oj.user_id) as uchastok, (SELECT name FROM operations_jornal_types WHERE id = oj.op_type) as op_name FROM operations_jornal oj WHERE op_type IN (2, 3) AND user_id IN (?a)", $users_ids_arr);
+  $sql = $db->parse("SELECT oj.*, (SELECT name FROM users WHERE id = oj.user_id) as name, (SELECT uchastok FROM users WHERE id = oj.user_id) as uchastok, (SELECT name FROM operations_jornal_types WHERE id = oj.op_type) as op_name FROM operations_jornal oj WHERE op_type IN (2, 3) AND user_id IN (?a) ORDER BY oj.id DESC", $users_ids_arr);
 } else {
-  $sql = $db->parse("SELECT oj.*, (SELECT name FROM users WHERE id = oj.user_id) as name, (SELECT uchastok FROM users WHERE id = oj.user_id) as uchastok, (SELECT name FROM operations_jornal_types WHERE id = oj.op_type) as op_name FROM operations_jornal oj WHERE op_type IN (2, 3)");
+  $sql = $db->parse("SELECT oj.*, (SELECT name FROM users WHERE id = oj.user_id) as name, (SELECT uchastok FROM users WHERE id = oj.user_id) as uchastok, (SELECT name FROM operations_jornal_types WHERE id = oj.op_type) as op_name FROM operations_jornal oj WHERE op_type IN (2, 3) ORDER BY oj.id DESC");
 }
 
 $contributions = $db->getAll($sql);

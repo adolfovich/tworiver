@@ -19,7 +19,7 @@ if (isset($_SESSION['id'])) {
       $type_id = 2;
     }
 
-    $json['header'] = 'Добавдение '.$type.' взноса';
+    $json['header'] = 'Добавление '.$type.' взноса';
     $json['html'] .= '<form id="add_contribution">';
 
     $json['html'] .= '<input type="hidden" name="contribution_type" value="'.$type_id.'"/>';
