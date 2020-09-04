@@ -60,6 +60,13 @@
           </a>
         </li>
 
+        <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_opjournal') {echo 'active';}?>">
+          <a class="nav-link" href="/cab/admin_rates">
+            <i class="fa fa-bar-chart menu-icon"></i>
+            <span class="menu-title">Тарифы</span>
+          </a>
+        </li>
+
 
         <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_settings') {echo 'active';}?>">
           <a class="nav-link" href="/cab/admin_settings">

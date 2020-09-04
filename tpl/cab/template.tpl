@@ -442,7 +442,6 @@ $currentyear = date("Y");
           $('#templateModal').modal('hide');
         }
       }
-
     }
 
     function addOperation() {
@@ -538,6 +537,34 @@ $currentyear = date("Y");
       $.cookie("user", c_user, { path: '/cab', expires: inFifteenMinutes });
       $.cookie("user", c_user, { path: '/', expires: inFifteenMinutes });
     });
+
+    function changeRate() {
+      $(".forcheck").removeClass( "is-invalid" );
+      formData = $("#change_rate").serialize();
+      $.ajax({
+        type: "POST",
+        url: "/pages/cab/ajax/change_rate.php",
+        data: formData,
+        success: onAjaxSuccess
+      });
+      function onAjaxSuccess(data)
+      {
+        response = JSON.parse(data);
+        Swal.fire({
+          icon: response.status,
+          text: response.text
+        }).then((result) => {
+            if (typeof(response.redirect) != "undefined" && response.redirect !== null) {
+              location.href = response.redirect;
+            }
+        })
+        if (response.status == 'error') {
+          $("#"+response.error_input).addClass( "is-invalid" );
+        } else {
+          $('#templateModal').modal('hide');
+        }
+      }
+    }
 
 
   </script>
