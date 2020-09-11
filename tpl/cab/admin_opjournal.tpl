@@ -37,6 +37,18 @@
                   <?php } ?>
                 </select>
               </div>
+
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="balancetype" class="sr-only">Тип баланса</label>
+                <select name="balancetype" id="balancetype" class="form-control">
+                  <option selected disabled>Тип баланса</option>
+                  <option value="0">Все</option>
+                  <option value="1">Электричество</option>
+                  <option value="2">Членские взносы</option>
+                  <option value="3">Целевые взносы</option>
+                </select>
+              </div>
+
               <div class="form-group mx-sm-1 mb-1" style="max-width: 15px;">
                 <label for="number" class="sr-only">C</label>
                 <input type="text" readonly class="form-control-plaintext" value="С">
@@ -94,7 +106,7 @@
   function loadAdminJournal()
   {
     formData = $('#opJournalForm').serialize()
-    console.log(formData);
+    //console.log(formData);
 
     $.post(
         "../pages/cab/ajax/getOperationsJournal.php",
@@ -103,7 +115,7 @@
     );
 
     function onAjaxSuccess(data) {
-      console.log(data);
+      //console.log(data);
       response = JSON.parse(data);
       if (response.status == 'error') {
         Swal.fire({

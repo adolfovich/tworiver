@@ -31,6 +31,12 @@ if (isset($_SESSION['id'])) {
         $optype_q = '';
       }
 
+      if (isset($form['balancetype']) && $form['balancetype'] != 0) {
+        $balancetype_q = ' 	balance_type = '.$form['balancetype'];
+      } else {
+        $balancetype_q = '';
+      }
+
       if ($form['start_date'] || $form['end_date']) {
         if ($form['start_date'] && $form['end_date']) {
           $date_q = $db->parse(" date BETWEEN ?s AND ?s", $form['start_date'], $form['end_date']);
@@ -47,7 +53,7 @@ if (isset($_SESSION['id'])) {
         $date_q = '';
       }
 
-      if ($user_q || $optype_q || $date_q) {
+      if ($user_q || $optype_q || $balancetype_q || $date_q) {
         $where = "WHERE";
       } else {
         $where = "";
@@ -57,6 +63,12 @@ if (isset($_SESSION['id'])) {
         $and = ' AND ';
       } else {
         $and = '';
+      }
+
+      if ($optype_q && $balancetype_q) {
+        $andBalance = ' AND ';
+      } else {
+        $andBalance = '';
       }
 
       if ($user_q || $optype_q) {
@@ -69,7 +81,7 @@ if (isset($_SESSION['id'])) {
         $andDate = '';
       }
 
-      $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andDate . "?p ORDER BY date DESC", $date_q);
+      $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andDate . "?p ORDER BY date DESC", $date_q);
 
       $json['status'] = 'success';
 
