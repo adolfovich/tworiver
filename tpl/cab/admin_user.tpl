@@ -122,7 +122,7 @@
             <p class="card-title">Договора и счетчики</p>
             <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center mb-4">
               <ul class="list-group col-sm-12">
-                <?php if ($curr_user_contracts) { ?>
+                <?php if ($curr_user_contracts ) { ?>
                   <?php foreach ($curr_user_contracts as $contract) {?>
                     <?php if (!$contract['num']) $contract['num'] = 'Б/Н'; ?>
                     <?php
@@ -165,6 +165,7 @@
                 <?php } else { ?>
                   <a href="admin_new_contract?user_id=<?=$curr_user_data['id']?>" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Добавить договор</a>
                 <?php } ?>
+                <a href="admin_new_contract?user_id=<?=$curr_user_data['id']?>" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> Добавить договор</a>
 
               </ul>
             </div>
