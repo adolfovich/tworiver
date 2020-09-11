@@ -175,7 +175,7 @@
 		<?php
 			//выбираем все оплаты
 
-			$result_user_payments = $db->getAll("SELECT * FROM operations_jornal WHERE balance_type = 1 AND op_type = 4 AND user_id = ?i AND date BETWEEN ?s AND ?s", $user_id, $date_from, $date_to);
+			$result_user_payments = $db->getAll("SELECT * FROM operations_jornal WHERE balance_type = 1 AND (op_type = 4 OR op_type = 1) AND user_id = ?i AND date BETWEEN ?s AND ?s", $user_id, $date_from, $date_to);
 		?>
 		<div class="row">
 			<div class="col-md-12">
