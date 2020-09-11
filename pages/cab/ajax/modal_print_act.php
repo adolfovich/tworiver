@@ -21,13 +21,13 @@ if (isset($_SESSION['id'])) {
 
       $json['html'] .= '<div class="form-group">';
       $json['html'] .= '<label for="act_date_start">Дата начала:</label>';
-      $json['html'] .= '<input type="date" name="act_date_start" class="form-control forcheck" id="act_date_start" aria-describedby="dateStarttHelp">';
+      $json['html'] .= '<input type="date" name="act_date_start" class="form-control forcheck" id="act_date_start" aria-describedby="dateStarttHelp" value="2020-06-24">';
       $json['html'] .= '<small id="dateStarttHelp" class="form-text text-muted">Дата начала акта, не ранее текущей даты</small>';
       $json['html'] .= '</div>';
 
       $json['html'] .= '<div class="form-group">';
       $json['html'] .= '<label for="act_date_end">Дата окончания:</label>';
-      $json['html'] .= '<input type="date" name="act_date_end" class="form-control forcheck" id="act_date_end" aria-describedby="dateEndHelp">';
+      $json['html'] .= '<input type="date" name="act_date_end" class="form-control forcheck" id="act_date_end" aria-describedby="dateEndHelp" value="'.date('Y-m-d').'">';
       $json['html'] .= '<small id="dateEndHelp" class="form-text text-muted">Дата окончания акта, не позднее текущей даты</small>';
       $json['html'] .= '</div>';
     }
