@@ -196,7 +196,7 @@
                     Распечатать акт
                   </button>
                   <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                    <a class="dropdown-item" href="#">Электричество</a>
+                    <a class="dropdown-item" href="#" onClick="loadModal('modal_print_act', 'type=electric&user_id=<?=$curr_user_data['id']?>')">Электричество</a>
                     <a class="dropdown-item" href="#">Членские взносы</a>
                     <a class="dropdown-item" href="#">Целевые взносы</a>
                   </div>

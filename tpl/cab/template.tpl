@@ -416,6 +416,46 @@ $currentyear = date("Y");
       }
     }
 
+    function printActModal() {
+      $(".forcheck").removeClass( "is-invalid" );
+      formData = $("#print_act").serialize();
+
+      $.ajax({
+        type: "POST",
+        url: "/pages/cab/ajax/print_act.php",
+        data: formData,
+        success: onAjaxSuccess
+      });
+
+      function onAjaxSuccess(data)
+      {
+        //console.log(data);
+        response = JSON.parse(data);
+        console.log(response);
+
+        if (response.status != 'error') {
+          window.open(response.link);
+        } else (
+          Swal.fire({
+            icon: response.status,
+            text: response.text
+          }).then((result) => {
+              if (typeof(response.redirect) != "undefined" && response.redirect !== null) {
+                location.href = response.redirect;
+              }
+          })
+        )
+
+        if (response.status == 'error') {
+          $("#"+response.error_input).addClass( "is-invalid" );
+        } else {
+          $('#templateModal').modal('hide');
+        }
+
+
+      }
+    }
+
     function addCounter() {
       $(".forcheck").removeClass( "is-invalid" );
       formData = $("#add_counter").serialize();
