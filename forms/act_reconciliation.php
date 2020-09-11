@@ -145,22 +145,139 @@
 
 							$sum_ind = 0;
 
-
+							$curr_month = date("m");
+							$curr_year = date("Y");
+							$prev_month = 0;
 
 							foreach ($result_user_indications as $user_indications) {
-								echo '<tr>';
+								$user_indications_m = date( "m",strtotime($user_indications['date']));
+								$user_indications_Y = date( "Y",strtotime($user_indications['date']));
 
-								echo '<td style="padding: 1px;" align="center">'.date('d.m.Y', strtotime($user_indications['date'])).'</td>';
-								echo '<td style="padding: 1px;" align="center">'.$user_indications['tarif'].'</td>';
-								echo '<td style="padding: 1px;" align="center">'.$user_indications['prev_indications'].'</td>';
-								echo '<td style="padding: 1px;" align="center">'.$user_indications['Indications'].'</td>';
-								echo '<td style="padding: 1px;" align="center">'.($user_indications['Indications'] - $user_indications['prev_indications']).'</td>';
-								echo '<td style="padding: 1px;" align="center">'.$user_indications['price'].'</td>';
-								echo '<td style="padding: 1px;" align="center">'.$user_indications['additional_sum'].'</td>';
+								if ($user_indications_m != $curr_month || $user_indications_Y != $curr_year) {
 
-								echo '</tr>';
+									if ($user_indications_m == $prev_month) {
+
+										$prev_month_name = $month_name[date('n',strtotime($user_indications['date']))];
+										$prev_month_tarif = $user_indications['tarif'];
+
+										if ($user_indications['tarif'] == 'Электроэнергия Т1') {
+											$prev_month_price_t1 = $user_indications['price'];
+											$prev_month_count_consumption_t1 = $prev_month_count_consumption_t1 + round($user_indications['Indications'] - $user_indications['prev_indications'], 2);
+											$prev_month_count_additional_sum_t1 = $prev_month_count_additional_sum_t1 + $user_indications['additional_sum'];
+											$prev_month_end1 = $user_indications['Indications'];
+											$prev_month_start1 = $user_indications['prev_indications'];
+										} else {
+											$prev_month_price_t2 = $user_indications['price'];
+											$prev_month_count_consumption_t2 = $prev_month_count_consumption_t2 + round($user_indications['Indications'] - $user_indications['prev_indications'], 2);
+											$prev_month_count_additional_sum_t2 = $prev_month_count_additional_sum_t2 + $user_indications['additional_sum'];
+											$prev_month_end2 = $user_indications['Indications'];
+											$prev_month_start2 = $user_indications['prev_indications'];
+										}
+
+									} else {
+										if ($prev_month != 0) {
+
+											if ($user_indications['tarif'] == 'Электроэнергия Т1') {
+												$prev_month_start1 = $user_indications['prev_indications'];
+											} else {
+												$prev_month_start2 = $user_indications['prev_indications'];
+											}
+											echo '<tr>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_name . ' '.date( "Y",strtotime($user_indications['date'])).'</td>';
+											echo '<td style="padding: 1px;" align="center">Электроэнергия Т1</td>';
+											echo '<td style="padding: 1px;" align="center">'.$prev_month_start1.'</td>';
+											echo '<td style="padding: 1px;" align="center">'.$prev_month_end1.'</td>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_count_consumption_t1 .'</td>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_price_t1 . '</td>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_count_additional_sum_t1 . '</td>';
+											echo '</tr>';
+
+											echo '<tr>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_name . ' '.date( "Y",strtotime($user_indications['date'])).'</td>';
+											echo '<td style="padding: 1px;" align="center">Электроэнергия Т2</td>';
+											echo '<td style="padding: 1px;" align="center">'.$prev_month_start2.'</td>';
+											echo '<td style="padding: 1px;" align="center">'.$prev_month_end2.'</td>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_count_consumption_t2 .'</td>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_price_t2 . '</td>';
+											echo '<td style="padding: 1px;" align="center">' . $prev_month_count_additional_sum_t2 . '</td>';
+											echo '</tr>';
+
+											$prev_month = date( 'm',strtotime($user_indications['date']));
+
+											$prev_month_price_t1 = 0;
+											$prev_month_price_t2 = 0;
+											$prev_month_count_consumption_t1 = 0;
+											$prev_month_count_consumption_t2 = 0;
+											$prev_month_count_additional_sum_t1 = 0;
+											$prev_month_count_additional_sum_t2 = 0;
+
+											$sum_ind = $sum_ind + $prev_month_count_additional_sum_t1 + $prev_month_count_additional_sum_t2;
+
+										} else {
+											$prev_month = date( 'm',strtotime($user_indications['date']));
+
+											if ($user_indications['tarif'] == 'Электроэнергия Т1') {
+												$prev_month_start1 = $user_indications['prev_indications'];
+											} else {
+												$prev_month_start2 = $user_indications['prev_indications'];
+											}
+
+											$prev_month_price_t1 = 0;
+											$prev_month_price_t2 = 0;
+											$prev_month_count_consumption_t1 = 0;
+											$prev_month_count_consumption_t2 = 0;
+											$prev_month_count_additional_sum_t1 = 0;
+											$prev_month_count_additional_sum_t2 = 0;
+										}
+									}
+								} else {
+									if ($prev_month != 0) {
+										echo '<tr>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_name . ' '.date( "Y",strtotime($user_indications['date'])).'</td>';
+										echo '<td style="padding: 1px;" align="center">Электроэнергия Т1</td>';
+										echo '<td style="padding: 1px;" align="center">'.$prev_month_start1.'</td>';
+										echo '<td style="padding: 1px;" align="center">'.$prev_month_end1.'</td>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_count_consumption_t1 .'</td>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_price_t1 . '</td>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_count_additional_sum_t1 . '</td>';
+										echo '</tr>';
+
+										echo '<tr>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_name . ' '.date( "Y",strtotime($user_indications['date'])).'</td>';
+										echo '<td style="padding: 1px;" align="center">Электроэнергия Т2</td>';
+										echo '<td style="padding: 1px;" align="center">'.$prev_month_start2.'</td>';
+										echo '<td style="padding: 1px;" align="center">'.$prev_month_end2.'</td>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_count_consumption_t2 .'</td>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_price_t2 . '</td>';
+										echo '<td style="padding: 1px;" align="center">' . $prev_month_count_additional_sum_t2 . '</td>';
+										echo '</tr>';
+
+										$prev_month = date( 'm',strtotime($user_indications['date']));
+
+										$prev_month_price_t1 = 0;
+										$prev_month_price_t2 = 0;
+										$prev_month_count_consumption_t1 = 0;
+										$prev_month_count_consumption_t2 = 0;
+										$prev_month_count_additional_sum_t1 = 0;
+										$prev_month_count_additional_sum_t2 = 0;
+
+									}
+
+									$prev_month = 0;
+									echo '<tr>';
+									echo '<td style="padding: 1px;" align="center">' . date( 'd.m.Y',strtotime($user_indications['date'])) . '</td>';
+									echo '<td style="padding: 1px;" align="center">' . $user_indications['tarif'] . '</td>';
+									echo '<td style="padding: 1px;" align="center">' . $user_indications['prev_indications'] . '</td>';
+									echo '<td style="padding: 1px;" align="center">' . $user_indications['Indications'] . '</td>';
+									echo '<td style="padding: 1px;" align="center">' . round($user_indications['Indications'] - $user_indications['prev_indications'], 2).'</td>';
+									echo '<td style="padding: 1px;" align="center">' . $user_indications['price'] . '</td>';
+									echo '<td style="padding: 1px;" align="center">' . $user_indications['additional_sum'] . '</td>';
+									echo '</tr>';
+								}
 
 								$sum_ind = $sum_ind + $user_indications['additional_sum'];
+
+
 							}
 
 
