@@ -9,9 +9,10 @@ $result = $db->getAll("SELECT * FROM `users` WHERE `send_monthly_sms` = 1");
 
 foreach ($result as $row) {
 		$text = 'Ваша задолженность за электроэнергию в СНТ Двуречье %sum%руб.';
-		if ($row['balans'] < 0) {
+		$balance = $db->getOne("SELECT balance FROM purses WHERE type = 1 AND user_id = ?i", $row['id']);
+		if ($balance < 0) {
 			echo 'user: '.$row['name']."\r\n";
-			$sum = abs($row['balans']);
+			$sum = abs($balance);
 			echo 'sum: '.$sum."\r\n";
 			$text = str_replace('%sum%', $sum, $text);
 			$text = str_replace(' ', '%20', $text);
