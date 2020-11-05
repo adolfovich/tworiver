@@ -149,11 +149,16 @@
 							$curr_year = date("Y");
 							$prev_month = 0;
 
+							$last_ind = $db->getROW("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to' ORDER BY i.id DESC LIMIT 1");
+							//var_dump($last_ind['date']);
+							$last_month = date( "m",strtotime($last_ind['date']));
+							$last_year = date( "Y",strtotime($last_ind['date']));
+
 							foreach ($result_user_indications as $user_indications) {
 								$user_indications_m = date( "m",strtotime($user_indications['date']));
 								$user_indications_Y = date( "Y",strtotime($user_indications['date']));
 
-								if ($user_indications_m != $curr_month || $user_indications_Y != $curr_year) {
+								if ($user_indications_m != $last_month || $user_indications_Y != $last_year) {
 
 									if ($user_indications_m == $prev_month) {
 
