@@ -1,5 +1,11 @@
 <?php
-	include_once "db_connect.php";
+include ('../_conf.php');
+include ('../classes/safemysql.class.php');
+$db = new SafeMySQL(array('host' => $db_host,'user' => $db_user, 'pass' => $db_pass, 'db' => $db_name, 'charset' => 'utf8'));
+
+require_once('../classes/core.class.php');
+
+	$core  = new Core();
 	$link = 'http://api.prostor-sms.ru/messages/v2/send/';
 	$sms_login = 't89181116385';
 	$sms_pass = '305446';
