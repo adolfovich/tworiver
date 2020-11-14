@@ -63,7 +63,7 @@
           <i class="fa fa-user-circle" style="font-size: 40px; margin-left: 20px;"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-          <a class="dropdown-item">
+          <a class="dropdown-item" href="/cab/settings">
             <i class="ti-settings text-primary"></i>
             Настройки
           </a>
