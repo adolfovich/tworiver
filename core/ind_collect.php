@@ -21,8 +21,7 @@
 	echo 'Вчера '.$yesterday."<br> \r\n";
 
 	//Выбираем всех пользователей у которых есть номер модема
-	//$result_users = mysql_query("SELECT * FROM users WHERE modem_num IS NOT NULL AND modem_num NOT LIKE ''") or die(mysql_error());
-	$result_counters = $db->getAll("SELECT * FROM counters WHERE modem_num IS NOT NULL AND modem_num NOT LIKE ''");
+	$result_counters = $db->getAll("SELECT c.* FROM counters c WHERE c.modem_num IS NOT NULL AND c.modem_num NOT LIKE '' AND (SELECT date_end FROM users_contracts WHERE id = c.contract_id) IS NULL");
 
 	//Перебор пользователей
 	foreach ($result_counters as $counter) {
@@ -53,7 +52,6 @@
 			//перебираем даты, пока не не будет сегодняшняя
 			while (date("Y-m-d", strtotime('+1 day', strtotime($last_date))) != $curdate) {
 
-
 				$date_q = date("Y-m-d", strtotime('+2 day', strtotime($last_date)));
 
 				$indication_q = 'https://lk.waviot.ru/api/report/?template=a2f5261236bf3e2aede89cae168d2c2d&period=P1D&from='.$date_q.'&raw=1&modem='.$counter['modem_num'].'&to='.$date_q . '&key=1e3a109e8a4ffdeb4715bf022a04a3bf';
@@ -81,7 +79,6 @@
 					die('ERROR: '.$indications->message." \r\n");
 				}
 
-
 				//Подсчитываем косичество элементов массива
 				$count_tarifs = count((array)$indications);
 				echo 'элементов вмассиве '.$count_tarifs. "<br> \r\n";
@@ -108,9 +105,7 @@
 							//echo '<hr>';
 							if ($value_ind > 0 || $value_ind != '0') {
 								$prev_ind = $db->getOne("SELECT Indications FROM Indications WHERE counter_id = ".$counter['id']." AND tarif = (SELECT id FROM tarifs WHERE id_waviot = '".$tarif."') ORDER BY date DESC LIMIT 1");
-								//$prev_ind = mysql_result($prev_ind_result, 0);
 								$ind_diff = $value_ind - $prev_ind;
-
 
 								echo '<b>Добавляем показания</b>'."<br> \r\n";
 
@@ -135,12 +130,6 @@
 
 								echo '<b>Обновляем баланс</b>'."<br> \r\n";
 								$core->changeBalance($counter['user_id'], 1, 5, $amount);
-
-
-								/*$q_upd_balans = "UPDATE users u SET u.balans = (u.balans - ($ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'))), u.total_balance = (u.total_balance - ($ind_diff*(SELECT price FROM tarifs WHERE id_waviot = '".$tarif."'))) WHERE u.id = ".$users['id'];
-								echo $q_upd_balans;
-								echo '<hr>'."<br> \r\n";
-								mysql_query($q_upd_balans) or die(mysql_error());*/
 
 							}
 						}

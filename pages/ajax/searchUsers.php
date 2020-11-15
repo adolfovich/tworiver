@@ -64,7 +64,7 @@ foreach ($users_arr as $user_id => $user_area) {
   $html .= '<td class="budget">';
   if ($user['phone']) $html .= '+'.$user['phone'];
   $html .= '</td>';
-  $user_contracts = $db->getAll("SELECT * FROM users_contracts WHERE user = ?i", $user['id']);
+  $user_contracts = $db->getAll("SELECT * FROM users_contracts WHERE user = ?i AND date_end IS NOT NULL", $user['id']);
   $html .= '<td class="budget">';
   foreach ($user_contracts as $user_contract) {
     if (!$user_contract['num']) $user_contract['num'] = 'Б/Н';
@@ -76,7 +76,7 @@ foreach ($users_arr as $user_id => $user_area) {
     $html .= '<p><a href="admin_edit_contract?id='.$user_contract['id'].'">№'.$user_contract['num'].' от '.$user_contract['date_start'].'</a></p>';
   }
   $html .= '</td>';
-  $user_counters = $db->getAll("SELECT * FROM counters WHERE user_id = ?i", $user['id']);
+  $user_counters = $db->getAll("SELECT c.* FROM counters c WHERE c.user_id = ?i AND (SELECT date_end FROM users_contracts WHERE id = c.contract_id) IS NULL", $user['id']);
   $html .= '<td class="budget">';
   foreach ($user_counters as $user_counter) {
     $html .= '<p>'.$user_counter['model'].' №'.$user_counter['num'].'<br>('.$user_counter['plomb'].')</p>';
