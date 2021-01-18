@@ -226,15 +226,26 @@ $currentyear = date("Y");
     dateFrom = document.getElementById('actDateFrom').value;
     dateTo = document.getElementById('actDateTo').value;
 
-    url = '/pages/cab/forms/?act=electric&datefrom='+dateFrom+'&dateto='+dateTo;
+    console.log(dateFrom);
 
-    if (type == 'electric') {
-      counter = document.getElementById('actCounter').value;
-      url = url + '&counter='+counter;
+    if (new Date(dateFrom) > new Date('2020-06-25')) {
+      url = '/pages/cab/forms/?act=electric&datefrom='+dateFrom+'&dateto='+dateTo;
+
+      if (type == 'electric') {
+        counter = document.getElementById('actCounter').value;
+        url = url + '&counter='+counter;
+      }
+
+      window.open(url, '_blank');
+      $('#templateModal').modal('hide');
+    } else {
+      Swal.fire({
+        icon: 'error',
+        text: 'Дата начала должна быть больше 25.06.2020'
+      })
     }
 
-    window.open(url, '_blank');
-    $('#templateModal').modal('hide');
+
   }
 
   function IsJsonString(str) {

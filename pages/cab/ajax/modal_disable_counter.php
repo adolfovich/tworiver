@@ -11,13 +11,15 @@ if (isset($_SESSION['id'])) {
   $json = [];
 
   if ($is_admin) {
+    $user_id = $db->getOne("SELECT user_id FROM counters WHERE id = ?i", $_GET['counter']);
     $json['html'] = '';
 
     $json['header'] = 'Вывод из эксплуатации счетчика ';
     $json['html'] .= '<form enctype="multipart/form-data" method="POST">';
 
-    $json['html'] .= '<a href="#" class="btn btn-primary" onClick="return false;">Распечатать акт сверки</a>';
+    $json['html'] .= '<a href="#" class="btn btn-primary" onClick="loadModal(\'modal_print_act\', \'type=electric&user_id='.$user_id.'\')">Распечатать акт сверки</a>';
     $json['html'] .= '<input type="hidden" name="counter_contract" value="'.$_GET['counter'].'">';
+    $json['html'] .= '<input type="hidden" name="action" value="disable_counter">';
 
     $json['html'] .= '<div class="form-group">';
     $json['html'] .= '<label for="act">Акт сверки:</label>';
@@ -28,7 +30,7 @@ if (isset($_SESSION['id'])) {
 
     $json['html'] .= '<div class="form-group">';
     $json['html'] .= '<label for="end_date">Дата вывода из эксплуатации</label>';
-    $json['html'] .= '<input type="date" name="end_date" class="form-control forcheck" id="end_date" aria-describedby="numbertHelp">';
+    $json['html'] .= '<input type="date" name="disable_counter_date" class="form-control forcheck" id="end_date" aria-describedby="numbertHelp">';
     $json['html'] .= '<small id="numbertHelp" class="form-text text-muted">Не позднее текущей даты</small>';
     $json['html'] .= '</div>';
 

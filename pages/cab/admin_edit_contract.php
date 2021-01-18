@@ -3,21 +3,30 @@
 if ($user_data['is_admin']) {
 //var_dump($_POST);
   if (isset($_POST) && $_POST) {
-    //var_dump($form);
-    //var_dump($form['counter_contract']);
 
-    if (!$form['date_start']) $form['date_start'] = NULL;
-    if (!$form['date_end']) $form['date_end'] = NULL;
+    if (isset($form['action']) && $form['action'] == 'disable_counter') {
 
-    $update = [
-      'num' => $form['num'],
-      'date_start' => $form['date_start'],
-      'date_end' => $form['date_end']
-    ];
+      if($form['disable_counter_date'])
 
-    if ($db->query("UPDATE users_contracts SET ?u WHERE id = ?i", $update, $form['id'])) {
-      $swal_message["type"] = 'success';
-      $swal_message["text"] = 'Договор сохранен';
+      $disable_counter_date = $form['disable_counter_date'];
+
+    } else {
+      //var_dump($form);
+      //var_dump($form['counter_contract']);
+
+      if (!$form['date_start']) $form['date_start'] = NULL;
+      if (!$form['date_end']) $form['date_end'] = NULL;
+
+      $update = [
+        'num' => $form['num'],
+        'date_start' => $form['date_start'],
+        'date_end' => $form['date_end']
+      ];
+
+      if ($db->query("UPDATE users_contracts SET ?u WHERE id = ?i", $update, $form['id'])) {
+        $swal_message["type"] = 'success';
+        $swal_message["text"] = 'Договор сохранен';
+      }
     }
 
   }
