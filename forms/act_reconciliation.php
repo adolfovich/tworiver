@@ -1,9 +1,8 @@
 <?php
 	include_once "../_conf.php";
 
-	ini_set('error_reporting', E_ALL);
-	ini_set('display_errors', 1);
-	ini_set('display_startup_errors', 1);
+
+	ini_set('display_errors', 0);
 
 	include ('../classes/safemysql.class.php');
 	$db = new SafeMySQL(array('host' => $db_host,'user' => $db_user, 'pass' => $db_pass, 'db' => $db_name, 'charset' => 'utf8'));
