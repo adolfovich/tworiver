@@ -12,7 +12,7 @@ function getCounters($contract_num)
 {
   global $db;
 
-  $counters = $db->getAll("SELECT * FROM counters WHERE contract_id = ?i", $contract_num);
+  $counters = $db->getAll("SELECT * FROM counters WHERE contract_id = ?i AND dismantling_date IS NULL", $contract_num);
 
   return $counters;
 }
