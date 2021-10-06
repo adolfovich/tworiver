@@ -64,7 +64,8 @@ foreach ($users_arr as $user_id => $user_area) {
   $html .= '<td class="budget">';
   if ($user['phone']) $html .= '+'.$user['phone'];
   $html .= '</td>';
-  $user_contracts = $db->getAll("SELECT * FROM users_contracts WHERE user = ?i AND date_end IS NOT NULL", $user['id']);
+  ////////////////////////////////////
+  $user_contracts = $db->getAll("SELECT * FROM users_contracts WHERE user = ?i AND date_end IS NULL", $user['id']);
   $html .= '<td class="budget">';
   foreach ($user_contracts as $user_contract) {
     if (!$user_contract['num']) $user_contract['num'] = 'Б/Н';

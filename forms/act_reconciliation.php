@@ -25,15 +25,21 @@
 
 	$user_uchastok = $user_data['uchastok'];
 	$user_name = $user_data['name'];
-	$user_sch_model = $user_data['sch_model'];
-	$user_sch_num = $user_data['sch_num'];
-	$user_sch_plomb_num = $user_data['sch_plomb_num'];
+	//$user_sch_model = $user_data['sch_model'];
+	//$user_sch_num = $user_data['sch_num'];
+	//$user_sch_plomb_num = $user_data['sch_plomb_num'];
 
 	//выбираем данные договора на энергопотребление
 	$user_contracts = $db->getRow("SELECT * FROM users_contracts WHERE user = ?i AND date_end IS NULL", $user_id);
 
 	$contract_num = $user_contracts['num'];
 	$contract_date = $user_contracts['date_start'];
+
+	//выбираем данные по счетчику
+	$counter = $db->getRow("SELECT * FROM counters WHERE contract_id = ?i ", $user_contracts['id']);
+	$user_sch_model = $counter['model'];
+	$user_sch_num = $counter['num'];
+	$user_sch_plomb_num = $counter['plomb'];
 
 ?>
 

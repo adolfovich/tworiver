@@ -21,17 +21,6 @@
     <div class="card my-4">
       <h5 class="card-header">Участок №<?=$user_info['uchastok']?></h5>
       <div class="card-body">
-        <?php if ($user_info['total_balance'] < 0) $tb_color = 'color: red;';?>
-        <p><b>Общий баланс:</b> <span style="<?=$tb_color?>"><?=$user_info['total_balance']?></span></p>
-
-        <?php if ($user_info['balans'] < 0) $eb_color = 'color: red;';?>
-        <p><b>Энергопотребление:</b> <span style="<?=$eb_color?>"><?=$user_info['balans']?></span></p>
-
-        <?php if ($user_info['membership_balans'] < 0) $mb_color = 'color: red;';?>
-        <p><b>Членские взносы:</b> <span style="<?=$mb_color?>"><?=$user_info['membership_balans']?></span></p>
-
-        <?php if ($user_info['target_balans'] < 0) $tab_color = 'color: red;';?>
-        <p><b>Целевые взносы:</b> <span style="<?=$tab_color?>"><?=$user_info['target_balans']?></span></p>
 
         <a href="cab" class="btn btn-outline-dark btn-block">Перейти в кабинет</a>
       </div>
@@ -39,6 +28,12 @@
     <?php
     }
     ?>
+    <div class="card my-4">
+      <div class="card-body">
+        <a href="contacts#contact-form" class="btn btn-outline-dark btn-block">Обращение к председателю</a>
+      </div>
+    </div>
+
 
     <!-- News Widget -->
         <div class="card my-4">

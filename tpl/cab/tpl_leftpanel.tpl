@@ -32,6 +32,12 @@
         <span class="menu-title">Отчеты</span>
       </a>
     </li>
+    <li class="nav-item ">
+      <a class="nav-link" href="/">
+        <i class="fa fa-globe menu-icon"></i>
+        <span class="menu-title">Вернуться на сайт</span>
+      </a>
+    </li>
 
     <?php if ($user_data['is_admin']) { ?>
     <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin') {echo 'active';}?>">
