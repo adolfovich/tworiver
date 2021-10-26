@@ -15,6 +15,7 @@ if ($paysystem == 'yandex') {
   $client = new Client();
 
   $user['id'] = $form['user'];
+  $user = $db->getRow("SELECT * FROM users WHERE id = ?i", $user['id']);
   //$user_email = 'adolfovich.alexashka@gmail.com';
   $pay_variant = 1;
   $amount = $form['amount'];
@@ -26,7 +27,7 @@ if ($paysystem == 'yandex') {
 
     $db->query("INSERT INTO pre_payments SET user_id = ?i, variant = ?s, amount = ?s", $user['id'], $pay_variant, $amount);
     $order_id = $db->insertId();
-    $description = 'Оплата электроэнергии #'.$order_id;
+    $description = 'Оплата электроэнергии #'.$order_id." | участок №".$user['uchastok'];
 
     $payment = $client->createPayment(
     		array(
