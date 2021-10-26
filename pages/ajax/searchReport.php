@@ -20,8 +20,13 @@ if ($form['type'] == 'fhd') {
     foreach ($reports as $report) {
       $html .= '<tr>';
       $html .= '<td>'.date("d.m.Y", strtotime($report['date'])).'</td>';
-      $html .= '<td><a href="/'.$report['path'].'" target="_blank">'.$report['name'].'</a></td>';
-      $html .= '<td class="text-center"><a href="/'.$report['path'].'" target="_blank"><i class="fa fa-download" aria-hidden="true"></i></a></td>';
+      $html .= '<td style="white-space:normal;"><a href="/'.$report['path'].'" target="_blank">'.$report['name'].'</a></td>';
+      $html .= '<td class="text-center">';
+      $html .= '<a href="/'.$report['path'].'" target="_blank" class="btn btn-outline-primary btn-sm" style="padding: 0.3rem 0.5rem;"><i class="fa fa-download" aria-hidden="true"></i></a>';
+      if ($form['role'] == 'admin') {
+        $html .= '<a href="#" class="btn btn-outline-danger btn-sm" style="padding: 0.3rem 0.5rem; margin-left: 5px;"><i class="fa fa-trash" aria-hidden="true" onClick="loadModal(\'modal_fhd_delete\', \'id='.$report['id'].'\'); return false;"></i></a>';
+      }
+      $html .= '</td>';
       $html .= '</tr>';
     }
   } else {
@@ -41,7 +46,9 @@ if ($form['type'] == 'fhd') {
       }
       $html .= '<td>'.$db->getOne("SELECT name FROM acts_type WHERE id = ?i", $act['type']).'</td>';
       $html .= '<td><a href="/'.$act['path'].'" target="_blank">'.$act['comment'].'</a></td>';
-      $html .= '<td class="text-center"><a href="/'.$act['path'].'" target="_blank"><i class="fa fa-download" aria-hidden="true"></i></a></td>';
+      $html .= '<td class="text-center">';
+      $html .= '<a href="/'.$act['path'].'" target="_blank"><i class="fa fa-download" aria-hidden="true"></i></a>';
+      $html .= '</td>';
       $html .= '</tr>';
     }
   } else {

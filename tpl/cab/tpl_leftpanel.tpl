@@ -73,6 +73,13 @@
           </a>
         </li>
 
+        <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_opjournal') {echo 'active';}?>">
+          <a class="nav-link" href="/cab/admin_fhd">
+            <i class="fa fa-file-text menu-icon"></i>
+            <span class="menu-title">ФХД</span>
+          </a>
+        </li>
+
 
         <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_settings') {echo 'active';}?>">
           <a class="nav-link" href="/cab/admin_settings">
