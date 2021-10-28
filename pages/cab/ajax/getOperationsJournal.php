@@ -107,7 +107,7 @@ if (isset($_SESSION['id'])) {
           $html .= '<tr>';
           $html .= '<td>'.$row['id'].'</td>';
           $html .= '<td>'.date("d.m.Y H:i", strtotime($row['date'])).'</td>';
-          $html .= '<td>'.$db->getOne("SELECT uchastok FROM users WHERE id = ?i", $row['user_id']).'</td>';
+          $html .= '<td style="text-align:center;">'.$db->getOne("SELECT uchastok FROM users WHERE id = ?i", $row['user_id']).'</td>';
           $html .= '<td>'.$balances_names[$row['balance_type']].'</td>';
           $html .= '<td>'.$db->getOne("SELECT name FROM operations_jornal_types WHERE id = ?i", $row['op_type']).'</td>';
           $html .= '<td>'.$row['amount'].'</td>';

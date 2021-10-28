@@ -73,11 +73,15 @@
 
               <button type="submit" class="btn btn-primary mb-2" onClick="loadAdminJournal(); return false;"><i class="fa fa-search" aria-hidden="true"></i></button>
               &nbsp;
+              <a class="btn btn-primary mb-2" onClick="printData(); return false;" style="color:#fff;"><i class="fa fa-print" aria-hidden="true"></i></a>
+              &nbsp;
+              <!--a class="btn btn-primary mb-2" onClick="" style="color:#fff;" ><i class="fa fa-file-excel-o" aria-hidden="true"></i></a-->
+              &nbsp;
               <button type="submit" class="btn btn-success mb-2" onClick="loadModal('modal_add_operation', 'operation_type='+document.getElementById('optype').value+'&area_number='+document.getElementById('number').value); return false;">Добавить операцию</button>
             </form>
 
             <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
-              <table class="table align-items-center table-flush">
+              <table class="table align-items-center table-flush" id="for-print">
                 <thead class="thead-light">
                   <tr>
                     <th scope="col">ID операции</th>
@@ -91,7 +95,7 @@
                 </thead>
                 <tbody class="list" id="journalResult">
                   <tr>
-                    <td colspan="4" style="text-align: center; padding: 20px;"> Выберите параметры </td>
+                    <td colspan="7" style="text-align: center; padding: 20px;"> Выберите параметры </td>
                   </tr>
                 </tbody>
               </table>
@@ -108,6 +112,33 @@
 </div>
 
 <script>
+
+    const tableToPrint = document.getElementById('for-print');
+
+    function printData(tableToPrint) {
+        Popup($(tableToPrint).html());
+    }
+
+    function Popup(data) {
+        const mywindow = window.open('', 'for-print', 'height=600, width=1000');
+        // стили таблицы
+        mywindow.document.write('<link rel="stylesheet" href="/css/style.css" type="text/css" />');
+        mywindow.document.write(tableToPrint.outerHTML);
+        mywindow.document.close(); // для IE >= 10
+        mywindow.focus();          // для IE >= 10
+        mywindow.print();
+        mywindow.close();
+        return true;
+    }
+
+    /*$(document).on('click', '#printTable', function () {
+        printData();
+        return false;
+    });*/
+
+</script>
+
+<script>
   function loadAdminJournal()
   {
     formData = $('#opJournalForm').serialize()
@@ -120,7 +151,7 @@
     );
 
     function onAjaxSuccess(data) {
-      console.log(data);
+      //console.log(data);
       response = JSON.parse(data);
       if (response.status == 'error') {
         Swal.fire({
