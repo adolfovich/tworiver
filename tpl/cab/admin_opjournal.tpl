@@ -66,6 +66,11 @@
                 <input name="end_date" type="date" class="form-control" id="end_date" placeholder="Дата окончания">
               </div>
 
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="comment" class="sr-only">Комментарий</label>
+                <input name="comment" type="text" class="form-control" id="comment" placeholder="Коментарий">
+              </div>
+
               <button type="submit" class="btn btn-primary mb-2" onClick="loadAdminJournal(); return false;"><i class="fa fa-search" aria-hidden="true"></i></button>
               &nbsp;
               <button type="submit" class="btn btn-success mb-2" onClick="loadModal('modal_add_operation', 'operation_type='+document.getElementById('optype').value+'&area_number='+document.getElementById('number').value); return false;">Добавить операцию</button>
@@ -115,7 +120,7 @@
     );
 
     function onAjaxSuccess(data) {
-      //console.log(data);
+      console.log(data);
       response = JSON.parse(data);
       if (response.status == 'error') {
         Swal.fire({

@@ -10,7 +10,7 @@ if (isset($_SESSION['id'])) {
 
   if ($is_admin) {
 
-    if ($form['number'] == "" && $form['start_date'] == "" && $form['end_date'] == "" && !isset($form['optype'])) {
+    if ($form['number'] == "" && $form['start_date'] == "" && $form['end_date'] == "" && !isset($form['optype']) && $form['comment'] == "") {
       $json['status'] = 'error';
       $json['text'] = 'Не выбрано ни одного параметра';
     } else {
@@ -53,7 +53,11 @@ if (isset($_SESSION['id'])) {
         $date_q = '';
       }
 
-      if ($user_q || $optype_q || $balancetype_q || $date_q) {
+      if ($form['comment']) {
+        $comment_q = "  comment LIKE '%".$form['comment']."%'" ;
+      }
+
+      if ($user_q || $optype_q || $balancetype_q || $date_q || $comment_q) {
         $where = "WHERE";
       } else {
         $where = "";
@@ -81,7 +85,16 @@ if (isset($_SESSION['id'])) {
         $andDate = '';
       }
 
-      $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andDate . "?p ORDER BY date DESC", $date_q);
+      if (isset($comment_q)) {
+
+        $andComment = $and.$comment_q;
+      }
+
+      //var_dump("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andComment . $andDate . "?p ORDER BY date DESC");
+
+      $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andComment . $andDate . "?p ORDER BY date DESC", $date_q);
+
+      //var_dump($db->parse("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andComment . $andDate . "?p ORDER BY date DESC", $date_q));
 
       $json['status'] = 'success';
 
@@ -91,18 +104,23 @@ if (isset($_SESSION['id'])) {
         3 => "Целевые взносы"
       ];
 
-      foreach ($q as $row) {
-        $html .= '<tr>';
-        $html .= '<td>'.$row['id'].'</td>';
-        $html .= '<td>'.date("d.m.Y H:i", strtotime($row['date'])).'</td>';
-        $html .= '<td>'.$db->getOne("SELECT uchastok FROM users WHERE id = ?i", $row['user_id']).'</td>';
-        $html .= '<td>'.$balances_names[$row['balance_type']].'</td>';
-        $html .= '<td>'.$db->getOne("SELECT name FROM operations_jornal_types WHERE id = ?i", $row['op_type']).'</td>';
-        $html .= '<td>'.$row['amount'].'</td>';
-        $html .= '<td>'.$row['comment'].'</td>';
-        $html .= '';
-        $html .= '</tr>';
+      if (!count($q)) {
+        $html .= '<tr><td colspan="7" style="padding: 10px; text-align: center; padding-top: 50px; padding-bottom: 50px;">Ничего не найдено</td></tr>';
+      } else {
+        foreach ($q as $row) {
+          $html .= '<tr>';
+          $html .= '<td>'.$row['id'].'</td>';
+          $html .= '<td>'.date("d.m.Y H:i", strtotime($row['date'])).'</td>';
+          $html .= '<td>'.$db->getOne("SELECT uchastok FROM users WHERE id = ?i", $row['user_id']).'</td>';
+          $html .= '<td>'.$balances_names[$row['balance_type']].'</td>';
+          $html .= '<td>'.$db->getOne("SELECT name FROM operations_jornal_types WHERE id = ?i", $row['op_type']).'</td>';
+          $html .= '<td>'.$row['amount'].'</td>';
+          $html .= '<td>'.$row['comment'].'</td>';
+          $html .= '';
+          $html .= '</tr>';
+        }
       }
+
       $json['html'] = $html;
     }
 
