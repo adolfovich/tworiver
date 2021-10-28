@@ -90,11 +90,7 @@ if (isset($_SESSION['id'])) {
         $andComment = $and.$comment_q;
       }
 
-      //var_dump("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andComment . $andDate . "?p ORDER BY date DESC");
-
       $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andComment . $andDate . "?p ORDER BY date DESC", $date_q);
-
-      //var_dump($db->parse("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andComment . $andDate . "?p ORDER BY date DESC", $date_q));
 
       $json['status'] = 'success';
 
