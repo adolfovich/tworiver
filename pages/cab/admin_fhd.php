@@ -21,7 +21,7 @@ if (isset($form['fhd_upload'])) {
   if (move_uploaded_file($_FILES["fhd_file"]['tmp_name'], $uploadfile)) {
 
       $insert = [
-        'name' => substr($_FILES["fhd_file"]['name'], 0, strrpos($_FILES["fhd_file"]['name'],'.')),
+        'name' => $form['fhd_name'],
         'date' => $form['fhd_date'],
         'path' => 'uploads/'.$rand_name.'.'.end($file_name)
       ];

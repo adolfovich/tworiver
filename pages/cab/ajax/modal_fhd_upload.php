@@ -7,16 +7,21 @@ if (isset($_SESSION['id'])) {
   $json['html'] = '';
 
   $json['header'] = 'Загрузка документа';
-  $json['html'] .= '<form class="form-inline" id="fhd_delete" method="POST" enctype="multipart/form-data">';
+  $json['html'] .= '<form id="fhd_upload" method="POST" enctype="multipart/form-data">';
   $json['html'] .= '<input type="hidden" name="fhd_upload" />';
-  $json['html'] .= '<div class="form-group mb-2">';
-  $json['html'] .= '<label for="fhd_date" style="margin-right: 10px; margin-top: 6px;">Период</label>';
-  $json['html'] .= '<input type="date" class="form-control" name="fhd_date">';
+  $json['html'] .= '<div class="form-group">';
+    $json['html'] .= '<label for="fhd_date" style="margin-right: 10px; margin-top: 6px;">Период</label>';
+    $json['html'] .= '<input type="date" class="form-control" name="fhd_date">';
   $json['html'] .= '</div>';
 
-  $json['html'] .= '<div class="form-group mx-sm-3 mb-2">';
-  $json['html'] .=   '<label for="fhd_file" class="sr-only">Файл</label>';
-  $json['html'] .=   '<input type="file" class="form-control-plaintext" name="fhd_file" >';
+  $json['html'] .= '<div class="form-group">';
+    $json['html'] .=   '<label for="fhd_name" style="margin-right: 10px; margin-top: 6px;">Название</label>';
+    $json['html'] .=   '<input type="text" class="form-control" name="fhd_name" >';
+  $json['html'] .= '</div>';
+
+  $json['html'] .= '<div class="form-group">';
+    $json['html'] .=   '<label for="fhd_file" class="sr-only">Файл</label>';
+    $json['html'] .=   '<input type="file" class="form-control-plaintext" name="fhd_file" >';
   $json['html'] .= '</div>';
 
 
