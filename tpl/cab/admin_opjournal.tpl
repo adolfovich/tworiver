@@ -71,7 +71,7 @@
                 <input name="comment" type="text" class="form-control" id="comment" placeholder="Коментарий">
               </div>
 
-              <button type="submit" class="btn btn-primary mb-2" onClick="loadAdminJournal(); return false;"><i class="fa fa-search" aria-hidden="true"></i></button>
+              <button type="submit" class="btn btn-primary mb-2" onClick="loadAdminJournal(); return false;" id="searchButton"><i class="fa fa-search" aria-hidden="true"></i></button>
               &nbsp;
               <a class="btn btn-primary mb-2" onClick="printData(); return false;" style="color:#fff;"><i class="fa fa-print" aria-hidden="true"></i></a>
               &nbsp;
@@ -164,7 +164,7 @@ function exportCSV() {
 */
 function prepCSVRow(arr, columnCount, initial) {
   var row = ''; // this will hold data
-  var delimeter = ','; // data slice separator, in excel it's `;`, in usual CSv it's `,`
+  var delimeter = ';'; // data slice separator, in excel it's `;`, in usual CSv it's `,`
   var newLine = '\r\n'; // newline separator for CSV row
 
   /*
@@ -242,8 +242,19 @@ function prepCSVRow(arr, columnCount, initial) {
 </script>
 
 <script>
+function setLoadOnButton(button) {
+  button.prop('disabled', true);
+  butonOLdImage = button.html();
+  button.html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>');
+}
+function unSetLoadOnButton(button) {
+  button.prop('disabled', false);
+  butonOLdImage = button.html();
+  button.html('<i class="fa fa-search" aria-hidden="true"></i>');
+}
   function loadAdminJournal()
   {
+    setLoadOnButton($('#searchButton'));
     formData = $('#opJournalForm').serialize()
     //console.log(formData);
 
@@ -254,6 +265,7 @@ function prepCSVRow(arr, columnCount, initial) {
     );
 
     function onAjaxSuccess(data) {
+      unSetLoadOnButton($('#searchButton'));
       //console.log(data);
       response = JSON.parse(data);
       if (response.status == 'error') {

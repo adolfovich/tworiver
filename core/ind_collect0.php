@@ -13,6 +13,64 @@
 	$ip = $core->ip;
 	$get = $core->setGet();
 
+$profiles_descr = [
+	'1.0.0' => 'дата-время записи [timestamp]',
+	'1.8.0' => 'Активная энергия к потребителю по сумме фаз и тарифов с момента сброса [Вт ч]',
+	'1.8.1' => 'Активная энергия к потребителю по сумме фаз тариф 1 с момента сброса [Вт ч]',
+	'1.8.2' => 'Активная энергия к потребителю по сумме фаз тариф 2 с момента сброса [Вт ч]',
+	'1.8.3' => 'Активная энергия к потребителю по сумме фаз тариф 3 с момента сброса [Вт ч]',
+	'1.8.4' => 'Активная энергия к потребителю по сумме фаз тариф 4 с момента сброса [Вт ч]',
+	'2.8.0' => 'Активная энергия от потребителя по сумме фаз и тарифов с момента сброса [Вт ч]',
+	'2.8.1' => 'Активная энергия от потребителя по сумме фаз тариф 1 с момента сброса [Вт ч]',
+	'2.8.2' => 'Активная энергия от потребителя по сумме фаз тариф 2 с момента сброса [Вт ч]',
+	'2.8.3' => 'Активная энергия от потребителя по сумме фаз тариф 3 с момента сброса [Вт ч]',
+	'2.8.4' => 'Активная энергия от потребителя по сумме фаз тариф 4 с момента сброса [Вт ч]',
+	'3.8.0' => 'Реактивная энергия к потребителю по сумме фаз и тарифов с момента сброса[Варч]',
+	'3.8.1' => 'Реактивная энергия к потребителю по сумме фаз тариф 1 с момента сброса [Вар ч]',
+	'3.8.2' => 'Реактивная энергия к потребителю по сумме фаз тариф 2 с момента сброса [Вар ч]',
+	'3.8.3' => 'Реактивная энергия к потребителю по сумме фаз тариф 3 с момента сброса [Вар ч]',
+	'3.8.4' => 'Реактивная энергия к потребителю по сумме фаз тариф 4 с момента сброса [Вар ч]',
+	'4.8.0' => 'Реактивная энергия от потребителя по сумме фаз и тариф. с момента сброса[Варч]',
+	'4.8.1' => 'Реактивная энергия от потребителя по сумме фаз тариф 1 с момента сброса [Вар ч]',
+	'4.8.2' => 'Реактивная энергия от потребителя по сумме фаз тариф 2 с момента сброса [Вар ч]',
+	'4.8.3' => 'Реактивная энергия от потребителя по сумме фаз тариф 3 с момента сброса [Вар ч]',
+	'4.8.4' => 'Реактивная энергия от потребителя по сумме фаз тариф 4 с момента сброса [Вар ч]',
+	'9.8.0' => 'Полная энергия к потребителю по сумме фаз и тарифов с момента сброса [ВА ч]',
+	'9.8.1' => 'Полная энергия к потребителю по сумме фаз тариф 1 с момента сброса [ВА ч]',
+	'9.8.2' => 'Полная энергия к потребителю по сумме фаз тариф 2 с момента сброса [ВА ч]',
+	'9.8.3' => 'Полная энергия к потребителю по сумме фаз тариф 3 с момента сброса [ВА ч]',
+	'9.8.4' => 'Полная энергия к потребителю по сумме фаз тариф 4 с момента сброса [ВА ч]',
+	'1.6.0' => 'Максимум мощности по сумме фаз за период учета [Вт]',
+	'1.7.0' => 'Активная мощность по сумме фаз [Вт]',
+	'21.7.0' => 'Активная мощность по фазе А [Вт]',
+	'41.7.0' => 'Активная мощность по фазе В [Вт]',
+	'61.7.0' => 'Активная мощность по фазе С [Вт]',
+	'3.7.0' => 'Реактивная мощность по сумме фаз [Вар]',
+	'23.7.0' => 'Реактивная мощность по фазе А [Вар]',
+	'43.7.0' => 'Реактивная мощность по фазе В [Вар]',
+	'63.7.0' => 'Реактивная мощность по фазе С [Вар]',
+	'9.7.0' => 'Полная мощность по сумме фаз [ВА]',
+	'29.7.0' => 'Полная мощность по фазе А [ВА]',
+	'49.7.0' => 'Полная мощность по фазе В [ВА]',
+	'69.7.0' => 'Полная мощность по фазе С [ВА]',
+	'11.7.0' => 'Ток по сумме фаз [А]',
+	'31.7.0' => 'Ток по фазе А [А]',
+	'51.7.0' => 'Ток по фазе В [А]',
+	'71.7.0' => 'Ток по фазе С [А]',
+	'91.7.0' => 'Ток нейтрали [А]',
+	'32.7.0' => 'Напряжение фазы А [В]',
+	'52.7.0' => 'Напряжение фазы В [В]',
+	'72.7.0' => 'Напряжение фазы С [В]',
+	'14.7.0' => 'Частота [Гц]',
+	'13.7.0' => 'cosFi суммы фаз',
+	'33.7.0' => 'cosFi фазы А',
+	'53.7.0' => 'cosFi фазы В',
+	'73.7.0' => 'cosFi фазы С',
+	'81.7.10' => 'угол между фазами А-В [градусы]',
+	'81.7.21' => 'угол между фазами В-С [градусы]',
+	'81.7.2' => 'угол между фазами А-С [градусы]'
+];
+
 	//авторизация
 
 	if( $curl = curl_init() ) {
@@ -27,13 +85,13 @@
 		));
 
 		$out = curl_exec($curl);
-		echo "<br>AUTH OUT<br>  \r\n";
-		var_dump($out);
-		echo "<br> \r\n";
+		//echo "<br>AUTH OUT<br>  \r\n";
+		//var_dump($out);
+		//echo "<br> \r\n";
 		$str = json_decode($out, TRUE);
 		$WAVIOT_JWT = $str['WAVIOT_JWT'];
 		//var_dump($str);
-		echo "<br> \r\n";
+		//echo "<br> \r\n";
 	}
 
 	echo '<hr><hr>';
@@ -42,7 +100,6 @@
 
 if( $curl = curl_init() ) {
 	curl_setopt($curl, CURLOPT_URL, 'https://api.waviot.ru/telecom/api/device?list=true');
-	//curl_setopt($curl, CURLOPT_HEADER, 0);
 	curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
 	curl_setopt($curl, CURLOPT_COOKIESESSION,true);
 	curl_setopt($curl, CURLOPT_HTTPHEADER, array(
@@ -53,33 +110,69 @@ if( $curl = curl_init() ) {
 	));
 
 	$out = curl_exec($curl);
-	echo "OUT<br>  \r\n";
-	var_dump($out);
-	echo "<br> \r\n";
+	//echo "OUT<br>  \r\n";
+	//var_dump($out);
+	//echo "<br> \r\n";
 	$data = json_decode($out, TRUE);
-	var_dump($data);
-	echo "<br> \r\n";
-echo '<hr><hr>';
-	foreach ($data["x_ids"] as $value) {
-		echo $value;
-		echo '<br>';
-	}
+	//var_dump($data);
+	//echo "<br> \r\n";
+	//echo '<hr><hr>';
+
 
 }
 
-die();
+foreach ($data["x_ids"] as $value) {
+	//echo $value.' ('.dechex($value).')<br>';
+
+	$counter = $db->getRow("SELECT * FROM counters WHERE modem_num = ?s", dechex($value));
+	//var_dump($counter);
+	if (count($counter)) {
+		//echo '<p style="color:green">FOUND</p>';
+		//https://lk.waviot.ru/api.data/get_modem_channel_values/?modem_id=70B3B9&channel=160
+		/*
+		if( $curl = curl_init() ) {
+			curl_setopt($curl, CURLOPT_URL, 'https://lk.waviot.ru/api.data/get_modem_channel_values/?modem_id='.dechex($value).'&channel=electro_current_l1');
+			curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
+			curl_setopt($curl, CURLOPT_COOKIESESSION,true);
+			curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+			'Content-type: application/json',
+			'user-agent: SNT-Dvurech`e',
+			'x-requested-with: XMLHttpRequest',
+			'authorization: bearer '.$WAVIOT_JWT
+			));
+
+			$out = curl_exec($curl);
+			//var_dump($out);
+			$data = json_decode($out, TRUE);
+			//echo '<hr>';
+		}
+		//var_dump($data['values']);
+
+		if (isset($data['values']) && count($data['values'])) {
+			foreach ($data['values'] as $key => $value) {
+				echo date('d.m.Y H:i:s', $key).' : '. $value .'<br>';
+			}
+		}*/
+		//die();
+	} else {
+		//echo '<p style="color:red">NOT FOUND</p>';
+	}
+	//echo '<br>';
+}
+
+
 //запрос данных
 
-	$timefrom = 1633921200;
-	$timeto = 1633953600;
+	$timefrom = time() - 86400;
+	$timeto = time();
 
-	$modem = '70C3D3';
+	$modem = '715DCF';
 
 	if( $curl = curl_init() ) {
 		curl_setopt($curl, CURLOPT_URL, 'https://api.waviot.ru/driver_electro5/api/report/history');
     curl_setopt($curl, CURLOPT_RETURNTRANSFER,true);
     curl_setopt($curl, CURLOPT_POST, true);
-		curl_setopt($curl, CURLOPT_POSTFIELDS, 'modem='.$modem.'&profile=31.7.0,51.7.0,71.7.0,91.7.0&timefrom=1633921200&timeto=1633953600' );
+		curl_setopt($curl, CURLOPT_POSTFIELDS, 'modem='.hexdec($modem).'&profile=1.0.94.7.0.255' );
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array(
     'Content-type: application/json',
     'user-agent: SNT-Dvurech`e',
@@ -90,11 +183,27 @@ die();
 		$out = curl_exec($curl);
 		echo "<br>DATA OUT<br>  \r\n";
 		var_dump($out);
-		echo "<br> \r\n";
+		//echo "<br> \r\n";
 		$str = json_decode($out, TRUE);
-
-		var_dump($str);
+		echo '<pre>';
+		//var_dump($str);
+		echo '</pre>';
 		echo "<br> \r\n";
+		foreach ($str[0]["meterings"] as $meterings) {
+			echo '<br>';
+			foreach ($meterings as $key => $value) {
+				if(isset($profiles_descr[$key])) {
+					if ($key == '1.0.0') {
+						echo $profiles_descr[$key] . ' : '. date("d.m.Y H:i:s", $value).'<br>';
+					} else {
+						echo $profiles_descr[$key] . ' : '. $value.'<br>';
+					}
+
+				}
+
+			}
+		}
+
 
 	}
 

@@ -80,6 +80,13 @@
           </a>
         </li>
 
+        <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_reports') {echo 'active';}?>">
+          <a class="nav-link" href="/cab/admin_reports">
+            <i class="fa fa-file menu-icon"></i>
+            <span class="menu-title">Отчеты</span>
+          </a>
+        </li>
+
 
         <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_settings') {echo 'active';}?>">
           <a class="nav-link" href="/cab/admin_settings">

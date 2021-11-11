@@ -55,6 +55,8 @@ if (isset($_SESSION['id'])) {
 
       if ($form['comment']) {
         $comment_q = "  comment LIKE '%".$form['comment']."%'" ;
+      } else {
+        $comment_q = '';
       }
 
       if ($user_q || $optype_q || $balancetype_q || $date_q || $comment_q) {
