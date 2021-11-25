@@ -87,10 +87,22 @@ if (isset($_SESSION['id'])) {
         $andDate = '';
       }
 
-      if (isset($comment_q)) {
-
-        $andComment = $and.$comment_q;
+      if (isset($comment_q) && $comment_q != '') {
+        $andComment = ' AND '.$comment_q;
+      } else {
+        $andComment = '';
       }
+
+      /*var_dump($comment_q);
+
+      var_dump($where);
+      var_dump($user_q);
+      var_dump($and);
+      var_dump($optype_q);
+      var_dump($andBalance);
+      var_dump($balancetype_q);
+      var_dump($andComment);
+      var_dump($andDate);*/
 
       $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andComment . $andDate . "?p ORDER BY date DESC", $date_q);
 
