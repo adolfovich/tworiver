@@ -11,7 +11,7 @@ require_once('../classes/core.class.php');
 	$sms_pass = '305446';
 	$sender = 'SNTDvureche';
 
-$result = $db->getAll("SELECT * FROM `users` WHERE `send_monthly_sms` = 1");
+$result = $db->getAll("SELECT * FROM `users` WHERE `send_monthly_sms` = 1 AND is_del = 0");
 
 foreach ($result as $row) {
 		$text = 'Ваша задолженность за электроэнергию в СНТ Двуречье %sum%руб.';

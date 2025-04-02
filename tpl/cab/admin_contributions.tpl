@@ -64,7 +64,7 @@
                     <th scope="col">Дата</th>
                     <th scope="col">Участок(ФИО)</th>
                     <th scope="col">Тип</th>
-                    <th scope="col">Коментарий</th>
+                    <th scope="col">Комментарий</th>
                     <th scope="col">Сумма</th>
                   </tr>
                 </thead>

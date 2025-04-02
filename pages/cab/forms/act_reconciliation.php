@@ -251,7 +251,11 @@
 		</div>
 		<?php
 			//выбираем все оплаты
-			$result_user_payments = $db->getAll("SELECT * FROM payments WHERE user = $user_id AND date BETWEEN '$date_from' AND '$date_to'");
+			$sql = $db->parse("SELECT * FROM operations_jornal WHERE balance_type = 1 AND (op_type = 4 OR op_type = 1) AND user_id = ?i AND date BETWEEN ?s AND ?s", $user_id, $date_from, $date_to);
+			//var_dump($db->parse($sql));
+			$result_user_payments = $db->getAll($sql);
+			
+			
 		?>
 		<div class="row">
 			<div class="col-md-12">
@@ -267,11 +271,11 @@
 							foreach ($result_user_payments as $user_payments) {
 								echo '<tr>';
 								echo '<td style="padding: 1px;">' . date( 'd.m.Y',strtotime($user_payments['date'])) . '</td>';
-								echo '<td style="padding: 1px;">' . $user_payments['base'] . '</td>';
-								echo '<td style="padding: 1px;">' . $user_payments['sum'] . '</td>';
+								echo '<td style="padding: 1px;">' . $user_payments['comment'] . '</td>';
+								echo '<td style="padding: 1px;">' . $user_payments['amount'] . '</td>';
 								echo '</tr>';
 
-								$sum_payments = $sum_payments + $user_payments['sum'];
+								$sum_payments = $sum_payments + $user_payments['amount'];
 							}
 						?>
 					<tr>

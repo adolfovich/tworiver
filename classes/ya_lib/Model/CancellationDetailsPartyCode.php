@@ -41,7 +41,7 @@ class CancellationDetailsPartyCode extends AbstractEnum
     /**
      * Яндекс.Касса
      */
-    const YANDEX_CHECKOUT = 'yandex_checkout';
+    const YANDEX_CHECKOUT = 'yoo_money';
 
     /**
      * «Внешние» участники платежного процесса (например, эмитент, сторонний платежный сервис)

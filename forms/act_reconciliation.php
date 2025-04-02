@@ -111,7 +111,9 @@
 			//выбираем все показания счетчика за указанный период $date_from - $date_to
 			$result_user_indications = $db->getAll("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to'");
 
-			//var_dump($result_user_indications);
+			//var_dump($_SESSION);
+
+			//var_dump($db->parse("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to'"));
 
 		?>
 
@@ -155,7 +157,7 @@
 							$prev_month = 0;
 
 							$last_ind = $db->getROW("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to' ORDER BY i.id DESC LIMIT 1");
-							//var_dump($last_ind['date']);
+							//var_dump($db->parse("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to' ORDER BY i.id DESC LIMIT 1"));
 							$last_month = date( "m",strtotime($last_ind['date']));
 							$last_year = date( "Y",strtotime($last_ind['date']));
 
@@ -303,6 +305,8 @@
 			//выбираем все оплаты
 
 			$result_user_payments = $db->getAll("SELECT * FROM operations_jornal WHERE balance_type = 1 AND (op_type = 4 OR op_type = 1) AND user_id = ?i AND date BETWEEN ?s AND ?s", $user_id, $date_from, $date_to);
+			
+			//var_dump($db->parse("SELECT * FROM operations_jornal WHERE balance_type = 1 AND (op_type = 4 OR op_type = 1) AND user_id = ?i AND date BETWEEN ?s AND ?s", $user_id, $date_from, $date_to)); 
 		?>
 		<div class="row">
 			<div class="col-md-12">

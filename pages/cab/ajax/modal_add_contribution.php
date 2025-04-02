@@ -46,7 +46,7 @@ if (isset($_SESSION['id'])) {
     $json['html'] .= '</div>';
 
     $json['html'] .= '<div class="form-group">';
-    $json['html'] .= '<label for="contribution_comment">Коментарий:</label>';
+    $json['html'] .= '<label for="contribution_comment">Комментарий:</label>';
     $json['html'] .= '<input type="text" name="contribution_comment" class="form-control forcheck" id="contribution_comment" aria-describedby="plombtHelp">';
     $json['html'] .= '</div>';
 

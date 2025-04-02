@@ -4,11 +4,11 @@ ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 
-include ('../../_conf.php');
-include ('../../classes/safemysql.class.php');
+include ('../../../_conf.php');
+/*include ('../../classes/safemysql.class.php');
 $db = new SafeMySQL(array('host' => $db_host,'user' => $db_user, 'pass' => $db_pass, 'db' => $db_name, 'charset' => 'utf8'));
 
-require_once('classes/core.class.php');
+require_once('../../classes/core.class.php');
 
 $core  = new Core();
 
@@ -33,6 +33,11 @@ $ip = getIp();
 $request = 'ip => '.$ip.', ';
 $source = file_get_contents('php://input');
 $requestBody = json_decode($source, true);
+*/
+
+
+
+/*
 
 include '../../classes/ya_lib/autoload.php';
 use YandexCheckout\Model\Notification\NotificationSucceeded;
@@ -79,3 +84,4 @@ if ($payment->_status == 'succeeded') {
     $db->query("INSERT INTO payment_logs SET type = 'error', text = 'order not found'");
   }
 }
+*/

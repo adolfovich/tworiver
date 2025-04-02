@@ -55,7 +55,7 @@
               </div>
               <div class="form-group mx-sm-3 mb-2">
                 <label for="start_date" class="sr-only">Дата начала</label>
-                <input name="start_date" type="date" class="form-control" id="start_date" placeholder="Дата начала">
+                <input name="start_date" type="date" class="form-control" id="start_date" placeholder="Дата начала" value="<?= date("Y-m")?>-01">
               </div>
               <div class="form-group mx-sm-1 mb-1" style="max-width: 25px;">
                 <label for="number" class="sr-only">ПО</label>
@@ -63,12 +63,12 @@
               </div>
               <div class="form-group mx-sm-3 mb-2">
                 <label for="end_date" class="sr-only">Дата окончания</label>
-                <input name="end_date" type="date" class="form-control" id="end_date" placeholder="Дата окончания">
+                <input name="end_date" type="date" class="form-control" id="end_date" placeholder="Дата окончания" value="<?= date("Y-m-d")?>">
               </div>
 
               <div class="form-group mx-sm-3 mb-2">
                 <label for="comment" class="sr-only">Комментарий</label>
-                <input name="comment" type="text" class="form-control" id="comment" placeholder="Коментарий">
+                <input name="comment" type="text" class="form-control" id="comment" placeholder="Комментарий">
               </div>
 
               <button type="submit" class="btn btn-primary mb-2" onClick="loadAdminJournal(); return false;" id="searchButton"><i class="fa fa-search" aria-hidden="true"></i></button>
@@ -90,7 +90,7 @@
                     <th scope="col">Тип баланса</th>
                     <th scope="col">Тип операции</th>
                     <th scope="col">Сумма</th>
-                    <th scope="col">Коментарий</th>
+                    <th scope="col">Комментарий</th>
                   </tr>
                 </thead>
                 <tbody class="list" id="journalResult">

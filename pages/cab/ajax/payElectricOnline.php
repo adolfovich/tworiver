@@ -1,63 +1,100 @@
 <?php
 include('connect.php');
-include '../../../classes/ya_lib/autoload.php';
-use YandexCheckout\Client;
 
-$paysystem = $core->cfgRead('payment_system');
+//$paysystem = 'sberpay';
 
-//var_dump($paysystem);
+$amount = $form['amount'];
 
-if ($paysystem == 'yandex') {
-  $shop_id = $core->cfgRead('yandex_shop_id');
-  $secret_key = $core->cfgRead('yandex_secret_key');
+$user['id'] = $form['user'];
+$user = $db->getRow("SELECT * FROM users WHERE id = ?i", $user['id']);
 
+if ($user['paysystem']) {
+	$paysystem = $user['paysystem'];
+} else {
+	$paysystem = $db->getOne("SELECT data FROM settings WHERE cfgname = 'default_paysystem'");
+}
 
-  $client = new Client();
+$pay_variant = 1;
+if ($paysystem == 'sberpay') {
+	
+	if ($amount > 0 && $amount <= 500000) {
+		
+		$db->query("INSERT INTO pre_payments SET user_id = ?i, variant = ?s, amount = ?s", $user['id'], $pay_variant, $amount);
+		$order_id = $db->insertId();
+		$description = 'Оплата электроэнергии #'.$order_id." | участок №".$user['uchastok'];
+		
+		//$url = 'https://securepayments.sberbank.ru/payment/rest/register.do';
+		$url = 'https://3dsec-payments.yookassa.ru/payment/rest/register.do';
+		$post_data = array(
+			'userName' => '420065',
+			'password' => 'live_uPInOz8-HypOH1rSWAe3oisagQXdpnCzHSyneO34vXw',
+			'orderNumber' => $order_id,
+			'returnUrl' => 'https://xn----dtbffa7byadkn0c6c.xn--p1ai/cab/electricpower',
+			'description' => $description,
+			'amount' => $amount * 100, 
+			'email' => $user['email'],
+			'phone' => $user['phone'],
+		);
+		
+		$headers = ['Content-Type: application/x-www-form-urlencoded'];
 
-  $user['id'] = $form['user'];
-  $user = $db->getRow("SELECT * FROM users WHERE id = ?i", $user['id']);
-  //$user_email = 'adolfovich.alexashka@gmail.com';
-  $pay_variant = 1;
-  $amount = $form['amount'];
+		$post_data = http_build_query($post_data);
 
-  if ($amount > 0 && $amount <= 15000) {
-    //$user = $db->getRow("SELECT * FROM users WHERE email = ?s", $user_email);
+		$curl = curl_init();
+		curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($curl, CURLOPT_VERBOSE, 1);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
+		curl_setopt($curl, CURLOPT_URL, $url);
+		curl_setopt($curl, CURLOPT_POST, true); // true - означает, что отправляется POST запрос
 
-    $setAuth = $client->setAuth($shop_id, $secret_key);
+		$result_json = curl_exec($curl);
+		
+		if($result_json === false) {
+			echo 'Ошибка curl: ' . curl_error($curl);
+		}
 
-    $db->query("INSERT INTO pre_payments SET user_id = ?i, variant = ?s, amount = ?s", $user['id'], $pay_variant, $amount);
-    $order_id = $db->insertId();
-    $description = 'Оплата электроэнергии #'.$order_id." | участок №".$user['uchastok'];
-
-    $payment = $client->createPayment(
-    		array(
-    				'amount' => array(
-    						'value' => $amount,
-    						'currency' => 'RUB',
-    				),
-    				'confirmation' => array(
-    						'type' => 'redirect',
-    						'return_url' => 'https://xn----dtbffa7byadkn0c6c.xn--p1ai/cab/electricpowe?payment=success',
-    				),
-    				'capture' => true,
-    				'description' => $description,
-    		),
-    		uniqid('', true)
-    );
-
-    $url = $payment->_confirmation->_confirmationUrl;
-
-    if ($url) {
-      $json['status'] = 'OK';
-      $json['url'] = $url;
-    } else {
-      $json['status'] = 'ERROR';
-      $json['error'] = 'Возникла ошибка. Попробуйте позже.';
-    }
-  } else {
-    $json['status'] = 'ERROR';
-    $json['error'] = 'Сумма должна быть от 1 до 15 000 рублей';
-  }
+		//var_dump($result_json);
+		
+		$result = json_decode($result_json, TRUE);
+		
+		if (isset($result['orderId'])) {
+			$db->query("UPDATE pre_payments SET destanation_order_id = ?s WHERE id = ?i", $result['orderId'], $order_id);
+			
+			$json['status'] = 'OK';
+			$json['url'] = $result['formUrl'];
+		} else {
+		  $json['status'] = 'ERROR';
+		  $json['error'] = 'Ошибка связи с банком. Попробуйте позже.';
+		}
+		
+	} else {
+		$json['status'] = 'ERROR';
+		$json['error'] = 'Сумма должна быть от 1 до 15 000 рублей';
+	  }	
+	
+} else if ($paysystem == 'yookassa') {
+	
+	var_dump($paysystem);
+	
+	/*$db->query("INSERT INTO pre_payments SET user_id = ?i, variant = ?s, amount = ?s", $user['id'], $pay_variant, $amount);
+		$order_id = $db->insertId();
+		$description = 'Оплата #'.$order_id;
+		
+		$url = 'https://securepayments.sberbank.ru/payment/rest/register.do';
+		$post_data = array(
+			'userName' => 'p2315139264-api',
+			'password' => 'MhhuympX',
+			'orderNumber' => $order_id,
+			'returnUrl' => 'https://xn----dtbffa7byadkn0c6c.xn--p1ai/cab/electricpower',
+			'description' => $description,
+			'amount' => $amount * 100, 
+			'email' => $user['email'],
+			'phone' => $user['phone'],
+		);*/
+	
 }
 
 echo json_encode($json);

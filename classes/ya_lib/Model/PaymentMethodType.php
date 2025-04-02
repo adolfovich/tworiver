@@ -48,7 +48,7 @@ use YandexCheckout\Common\AbstractEnum;
  */
 class PaymentMethodType extends AbstractEnum
 {
-    const YANDEX_MONEY   = 'yandex_money';
+    const YANDEX_MONEY   = 'yoo_money';
     const BANK_CARD      = 'bank_card';
     const SBERBANK       = 'sberbank';
     const CASH           = 'cash';

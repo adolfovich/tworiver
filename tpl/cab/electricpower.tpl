@@ -39,7 +39,11 @@
                 </div>
               </div>
               <div class="col-md-3 ">
+			  <?php //if ($core->cfgRead('pay_enable') == 1) { ?>
                 <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-success btn-sm btn-block" onClick="loadModal('modal_pay_electric')">Оплатить</a></div>
+			  <?php //else { ?>
+				<!--div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-secondary btn-sm btn-block" disabled>Оплатить</a></div-->
+			  <?php //} ?>
                 <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-primary btn-sm btn-block" onClick="loadModal('modal_receipt_electric')">Распечатать квитанцию</a></div>
               </div>
             </div>
@@ -173,54 +177,57 @@
     <?php } ?>
 
 
-
-
-    <?php if (!$operations) { ?>
       <div class="row" >
         <div class="col-md-12 grid-margin stretch-card">
           <div class="card border-bottom-0">
             <div class="card-body">
               <p class="card-title">Журнал операций</p>
-              <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
-                <h4>Операций не найдено</h4>
-              </div>
-            </div>
+			  
+			  <form class="form-inline" method="GET">
+				  <div class="form-group mb-2">
+					С<span style="width: 10px;"></span><input type="date" class="form-control" name="datefrom" id="datefrom" value="<?=$opStartDate?>">
+				  </div>
+				  <div class="form-group mb-2" style="padding-left: 10px;">
+					ПО<span style="width: 10px;"></span><input type="date" class="form-control" name="dateto" id="dateto" value="<?=$opEndDate?>">
+				  </div>
+				  <button type="submit" class="btn btn-primary mb-2" style="margin-left: 10px;">Поиск</button>
+				</form>
+				
+				<?php if (!$operations) { ?>
+				
+					<div class="row" style="margin-top: 20px;">
+						<div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+							<h4>Операций за период не найдено</h4>
+						</div>	
+					</div>					
+				
+				<?php } else { ?>
+				
+					<div class="row">
+						<table class="table table-bordered table-sm table-hover">
+						  <tr>
+							<th style="vertical-align: middle; text-align: center;">Дата</th>
+							<th style="vertical-align: middle; text-align: center;">Операция</th>
+							<th style="vertical-align: middle; text-align: center;">Сумма</th>
+							<th style="vertical-align: middle; text-align: center;">Комментарий</th>
+						  </tr>
+						  <?php foreach ($operations as $operation) { ?>
+							<tr>
+							  <td class="text-center"><?=date("d.m.Y H:i", strtotime($operation['date']))?></td>
+							  <td class="text-center"><?=$operation['operation_name']?></td>
+							  <td class="text-center"><?=$operation['amount']?></td>
+							  <td class="text-center"><?=$operation['comment']?></td>
+							</tr>
+						  <?php } ?>
+						</table>
+				    </div>
+				
+				<?php } ?>
+				
+				</div>
           </div>
         </div>
       </div>
-    <?php } else { ?>
-
-      <div class="row" >
-        <div class="col-md-12 grid-margin stretch-card">
-          <div class="card border-bottom-0">
-            <div class="card-body">
-              <p class="card-title">Журнал операций</p>
-              <div class="row">
-                <table class="table table-bordered table-sm table-hover">
-                  <tr>
-                    <th style="vertical-align: middle; text-align: center;">Дата</th>
-                    <th style="vertical-align: middle; text-align: center;">Операция</th>
-                    <th style="vertical-align: middle; text-align: center;">Сумма</th>
-                    <th style="vertical-align: middle; text-align: center;">Коментарий</th>
-                  </tr>
-                  <?php foreach ($operations as $operation) { ?>
-                    <tr>
-                      <td class="text-center"><?=date("d.m.Y H:i", strtotime($operation['date']))?></td>
-                      <td class="text-center"><?=$operation['operation_name']?></td>
-                      <td class="text-center"><?=$operation['amount']?></td>
-                      <td class="text-center"><?=$operation['comment']?></td>
-                    </tr>
-                  <?php } ?>
-              </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    <?php } ?>
-
-
 
   <!-- content-wrapper ends -->
   <!-- partial:partials/_footer.html -->
@@ -228,7 +235,8 @@
   <!-- partial -->
 </div>
 
-<script>
-
-
-</script>
+<?php if ($showOperations == 1) {?>
+	<script>
+		window.location.hash="datefrom";
+	</script>
+<?php } ?>

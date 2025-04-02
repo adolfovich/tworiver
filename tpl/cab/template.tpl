@@ -1,10 +1,7 @@
 <?php
 $currentmomth = date("m");
-
 $currentyear = date("Y");
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -41,10 +38,11 @@ $currentyear = date("Y");
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
   <meta name="theme-color" content="#ffffff">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+  
   <script src="https://use.fontawesome.com/8077ddb7e0.js"></script>
 
   <style>
+  
   .switch {
   position: relative;
   display: inline-block;
@@ -104,6 +102,7 @@ $currentyear = date("Y");
 
 </head>
 <body>
+
   <div class="modal fade bd-example-modal-lg" id="templateModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -114,6 +113,22 @@ $currentyear = date("Y");
           </button>
         </div>
         <div class="modal-body" id="templateModalBody">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal fade bd-example-modal-lg" id="modalPay" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title h4" id="modalPayHeader">Modal Header</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body" id="modalPayBody">
 
         </div>
       </div>
@@ -220,6 +235,19 @@ $currentyear = date("Y");
   } ?>
 
   <script>
+  
+  <?php if (isset($_GET['orderId'])) { ?>
+	openModalPay(header = '', text = 'Оплата произведена. Зачисление произойдет в течение нескольких минут.')
+	  
+  <?php } ?>
+  
+	function setLocation(curLoc){
+		try {
+		  history.pushState(null, null, curLoc);
+		  return;
+		} catch(e) {}
+		location.hash = '#' + curLoc;
+	}
 
   function printAct(type)
   {
@@ -228,7 +256,7 @@ $currentyear = date("Y");
 
     console.log(dateFrom);
 
-    if (new Date(dateFrom) > new Date('2020-06-25')) {
+    if (new Date(dateFrom) > new Date('2020-06-24')) {
       url = '/pages/cab/forms/?act=electric&datefrom='+dateFrom+'&dateto='+dateTo;
 
       if (type == 'electric') {
@@ -241,7 +269,7 @@ $currentyear = date("Y");
     } else {
       Swal.fire({
         icon: 'error',
-        text: 'Дата начала должна быть больше 25.06.2020'
+        text: 'Дата начала должна быть больше 24.06.2020'
       })
     }
 
@@ -263,6 +291,7 @@ $currentyear = date("Y");
     $.post("/pages/cab/ajax/payElectricOnline.php", {user: '<?=$user_data["id"]?>', amount: payAmount}, onAjaxSuccess);
     function onAjaxSuccess(data)
     {
+		console.log(data);
       if (IsJsonString(data)) {
         response = JSON.parse(data)
         if (response.status == 'OK') {
@@ -289,7 +318,9 @@ $currentyear = date("Y");
     $.post("/pages/cab/ajax/payMembershipOnline.php", {user: '<?=$user_data["id"]?>', amount: payAmount}, onAjaxSuccess);
     function onAjaxSuccess(data)
     {
+		console.log(data);
       if (IsJsonString(data)) {
+		  
         response = JSON.parse(data)
         if (response.status == 'OK') {
           location.href = response.url;
@@ -343,7 +374,33 @@ $currentyear = date("Y");
     });
   });
 
-    function loadModal(page, params = '') {
+    
+	function openModal(header, text) {
+      
+        document.getElementById('templateModalHeader').innerHTML = header;
+        document.getElementById('templateModalBody').innerHTML = text;
+		 $('#templateModal').modal('show');
+        
+    }
+	
+	
+	function openModalPay(header, text) {      
+        document.getElementById('modalPayHeader').innerHTML = header;
+        document.getElementById('modalPayBody').innerHTML = text;
+		 $('#modalPay').modal('show');        
+    }
+	
+	$(document).ready(function(){
+
+		$("#modalPay").on('hide.bs.modal', function () {
+		   var url=document.location.href;
+			var mainurl=url.split("?");
+			setLocation(mainurl[0]);
+		});
+
+	});
+	
+	function loadModal(page, params = '') {
 
       if (params.length > 0) {
         params = '?'+params;
@@ -352,20 +409,15 @@ $currentyear = date("Y");
       $.post("/pages/cab/ajax/"+page+".php"+params, {user: '<?=$user_data["id"]?>'}, onAjaxSuccess);
       function onAjaxSuccess(data)
       {
-        //console.log(data);
         response = JSON.parse(data);
         document.getElementById('templateModalHeader').innerHTML = response.header;
         document.getElementById('templateModalBody').innerHTML = response.html;
         $('#templateModal').modal('show');
-        //eval(response.script);
       }
     }
 
     function uploadAct() {
       $(".forcheck").removeClass( "is-invalid" );
-      //formData = $("#upload_act").serialize();
-
-      //console.log(formData);
 
       files = document.getElementById('uploadActFile').files;
 
@@ -381,7 +433,6 @@ $currentyear = date("Y");
       data1.append( 'uploadActComment', document.getElementById('uploadActComment').value );
       data1.append( 'uploadActVisible', document.getElementById('uploadActVisible').value );
 
-      //console.log(data);
       $.ajax({
         type: "POST",
         url: "/pages/cab/ajax/upload_act.php",
@@ -394,10 +445,7 @@ $currentyear = date("Y");
       {
         console.log(data);
         response = JSON.parse(data);
-        Swal.fire({
-          icon: response.status,
-          text: response.text
-        }).then((result) => {
+        openModal(header = response.status, text = response.text).then((result) => {
             if (typeof(response.redirect) != "undefined" && response.redirect !== null) {
               location.href = response.redirect;
             }
@@ -418,10 +466,8 @@ $currentyear = date("Y");
       {
         response = JSON.parse(data);
 
-        Swal.fire({
-          icon: response.status,
-          text: response.text
-        })
+		openModal(header = response.status, text = response.text)
+		
 
         $('#templateModal').modal('hide');
       }
@@ -440,17 +486,13 @@ $currentyear = date("Y");
 
       function onAjaxSuccess(data)
       {
-        //console.log(data);
         response = JSON.parse(data);
         console.log(response);
 
         if (response.status != 'error') {
           window.open(response.link);
         } else (
-          Swal.fire({
-            icon: response.status,
-            text: response.text
-          }).then((result) => {
+			openModal(header = response.status, text = response.text).then((result) => {
               if (typeof(response.redirect) != "undefined" && response.redirect !== null) {
                 location.href = response.redirect;
               }
@@ -462,7 +504,6 @@ $currentyear = date("Y");
         } else {
           $('#templateModal').modal('hide');
         }
-
 
       }
     }
@@ -479,10 +520,7 @@ $currentyear = date("Y");
       function onAjaxSuccess(data)
       {
         response = JSON.parse(data);
-        Swal.fire({
-          icon: response.status,
-          text: response.text
-        }).then((result) => {
+        openModal(header = response.status, text = response.text).then((result) => {
             if (typeof(response.redirect) != "undefined" && response.redirect !== null) {
               location.href = response.redirect;
             }
@@ -509,10 +547,7 @@ $currentyear = date("Y");
         console.log(data);
         response = JSON.parse(data);
 
-        Swal.fire({
-          icon: response.status,
-          text: response.text
-        }).then((result) => {
+        openModal(header = response.status, text = response.text).then((result) => {
             if (typeof(response.redirect) != "undefined" && response.redirect !== null) {
               location.href = response.redirect;
             }
@@ -521,7 +556,6 @@ $currentyear = date("Y");
           $("#"+response.error_input).addClass( "is-invalid" );
         } else {
           $('#templateModal').modal('hide');
-          //loadAdminJournal();
         }
       }
     }
@@ -534,9 +568,13 @@ $currentyear = date("Y");
       var modalBody = document.getElementById('indicationsModalBody');
       if (month == '') {
         month = document.getElementById('indicationsMonth').value;
+		
       } else {
         month = date.getMonth();
+		month = month + 1;
       }
+	  
+	  //console.log(month);
 
       if (year == '') {
         var year = document.getElementById('indicationsYear').value;
@@ -554,9 +592,6 @@ $currentyear = date("Y");
 
     function indicationsLoad(counterId, month, year)
     {
-      console.log(counterId);
-      console.log(month);
-      console.log(year);
       var modalBody = document.getElementById('indicationsModalBody');
       $.post(
         "/pages/cab/ajax/getIndications.php",
@@ -570,17 +605,9 @@ $currentyear = date("Y");
 
       function onAjaxSuccess(data)
       {
-        console.log(data)
         modalBody.innerHTML = data;
       }
     }
-
-    /*function disableCounter() {
-      $(".forcheck").removeClass( "is-invalid" );
-      formData = $("#add_counter").serialize();
-
-      console.log(formData);
-    }*/
 
     $(document).on('click','body',function(){
       var c_user = $.cookie("user");
@@ -601,10 +628,7 @@ $currentyear = date("Y");
       function onAjaxSuccess(data)
       {
         response = JSON.parse(data);
-        Swal.fire({
-          icon: response.status,
-          text: response.text
-        }).then((result) => {
+        openModal(header = response.status, text = response.text).then((result) => {
             if (typeof(response.redirect) != "undefined" && response.redirect !== null) {
               location.href = response.redirect;
             }
@@ -618,26 +642,8 @@ $currentyear = date("Y");
     }
 
 
-  </script>
-
-  <script>
-  <?php if (isset($swal_message)) {?>
-    Swal.fire({
-      icon: '<?=$swal_message["type"]?>',
-      text: '<?=$swal_message["text"]?>'
-    })
-    <?php if (isset($swal_message["redirect"])) {?>
-      .then((result) => {
-        if (result.value) {
-          location.href = '<?=$swal_message["redirect"]?>';
-        }
-      })
-    <?php } ?>
-  <?php } ?>
-
-
-
-  </script>
+  </script>  
+ 
 </body>
 
 </html>

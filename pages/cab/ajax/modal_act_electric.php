@@ -10,11 +10,11 @@ if (isset($_SESSION['id'])) {
   $json['html'] .= '<form id="act_params">';
   $json['html'] .= '<div class="form-group">';
   $json['html'] .= '<label for="actDateFrom">Дата начала:</label>';
-  $json['html'] .= '<input type="date" name="actDateFrom" class="form-control" id="actDateFrom" >';
+  $json['html'] .= '<input type="date" name="actDateFrom" class="form-control" id="actDateFrom" value="'.date("Y-m-d", strtotime('25.06.2020')).'">';
   $json['html'] .= '</div>';
   $json['html'] .= '<div class="form-group">';
   $json['html'] .= '<label for="actDateTo">Дата окончания:</label>';
-  $json['html'] .= '<input type="date" name="actDateTo" class="form-control" id="actDateTo" >';
+  $json['html'] .= '<input type="date" name="actDateTo" class="form-control" id="actDateTo" value="'.date("Y-m-d").'">';
   $json['html'] .= '</div>';
   $json['html'] .= '<input type="hidden" id="actCounter" name="actCounter" value="'.$_GET['counter'].'">';
 

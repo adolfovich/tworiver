@@ -72,7 +72,7 @@
                     <th style="vertical-align: middle; text-align: center;">Дата</th>
                     <th style="vertical-align: middle; text-align: center;">Операция</th>
                     <th style="vertical-align: middle; text-align: center;">Сумма</th>
-                    <th style="vertical-align: middle; text-align: center;">Коментарий</th>
+                    <th style="vertical-align: middle; text-align: center;">Комментарий</th>
                   </tr>
                   <?php foreach ($targets as $target) { ?>
                     <tr>

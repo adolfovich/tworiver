@@ -16,10 +16,13 @@ if (isset($_SESSION['id'])) {
   $json['html'] .= '<div class="form-group">';
   $json['html'] .= '<label for="electricAmount">Сумма оплаты:</label>';
   $json['html'] .= '<input type="number" name="numbers" class="form-control" id="electricAmount" aria-describedby="amountHelp" value="'.$amount.'">';
-  $json['html'] .= '<small id="amountHelp" class="form-text text-muted">Введите сумму от 1 до 15 000 рублей</small>';
+  //$json['html'] .= '<small id="amountHelp" class="form-text text-muted">Введите сумму от 1 до 15 000 рублей</small>';
   $json['html'] .= '</div>';
   $json['html'] .= '<div class="text-right">';
-  $json['html'] .= '<button class="btn btn-success" onClick="payTargetOnline(); return false;">Оплатить</button>';
+  $json['html'] .= '<button class="btn btn-success" onClick="payTargetOnline(); return false;">Оплатить</button>';  
+  //$json['html'] .= '<button class="btn btn-warning" disabled>Оплата временно недоступна по техническим причинам</button>';
+  
+  
   $json['html'] .= '<button class="btn btn-outline-secondary ml-2" data-dismiss="modal" aria-label="Close">Закрыть</button>';
   $json['html'] .= '</div>';
   $json['html'] .= '</form>';

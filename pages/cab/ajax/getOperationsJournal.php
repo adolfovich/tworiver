@@ -38,14 +38,21 @@ if (isset($_SESSION['id'])) {
       }
 
       if ($form['start_date'] || $form['end_date']) {
+		  
+		  $form['end_date'] = $form['end_date']." 23:59:59";
+		  
         if ($form['start_date'] && $form['end_date']) {
+			
           $date_q = $db->parse(" date BETWEEN ?s AND ?s", $form['start_date'], $form['end_date']);
-          //$date_q = " date BETWEEN '".$form['start_date']."' AND '".$form['end_date']."'";
+          
         } else if ($form['start_date'] && !$form['end_date']) {
+			
           $date_q = $db->parse("date >= ?s", $form['start_date']);
-          //$date_q = " date >= '".$form['start_date']."'";
+          
         } else if (!$form['start_date'] && $form['end_date']) {
+			
           $date_q = $db->parse("date <= ?s", $form['end_date']);
+		  
         } else {
           $date_q = '';
         }
@@ -93,17 +100,6 @@ if (isset($_SESSION['id'])) {
         $andComment = '';
       }
 
-      /*var_dump($comment_q);
-
-      var_dump($where);
-      var_dump($user_q);
-      var_dump($and);
-      var_dump($optype_q);
-      var_dump($andBalance);
-      var_dump($balancetype_q);
-      var_dump($andComment);
-      var_dump($andDate);*/
-
       $q = $db->getAll("SELECT * FROM operations_jornal ".$where." ".$user_q . $and . $optype_q . $andBalance . $balancetype_q . $andComment . $andDate . "?p ORDER BY date DESC", $date_q);
 
       $json['status'] = 'success';
@@ -117,6 +113,7 @@ if (isset($_SESSION['id'])) {
       if (!count($q)) {
         $html .= '<tr><td colspan="7" style="padding: 10px; text-align: center; padding-top: 50px; padding-bottom: 50px;">Ничего не найдено</td></tr>';
       } else {
+		  
         foreach ($q as $row) {
           $html .= '<tr>';
           $html .= '<td>'.$row['id'].'</td>';

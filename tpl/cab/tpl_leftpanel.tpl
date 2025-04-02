@@ -26,6 +26,12 @@
         <span class="menu-title">Целевые взносы</span>
       </a>
     </li>
+	<li class="nav-item <?php if (isset($url[1]) && $url[1] == 'loans') {echo 'active';}?>">
+      <a class="nav-link" href="/cab/loans">
+        <i class="fa fa-money menu-icon"></i>
+        <span class="menu-title">Договоры займа</span>
+      </a>
+    </li>
     <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'reports') {echo 'active';}?>">
       <a class="nav-link" href="/cab/reports">
         <i class="fa fa-file menu-icon"></i>
@@ -58,7 +64,12 @@
             <span class="menu-title">Взносы</span>
           </a>
         </li>
-
+		<li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_loans') {echo 'active';}?>">
+          <a class="nav-link" href="/cab/admin_loans">
+            <i class="fa fa-money menu-icon"></i>
+            <span class="menu-title">Займы</span>
+          </a>
+        </li>
         <li class="nav-item <?php if (isset($url[1]) && $url[1] == 'admin_opjournal') {echo 'active';}?>">
           <a class="nav-link" href="/cab/admin_opjournal">
             <i class="fa fa-book menu-icon"></i>

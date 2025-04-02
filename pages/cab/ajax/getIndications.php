@@ -13,8 +13,6 @@ if (isset($_SESSION['id'])) {
 
     $start_date = $year.'-'.$month.'-1';
     $end_date = $year.'-'.$month.'-'.cal_days_in_month(CAL_GREGORIAN, $month, $year);
-    //echo 'counter - '.$form['counterId'].'<br>'."\r\n";
-
     $tarifs = $db->getAll("SELECT * FROM tarifs");
 
     $html .= '<div class="container mt-3">';
@@ -45,9 +43,7 @@ if (isset($_SESSION['id'])) {
         $active = '';
       }
 
-      $sql = $db->parse("SELECT * FROM Indications WHERE user = ?i AND counter_id = ?i AND tarif = ?i AND date BETWEEN ?s AND ?s", $_SESSION['id'], $form['counterId'], $tarif['id'], $start_date, $end_date);
-
-      //var_dump($sql);
+      $sql = $db->parse("SELECT * FROM Indications WHERE (user = ?i OR (SELECT is_admin FROM users WHERE id = ?i) = 1) AND counter_id = ?i AND tarif = ?i AND date BETWEEN ?s AND ?s", $_SESSION['id'], $_SESSION['id'], $form['counterId'], $tarif['id'], $start_date, $end_date);
 
       $indications = $db->getAll($sql);
 

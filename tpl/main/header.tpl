@@ -13,9 +13,8 @@
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-  <!-- Custom styles for this template -->
-  <link href="css/blog-post.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+  <!-- Custom styles for this template --> <link href="css/blog-post.css" rel="stylesheet"> 
+<!--script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script-->
 
   <script src="vendor/jquery/jquery.min.js"></script>
 

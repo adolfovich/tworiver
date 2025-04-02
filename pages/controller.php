@@ -12,8 +12,8 @@ if (isset($url[1]) && $url[1] == 'logout') {
   include ('pages/cab/reminder.php');
 } else if ($url[0] == 'captcha') {
   include ('pages/captcha.php');
-} else if ($url[0] == 'online_payment') {
+} /*else if ($url[0] == 'online_payment') {
   include ('pages/main/online_payment.php');
-} else {
+}*/ else {
   include ('pages/main/template.php');
 }

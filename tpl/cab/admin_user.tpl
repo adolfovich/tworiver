@@ -11,7 +11,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-3 grid-margin stretch-card">
+      <div class="col-md-2 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
             <p class="card-title text-md-center text-xl-left">Общий баланс</p>
@@ -23,8 +23,8 @@
           </div>
         </div>
       </div>
-      <div class="col-md-3 grid-margin stretch-card">
-        <a class="card" href="cab/electricpower">
+      <div class="col-md-2 grid-margin stretch-card">
+        <div class="card" href="cab/electricpower">
           <div class="card-body">
             <p class="card-title text-md-center text-xl-left">Энергопотребление</p>
             <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
@@ -33,10 +33,10 @@
               <i class="fas fa-ruble-sign"></i>
             </div>
           </div>
-        </a>
+        </div>
       </div>
-      <div class="col-md-3 grid-margin stretch-card">
-        <a class="card" href="cab/membership">
+      <div class="col-md-2 grid-margin stretch-card">
+        <div class="card" href="cab/membership">
           <div class="card-body">
             <p class="card-title text-md-center text-xl-left">Членские взносы</p>
             <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
@@ -45,12 +45,24 @@
               <i class="fas fa-ruble-sign"></i>
             </div>
           </div>
-        </a>
+        </div>
       </div>
-      <div class="col-md-3 grid-margin stretch-card">
-        <a class="card" href="cab/target">
+      <div class="col-md-2 grid-margin stretch-card">
+        <div class="card" href="cab/target">
           <div class="card-body">
             <p class="card-title text-md-center text-xl-left">Целевые взносы</p>
+            <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
+              <?php if ($curr_target_balance < 0) {$c4text = 'red';} else {$c4text = 'black';}?>
+              <h3 class="mb-0 mb-md-2 mb-xl-0 order-md-1 order-xl-0" style="color:<?=$c4text?>"><?=$curr_target_balance?>р.</h3>
+              <i class="fas fa-ruble-sign"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+	  <div class="col-md-2 grid-margin stretch-card">
+        <a class="card" href="cab/loan">
+          <div class="card-body">
+            <p class="card-title text-md-center text-xl-left">Займ</p>
             <div class="d-flex flex-wrap justify-content-between justify-content-md-center justify-content-xl-between align-items-center">
               <?php if ($curr_target_balance < 0) {$c4text = 'red';} else {$c4text = 'black';}?>
               <h3 class="mb-0 mb-md-2 mb-xl-0 order-md-1 order-xl-0" style="color:<?=$c4text?>"><?=$curr_target_balance?>р.</h3>
@@ -150,6 +162,7 @@
                       </div>
                     </li>
                     <?php $contract_counters = $db->getAll("SELECT * FROM counters WHERE contract_id = ?i AND dismantling_date IS NULL",$contract['id'] ); ?>
+					<?php //var_dump($db->parse("SELECT * FROM counters WHERE contract_id = ?i AND dismantling_date IS NULL",$contract['id'] ));?>
                     <?php if (!$contract_counters) { ?>
                       <li class="list-group-item text-center">Нет счетчиков</li>
                     <?php } else { ?>
