@@ -285,6 +285,49 @@ $currentyear = date("Y");
     return true;
 }
 
+
+  $('#upladIndications').submit(function(){
+      event.preventDefault();
+      $('#upladIndicationsButton').attr('disabled', 'disabled');
+      $('#upladIndicationsButton').attr('value', 'Идет загрузка ...');
+
+      if (window.FormData === undefined) {
+          alert('В вашем браузере FormData не поддерживается')
+      } else {
+          var formData = new FormData();
+          formData.append('startDate', $("#startDate").val());
+          formData.append('endDate', $("#endDate").val());
+          formData.append('csvFile', $("#csvFile")[0].files[0]);
+
+          $.ajax({
+              type: "POST",
+              url: '/pages/cab/ajax/uploadIndications.php',
+              cache: false,
+              contentType: false,
+              processData: false,
+              data: formData,
+              dataType : 'html',
+              success: function(data){
+                  //console.log(data);
+                  if (IsJsonString(data)) {
+                      response = JSON.parse(data)
+                      if (response.status === 'OK') {
+                          $('#uploadIndicationsMsg').html('<p style="color:green;">'+response.msg+'</p>');
+                          $("#csvFile").val('');
+                      } else {
+                          $('#uploadIndicationsMsg').html('<p style="color:red;">Ошибка: '+response.error+'</p>');
+                      }
+                  } else {
+                      $('#uploadIndicationsMsg').html('<p style="color:red;">Ошибка: Неверный JSON</p>');
+                  }
+                  $('#upladIndicationsButton').removeAttr("disabled");
+                  $('#upladIndicationsButton').attr('value', 'Загрузить');
+              }
+          });
+      }
+  });
+
+
   function payElectricOnline() {
     var payAmount = document.getElementById("electricAmount").value;
 

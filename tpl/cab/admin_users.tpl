@@ -78,7 +78,7 @@
 						Баланс<br>
 						<span id="balance_name"></span>
 					</th>
-					<th scope="col">Показания</th>
+					<!--th scope="col">Показания</th-->
                     <th scope="col"></th>
                   </tr>
                 </thead>

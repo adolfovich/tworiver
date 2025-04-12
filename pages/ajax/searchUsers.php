@@ -95,31 +95,16 @@ foreach ($users_arr as $user_id => $user_area) {
   
   $html .= '</td>';
   
-  
-  //$u_balance = $db->getOne("SELECT SUM(balance) FROM purses WHERE user_id = ?i", $user['id']);
-  //$user_balance_el = $db->getOne("SELECT balance FROM purses WHERE user_id = ?i AND type = 1", $user['id']);
-  //$user_balance_ch = $db->getOne("SELECT balance FROM purses WHERE user_id = ?i AND type = 2", $user['id']);
-  //$user_balance_t = $db->getOne("SELECT balance FROM purses WHERE user_id = ?i AND type = 3", $user['id']);
-  /*$html .= '<td class="budget">
-	<select style="width: 215px;">
-		<option>Электричество: '.$user_balance_el.'</option>
-		<option>Членские: '.$user_balance_ch.'</option>
-		<option>Целевые: '.$user_balance_t.'</option>
-	</select>
-  </td>';*/
-  
   $user_balance = $db->getOne("SELECT balance FROM purses WHERE user_id = ?i AND type = ?i", $user['id'], $btype);
   $html .= '<td class="budget">';
   $html .= $user_balance;
   $html .= '</td>';
   
-  //date("Y-m-d", strtotime("yesterday"))
-  
   $yesterday_ind_date_q = $db->parse("SELECT last_ind_date FROM counters WHERE user_id = ?i AND dismantling_date IS NULL AND last_ind_date IS NOT NULL", $user['id']);
   $yesterday_ind_date = $db->getOne($yesterday_ind_date_q);
   
   
-  if ($db->getAll("SELECT c.* FROM counters c WHERE c.user_id = ?i AND (SELECT date_end FROM users_contracts WHERE id = c.contract_id) IS NULL AND dismantling_date IS NULL", $user['id'])) {
+  /*if ($db->getAll("SELECT c.* FROM counters c WHERE c.user_id = ?i AND (SELECT date_end FROM users_contracts WHERE id = c.contract_id) IS NULL AND dismantling_date IS NULL", $user['id'])) {
 	  if ($yesterday_ind_date == date("Y-m-d", strtotime("yesterday"))) {
 		  $ind_td = '<i class="fa fa-check-circle text-success" aria-hidden="true"></i>';
 	  } else {
@@ -127,7 +112,7 @@ foreach ($users_arr as $user_id => $user_area) {
 	  }
   } else {
 	 $ind_td = ''; 
-  }
+  }*/
    
   
   $html .= '<td class="budget text-center ">';

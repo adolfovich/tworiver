@@ -45,8 +45,12 @@
                 </div>
 
                 <div class="col-md-4 ">
-                  <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-success btn-sm btn-block" onClick="loadModal('modal_pay_membership')">Оплатить</a></div>
-                  <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-success btn-sm btn-block" onClick="loadModal('modal_receipt_membership')">Распечатать квитанцию</a></div>
+                  <?php if ($core->cfgRead('pay_enable') == 1) { ?>
+                    <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-success btn-sm btn-block" onClick="loadModal('modal_pay_membership')">Оплатить</a></div>
+                  <?php } else { ?>
+                  <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-secondary  btn-sm btn-block" disabled">Оплата отключена</a></div>
+                  <?php } ?>
+                  <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-primary btn-sm btn-block" onClick="loadModal('modal_receipt_membership')">Распечатать квитанцию</a></div>
                 </div>
 
             </div>

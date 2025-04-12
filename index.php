@@ -18,6 +18,7 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 */
 
+
 include ('_conf.php');
 include ('classes/safemysql.class.php');
 $db = new SafeMySQL(array('host' => $db_host,'user' => $db_user, 'pass' => $db_pass, 'db' => $db_name, 'charset' => 'utf8'));
@@ -35,8 +36,6 @@ if (isset($_SESSION['id'])) {
   $user_id = $_SESSION['id'];
   $user_info = $db->getRow("SELECT * FROM users WHERE id = ?i", $user_id);
 }
-
-
 
 $month_name = array(
   1 => 'января',

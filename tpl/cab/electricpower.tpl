@@ -39,11 +39,11 @@
                 </div>
               </div>
               <div class="col-md-3 ">
-			  <?php //if ($core->cfgRead('pay_enable') == 1) { ?>
+			  <?php if ($core->cfgRead('pay_enable') == 1) { ?>
                 <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-success btn-sm btn-block" onClick="loadModal('modal_pay_electric')">Оплатить</a></div>
-			  <?php //else { ?>
-				<!--div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-secondary btn-sm btn-block" disabled>Оплатить</a></div-->
-			  <?php //} ?>
+			  <?php } else { ?>
+				<div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-secondary btn-sm btn-block" disabled>Оплата отключена</a></div>
+			  <?php } ?>
                 <div class="mb-3" style="font-size: 2em; width: 100%;"><a href="#" class="btn btn-primary btn-sm btn-block" onClick="loadModal('modal_receipt_electric')">Распечатать квитанцию</a></div>
               </div>
             </div>

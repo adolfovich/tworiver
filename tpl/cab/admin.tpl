@@ -11,6 +11,44 @@
       </div>
     </div>
     <div class="row">
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="card-title text-md-center text-xl-left">Загрузка показаний счетчиков из файла</p>
+            <p class="text-md-center text-xl-left">Тип файла CSV</p>
+
+            <form id="upladIndications" method="POST" enctype="multipart/form-data" >
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="startDate">Дата начала периода</label>
+                        <input name="startDate" type="date" class="form-control" id="startDate" value="<?=date('Y-m-d', strtotime("first day of last month"))?>">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="endDate">Дата окончания периода</label>
+                        <input name="endDate" type="date" class="form-control" id="endDate" value="<?=date('Y-m-d', strtotime("last day of last month"))?>">
+                    </div>
+                </div>
+                <div class="form-row" style="margin-top: 20px;">
+                    <div class="form-group col-md-4">
+                        <input id="csvFile" name="csvFile" type="file" class="form-control" placeholder="">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <input id="upladIndicationsButton" type="submit" class="form-control btn btn-success" value="Загрузить">
+                    </div>
+                </div>
+                <div class="form-row" style="margin-top: 20px;">
+                    <div class="form-group col-md-6" id="uploadIndicationsMsg"></div>
+                </div>
+            </form>
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
       <div class="col-md-4 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">

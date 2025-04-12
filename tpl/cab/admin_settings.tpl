@@ -22,7 +22,18 @@
                   <div class="form-group row">
                     <label for="setting_<?=$setting['cfgname']?>" class="col-sm-3 col-form-label"><?=$setting['description']?></label>
                     <div class="col-sm-9">
-                      <input type="text" class="form-control" id="setting_<?=$setting['cfgname']?>" name="<?=$setting['cfgname']?>" value="<?=$setting['data']?>" <?php if ($setting['cfgname'] == 'version') echo 'disabled'; ?> >
+                      <?php if ($setting['input_type'] == 'text') { ?>
+                        <input type="text" class="form-control" id="setting_<?=$setting['cfgname']?>" name="<?=$setting['cfgname']?>" value="<?=$setting['data']?>" <?php if ($setting['cfgname'] == 'version') echo 'disabled'; ?> >
+                      <?php } else if ($setting['input_type'] == 'select') { ?>
+                        <select class="form-control" id="setting_<?=$setting['cfgname']?>" name="<?=$setting['cfgname']?>">
+                          <?php $options = explode(";", $setting['options']); ?>
+                          <?php foreach ($options as $value) { ?>
+                            <?php $option = explode(",", $value); ?>
+                            <?php if ($setting['data'] == $option[0]) { $selected_option = 'selected'; } else { $selected_option = ''; } ?>
+                            <option value="<?=$option[0]?>" <?=$selected_option?>><?=$option[1]?></option>
+                          <?php } ?>
+                        </select>
+                      <?php } ?>
                     </div>
                   </div>
                   <?php } ?>
