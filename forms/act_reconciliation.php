@@ -1,9 +1,6 @@
 <?php
 	include_once "../_conf.php";
-
-
 	ini_set('display_errors', 0);
-
 	include ('../classes/safemysql.class.php');
 	$db = new SafeMySQL(array('host' => $db_host,'user' => $db_user, 'pass' => $db_pass, 'db' => $db_name, 'charset' => 'utf8'));
 
@@ -111,8 +108,6 @@
 			//выбираем все показания счетчика за указанный период $date_from - $date_to
 			$result_user_indications = $db->getAll("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to'");
 
-			//var_dump($_SESSION);
-
 			//var_dump($db->parse("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to'"));
 
 		?>
@@ -157,7 +152,7 @@
 							$prev_month = 0;
 
 							$last_ind = $db->getROW("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to' ORDER BY i.id DESC LIMIT 1");
-							//var_dump($db->parse("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to' ORDER BY i.id DESC LIMIT 1"));
+							var_dump($db->parse("SELECT i.date, i.prev_indications, i.Indications, i.additional as price, i.additional_sum, t.name as tarif FROM Indications i, tarifs t WHERE i.user = $user_id AND i.tarif = t.id AND i.date BETWEEN '$date_from' AND '$date_to' ORDER BY i.id DESC LIMIT 1"));
 							$last_month = date( "m",strtotime($last_ind['date']));
 							$last_year = date( "Y",strtotime($last_ind['date']));
 

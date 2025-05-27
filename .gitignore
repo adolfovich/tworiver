@@ -2,3 +2,6 @@
 _conf.php
 
 uploads/*.*
+/uploads/
+.idea/
+/temp/

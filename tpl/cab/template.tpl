@@ -308,7 +308,7 @@ $currentyear = date("Y");
               data: formData,
               dataType : 'html',
               success: function(data){
-                  //console.log(data);
+                  console.log(data);
                   if (IsJsonString(data)) {
                       response = JSON.parse(data)
                       if (response.status === 'OK') {

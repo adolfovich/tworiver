@@ -12,8 +12,6 @@ class Core
   * @var array $url
     */
   var $url;
-
-
   function __construct()
 	{
       //$this->_conf();
@@ -33,7 +31,6 @@ class Core
       $this->form = $this->form();
       //$this->get = $this->_get();
     }
-
     public function setGet()
     {
       $full_url = $_SERVER['REQUEST_URI'];
@@ -449,6 +446,101 @@ class Core
    	$out[] = $kop.' '.$this->morph($kop,$unit[0][0],$unit[0][1],$unit[0][2]); // kop
    	return trim(preg_replace('/ {2,}/', ' ', join(' ',$out)));
    }
+
+   public function backupDatabase($db_host, $db_name, $db_user, $db_pass)
+   {
+
+       try{
+
+           $exit = array();
+
+           $backupFolder =  $_SERVER['DOCUMENT_ROOT'].'/backups/'; // backup folder name
+           $fileName = $db_name .'-' . date('Y-m-d').'-'. time() . '.sql';
+
+           $dir = dirname(__FILE__) . $backupFolder . $fileName;
+
+           // create DB connection
+
+           $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
+
+           // Check connection
+           if ($conn->connect_error) {
+
+               $exit['status'] = 'error';
+               $exit['text'] = 'Ошибка соединения: '. $conn->connect_error;
+               return $exit;
+           }
+
+           // create dump of DB
+           exec("mysqldump --user={$user} --password={$password} --host={$host} {$database} --result-file={$dir} 2>&1", $output);
+
+           // create backup file from dump
+           // add backup file to zip archive
+           $zip = new ZipArchive();
+           $zip_name = dirname(__FILE__) . '/backup-' .$fileName . '.zip';
+           if($zip->open($zip_name, ZipArchive::CREATE) !== TRUE){
+
+               $exit['status'] = 'error';
+               $exit['text'] = 'Не удалось создать zip архив';
+               return $exit;
+           }
+
+           $zip->addFile($dir, $fileName);
+           $zip->close();
+
+           // remove old backups (older than 7 days)
+           $files = glob(dirname(__FILE__) . $backupFolder . '*'); // get all file names
+           foreach($files as $file){ // iterate files
+               if(is_file($file) && time() - filemtime($file) >= 60*60*24*7) // if file is older than 7 days 60*60*24*7
+                   unlink($file); // delete file
+           }
+
+           // success message
+           $exit['status'] = 'success';
+           $exit['text'] = 'Резервная копия базы данных успешно создана';
+           return $exit;
+       }catch(Exception $e){
+           $exit['status'] = 'error';
+           $exit['text'] = 'Ошибка : '. $e->getMessage();
+           return $exit;
+       }
+
+   }
+
+    public function getMonthsBetweenDates($date1, $date2)
+    {
+        $start = new DateTime($date1);
+        $end = new DateTime($date2);
+
+        // Если дата начала больше даты конца, меняем их местами
+        if ($start > $end) {
+            $temp = $start;
+            $start = $end;
+            $end = $temp;
+        }
+
+        $interval = new DateInterval('P1M'); // Интервал в 1 месяц
+        $period = new DatePeriod($start, $interval, $end);
+
+        $months = [];
+        foreach ($period as $dt) {
+            $months[] = $dt->format('m-Y'); // Форматируем в "месяц-год"
+        }
+
+        // Добавляем последний месяц, если он не попал в период
+        $lastMonth = $end->format('m-Y');
+        if (!in_array($lastMonth, $months)) {
+            $months[] = $lastMonth;
+        }
+
+        return $months;
+    }
+
+    public function getLastDayOfMonth(int $month, int $year): string {
+        $date = new DateTime("$year-$month-01");  // Первый день месяца
+        $date->modify('last day of this month');  // Переход на последний день
+        return $date->format('d');            // Возвращаем день
+    }
 
    
 }

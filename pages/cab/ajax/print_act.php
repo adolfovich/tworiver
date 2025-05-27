@@ -26,7 +26,7 @@ if (isset($_SESSION['id'])) {
       $json['error_input'] = 'act_date_end';
     } else {
 
-      $act_link = '/forms/act_reconciliation.php?user='.$form['act_user'].'&datefrom='.$form['act_date_start'].'&dateto='.$form['act_date_end'];
+      $act_link = '/forms/act_reconcilation_v2.php?user='.$form['act_user'].'&datefrom='.$form['act_date_start'].'&dateto='.$form['act_date_end'];
 
       $json['status'] = 'success';
       $json['text'] = 'Акт создан';
