@@ -32,11 +32,7 @@
 				  <a class="btn btn-primary" id="exportcsv" onClick="exportCSV(); return false;" style="color:#fff;" ><i class="fa fa-file-excel-o" aria-hidden="true"></i></a>
                 </div>
               </div>
-			  <div class="row" style="padding-top: 5px;">
-				<div class="col-md-12 text-right">
-                  <a href="#" onClick="loadModal('modal_upload_indications'); return false;" class="btn btn-primary">Загрузка показаний</a>
-				</div>
-			  </div>
+
             </p>
             <form class="form-inline">
               <div class="form-group mb-2 col-sm-8">
@@ -78,7 +74,7 @@
 						Баланс<br>
 						<span id="balance_name"></span>
 					</th>
-					<!--th scope="col">Показания</th-->
+					<th scope="col"></th>
                     <th scope="col"></th>
                   </tr>
                 </thead>
