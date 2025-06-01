@@ -1,5 +1,10 @@
 <?php
+/*
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 
+*/
 include('connect.php');
 
 $log = '';
@@ -62,7 +67,7 @@ if (!isset($_FILES[$input_name])) {
                     if ($date_from > $date_to) {
                         $json['status'] = 'ERROR';
                         $json['error'] = 'Дата начала больше даты окончания';
-                    } else if ($db->getRow('SELECT * FROM indications_log WHERE period = ?s', date('m.Y', $date_to))) {
+                    } else if ($db->getRow('SELECT * FROM Indications_log WHERE period = ?s', date('m.Y', $date_to))) {
                         $json['status'] = 'ERROR';
                         $json['error'] = 'За выбраный период '.date('m.Y', $date_to).' в систему уже загружены показания';
                     } else {
@@ -184,7 +189,7 @@ if (!isset($_FILES[$input_name])) {
                         $json['msg'] .= '<br> Загрузка завершена';
                         $json['msg'] .= '<br> После проверки не забудьте включить онлайн оплату';
 
-                        $db->query('INSERT INTO indications_log SET log = ?s, period = ?s', $log, date('m.Y', $date_to));
+                        $db->query('INSERT INTO Indications_log SET log = ?s, period = ?s', $log, date('m.Y', $date_to));
                     }
                 }
 
