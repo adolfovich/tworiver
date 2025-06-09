@@ -203,14 +203,14 @@ $count_sum_ind2 = 0;
                                 <td><?= $t1_ind['prev_indications'] ?></td>
                                 <td><?= $t1_ind['Indications'] - $t1_ind['prev_indications'] ?></td>
                                 <td><?= $t1_ind['Indications'] ?></td>
-                                <td><?= $t1_ind['additional'] ?></td>
-                                <td><?= $t1_ind['additional_sum'] ?></td>
+                                <td><?= round($t1_ind['additional'], 2) ?></td>
+                                <td><?= round($t1_ind['additional_sum'], 2) ?></td>
                                 <td><?= $t2_ind['prev_indications'] ?></td>
                                 <td><?= $t2_ind['Indications'] - $t2_ind['prev_indications'] ?></td>
                                 <td><?= $t2_ind['Indications'] ?></td>
-                                <td><?= $t2_ind['additional'] ?></td>
-                                <td><?= $t2_ind['additional_sum'] ?></td>
-                                <td><?= $t1_ind['additional_sum'] + $t2_ind['additional_sum']?></td>
+                                <td><?= round($t2_ind['additional'], 2) ?></td>
+                                <td><?= round($t2_ind['additional_sum'], 2) ?></td>
+                                <td><?= round($t1_ind['additional_sum'] + $t2_ind['additional_sum'], 2)?></td>
                             </tr>
                             <?php
                                 $count_sum_ind1 = $count_sum_ind1 + $t1_ind['additional_sum'];
@@ -269,7 +269,7 @@ $count_sum_ind2 = 0;
 
     <?php
 
-    $saldo = $sum_payments - $sum_ind;
+    $saldo = $sum_payments - ($count_sum_ind1+$count_sum_ind2);
     if ($saldo > 0) {
         $saldo_name = 'Дебет';
         $saldo_cuirsive = $core->num2str($saldo);
