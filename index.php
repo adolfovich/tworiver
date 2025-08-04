@@ -1,7 +1,7 @@
 <?php
 /*
 +---------------------------------------------------------------------------+
-| SNT-control v 2.0.1                                                       |
+| SNT-control v 2.0.6                                                      |
 | ============                                                              |
 | Copyright (c) by Alexandr Doroshenko                                      |
 | For contact details:                                                      |
@@ -53,5 +53,12 @@ $month_name = array(
 );
 
 $curdate = date("Y-m-d");
+
+$v_array = file("changelog.txt");
+
+$crm_version = explode(":", end($v_array));
+$crm_version_num = $crm_version[0];
+$crm_version_date = $crm_version[1];
+
 
 require_once('pages/controller.php');

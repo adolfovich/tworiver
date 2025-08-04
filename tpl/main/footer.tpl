@@ -4,7 +4,7 @@
   <!-- Footer -->
   <footer class="py-5 bg-dark">
     <div class="container">
-      <p class="m-0 text-center text-white">Copyright &copy; <?=$core->cfgRead('siteName')?> <?=date("Y")?>. <a href="changelog" title="Посмотреть список изменений">Версия <?=$core->cfgRead('version')?><a></p>
+      <p class="m-0 text-center text-white">Copyright &copy; <?=$core->cfgRead('siteName')?> <?=date("Y")?>. <a href="changelog" title="Посмотреть список изменений">Версия <?=$crm_version_num;?> от <?=$crm_version_date;?><a></p>
     </div>
     <!-- /.container -->
   </footer>
