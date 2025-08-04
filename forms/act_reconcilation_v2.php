@@ -235,7 +235,9 @@ $count_sum_ind2 = 0;
     <?php
     //выбираем все оплаты
 
-    $result_user_payments = $db->getAll("SELECT * FROM operations_jornal WHERE balance_type = 1 AND (op_type = 4 OR op_type = 1) AND user_id = ?i AND date BETWEEN ?s AND ?s", $user_id, $date_from, $date_to);
+    //echo $db->parse("SELECT * FROM operations_jornal WHERE balance_type = 1 AND (op_type = 4 OR op_type = 1) AND user_id = ?i AND date BETWEEN ?s AND ?s ORDER BY date", $user_id, $date_from, $date_to);
+
+    $result_user_payments = $db->getAll("SELECT * FROM operations_jornal WHERE balance_type = 1 AND (op_type = 4 OR op_type = 1) AND user_id = ?i AND date BETWEEN ?s AND ?s ORDER BY date", $user_id, $date_from, $date_to);
 
      ?>
     <div class="row">

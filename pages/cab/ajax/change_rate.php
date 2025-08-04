@@ -20,10 +20,13 @@ if (isset($_SESSION['id'])) {
       $json['error_input'] = 'rate_waviot_id';
     } else {
 
+        $rate_price = str_replace(',','.',$form['rate_price']); //Меняем точку на запятую
+        $rate_price = floatval($rate_price); //удаляем все лишнее
+
       $update = [
         'name' => $form['rate_name'],
         'id_waviot' => $form['rate_waviot_id'],
-        'price' => $form['rate_price']
+        'price' => $rate_price
       ];
 
       if ($db->query("UPDATE tarifs SET ?u WHERE id = ?i", $update, $form['rate_id'])) {

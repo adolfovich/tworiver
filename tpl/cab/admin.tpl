@@ -15,7 +15,7 @@
         <div class="card">
           <div class="card-body">
             <p class="card-title text-md-center text-xl-left">Загрузка показаний счетчиков из файла</p>
-            <p class="text-md-center text-xl-left">Тип файла CSV</p>
+            <p class="text-md-center text-xl-left alert alert-danger">Внимание: Тип файла CSV (разделитель точка с запятой)</p>
 
             <form id="upladIndications" method="POST" enctype="multipart/form-data" >
                 <div class="form-row">
