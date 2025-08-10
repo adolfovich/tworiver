@@ -35,6 +35,10 @@ $requestBody = json_decode($source, true);
 
 $payment = $_GET;
 
+$payment_log = json_encode($payment);
+$db->query("INSERT INTO payment_logs SET type = 'debug', text = ?s", [$payment_log]);
+
+
 if ($payment['status'] == '1') {
 	$pay_order = $payment['orderNumber'];
 	$pay_id = $payment['mdOrder'];
