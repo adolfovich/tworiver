@@ -15,6 +15,18 @@
   <link rel="stylesheet" href="js/lightzoom/style.css" type="text/css">
   <script type="text/javascript" src="js/lightzoom/lightzoom.js"></script>
   <script type="text/javascript">jQuery('.lightzoom').lightzoom({speed: 400, viewTitle: true, isOverlayClickClosing: true, isWindowClickClosing: true});</script>
+
+  <?php
+  if (isset($message)) {
+      ?>
+      <script type="text/javascript">
+          //Swal.fire({type: "<?=$message['type']?>",text: "<?=$message['msg']?>"})ж
+          $('#messageText').text('<?=$message['msg']?>');
+          $('#modalMessage').modal('show');
+      </script>
+      <?php
+  }
+  ?>
 </body>
 
 </html>

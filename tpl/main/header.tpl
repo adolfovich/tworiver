@@ -35,13 +35,26 @@
 
 <body>
 
-  <?php
-  if (isset($message)) {
-  ?>
-  <script type="text/javascript">Swal.fire({type: "<?=$message['type']?>",text: "<?=$message['msg']?>"})</script>
-  <?php
-  }
-  ?>
+
+
+  <!-- modal message -->
+  <div class="modal fade" id="modalMessage" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title">Внимание</h5>
+                  <button type="button" class="btn-close" data-dismiss="modal" aria-label="Закрыть"></button>
+              </div>
+              <div class="modal-body">
+                  <p id="messageText" class="messageText"></p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+              </div>
+          </div>
+      </div>
+  </div>
+
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
     <div class="container">
